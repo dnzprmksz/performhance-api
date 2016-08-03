@@ -13,6 +13,8 @@ public class ResponseCode {
     public static final int ORGANIZATION_ID_DOES_NOT_EXIST = 1101;
     public static final int ORGANIZATION_ID_INVALID = 1102;
     public static final int ORGANIZATION_NAME_DOES_NOT_EXIST = 1103;
+    public static final int ORGANIZATION_NAME_INVALID = 1104;
+    public static final int ORGANIZATION_NAME_EXISTS = 1105;
 
     protected ResponseCode() {}
 }

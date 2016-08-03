@@ -3,7 +3,9 @@ package com.monitise.controllers;
 import com.monitise.models.BaseException;
 import com.monitise.models.Organization;
 import com.monitise.models.Response;
+import com.monitise.models.ResponseCode;
 import com.monitise.services.OrganizationService;
+import org.mockito.internal.exceptions.ExceptionIncludingMockitoWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +51,9 @@ public class OrganizationController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
 
+        // Validate name.
+        validateName(organization.getName());
+
         // Initialize response object.
         Response<Organization> response = new Response<>();
 
@@ -61,5 +66,33 @@ public class OrganizationController {
 
         return response;
     }
+
+    // region Helper Methods
+
+    private void validateName(String name) throws BaseException {
+
+        // Check for empty name.
+        if (name.trim().equals("")) {
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty organization name is not allowed.");
+        }
+        // Check for existing name.
+        else if (doesNameExists(name)) {
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS, "Given name is used by another organization.");
+        }
+    }
+
+    private boolean doesNameExists(String name) {
+        try {
+            organizationService.getByName(name);
+        } catch (BaseException exception) {
+            if (exception.getCode() == ResponseCode.ORGANIZATION_NAME_DOES_NOT_EXIST) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // emdregion
 
 }

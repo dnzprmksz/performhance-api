@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = AppConfig.class)
@@ -29,7 +30,7 @@ public class OrganizationServiceTest {
             organizationService.add(initial);
         } catch (BaseException e) {}
 
-        // Add same object.
+        // Get same object.
         try {
             organization = organizationService.getByName("Pozitron");
         } catch (BaseException e) {}
@@ -64,12 +65,18 @@ public class OrganizationServiceTest {
 
     @Test
     public void add_ExistingOrganization_ShouldNotAdd() {
-        Organization organization = new Organization("Pozitron");
+        Organization initial = new Organization("Pozitron");
         Organization organizationFromRepo = null;
 
+        // Initialize database with an object.
+        try {
+            organizationService.add(initial);
+        } catch (Exception e) {}
+
+        // Add same object.
         try {
             Assert.assertNotNull(organizationService.getByName("Pozitron"));
-            organizationFromRepo = organizationService.add(organization);
+            organizationFromRepo = organizationService.add(initial);
         } catch (Exception e) {}
 
         Assert.assertNull(organizationFromRepo);
