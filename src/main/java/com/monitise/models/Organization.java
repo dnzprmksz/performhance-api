@@ -27,7 +27,6 @@ public class Organization implements Serializable {
     public Organization(String name) {
         this.name = name;
     }
-
     // region Getters
 
     public String getName() {

@@ -17,8 +17,8 @@ public class Employee implements Serializable {
     @ManyToOne
     protected JobTitle jobTitle;
 
+    protected Employee() {}
 
-    protected Employee(){}
     // region Getters
 
     public String getName() {
