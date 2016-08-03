@@ -33,6 +33,19 @@ public class OrganizationService {
         return organization;
     }
 
+    public Organization getByName(String name) throws BaseException {
+
+        // Find the organization with given name in repository.
+        Organization organization = organizationRepository.findByName(name);
+
+        // Check the success of the action and throw an exception if the action fails.
+        if (organization == null) {
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_DOES_NOT_EXIST, "An organization with given name does not exist.");
+        }
+
+        return organization;
+    }
+
     public Organization add(Organization organization) throws BaseException {
 
         // Add the given organization to the repository.

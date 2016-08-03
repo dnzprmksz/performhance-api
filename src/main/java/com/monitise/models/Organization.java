@@ -1,9 +1,6 @@
 package com.monitise.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -13,6 +10,7 @@ public class Organization implements Serializable {
     @Id
     @GeneratedValue
     private int id;
+    @Column(unique = true)
     private String name;
     private int numberOfEmployees;
     @OneToMany
