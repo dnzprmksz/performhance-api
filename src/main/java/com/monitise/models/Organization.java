@@ -1,8 +1,11 @@
 package com.monitise.models;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,7 +17,9 @@ public class Organization implements Serializable {
     private int id;
     private String name;
     private int numberOfEmployees;
-    private List<Person> employees;
+    @OneToMany
+    private List<Employee> employees;
+    @OneToMany
     private List<JobTitle> jobTitles;
 
     protected Organization() {}
@@ -33,7 +38,7 @@ public class Organization implements Serializable {
         return numberOfEmployees;
     }
 
-    public List<Person> getEmployees() {
+    public List<Employee> getEmployees() {
         return employees;
     }
 
@@ -53,7 +58,7 @@ public class Organization implements Serializable {
         this.numberOfEmployees = numberOfEmployees;
     }
 
-    public void setEmployees(List<Person> employees) {
+    public void setEmployees(List<Employee> employees) {
         this.employees = employees;
     }
 
