@@ -22,5 +22,11 @@ public class ResponseCode {
     public static final int EMPLOYEE_ID_DOES_NOT_EXIST = 1201;
     public static final int EMPLOYEE_ID_INVALID = 1202;
 
+    /**
+     *  TEAM RELATED RESPONSE CODES
+     */
+    public static final int TEAM_ID_DOES_NOT_EXIST = 1301;
+    public static final int TEAM_ID_INVALID = 1302;
+
     protected ResponseCode() {}
 }

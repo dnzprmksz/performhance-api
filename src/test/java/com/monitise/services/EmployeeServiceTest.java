@@ -20,16 +20,11 @@ public class EmployeeServiceTest {
     private EmployeeService employeeService;
 
     @Test
-    public void add_UniqueEmployee_ShouldAdd() {
+    public void add_uniqueEmployee_shouldAdd() throws BaseException {
 
         Employee employee = new Employee("Deniz", "Parmaksız");
         Employee employeeFromService = null;
-
-        try {
-            employeeFromService = employeeService.add(employee);
-        } catch (BaseException e) {
-            e.printStackTrace();
-        }
+        employeeFromService = employeeService.add(employee);
 
         Assert.assertNotNull(employeeFromService);
         Assert.assertEquals(employee.getName(), employeeFromService.getName());

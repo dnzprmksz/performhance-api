@@ -2,9 +2,4 @@
 .idea/
 build/
 classes/
-gradle/
 out/
-src/main/resources/application.properties
-src/test/resources/application.properties
-gradlew
-gradlew.bat
