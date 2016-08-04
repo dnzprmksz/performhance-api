@@ -16,5 +16,11 @@ public class ResponseCode {
     public static final int ORGANIZATION_NAME_INVALID = 1104;
     public static final int ORGANIZATION_NAME_EXISTS = 1105;
 
+    /**
+     *  EMPLOYEE RELATED RESPONSE CODES
+     */
+    public static final int EMPLOYEE_ID_DOES_NOT_EXIST = 1201;
+    public static final int EMPLOYEE_ID_INVALID = 1202;
+
     protected ResponseCode() {}
 }

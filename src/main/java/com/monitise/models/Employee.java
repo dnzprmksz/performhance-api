@@ -19,6 +19,11 @@ public class Employee implements Serializable {
 
     protected Employee() {}
 
+    public Employee(String name, String surname) {
+        this.name = name;
+        this.surname = surname;
+    }
+
     // region Getters
 
     public String getName() {

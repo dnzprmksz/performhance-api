@@ -65,4 +65,12 @@ public class OrganizationService {
         return organizationFromRepo;
     }
 
+    public Organization update(Organization organization) throws BaseException {
+
+        // Check if organization exists in repository. If DNE an exception will be thrown by getId().
+        get(organization.getId());
+        Organization organizationFromRepo = organizationRepository.save(organization);
+        return organizationFromRepo;
+    }
+
 }

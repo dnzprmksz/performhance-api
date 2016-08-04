@@ -1,11 +1,8 @@
 package com.monitise.controllers;
 
-import com.monitise.models.BaseException;
-import com.monitise.models.Organization;
-import com.monitise.models.Response;
-import com.monitise.models.ResponseCode;
+import com.monitise.models.*;
+import com.monitise.services.EmployeeService;
 import com.monitise.services.OrganizationService;
-import org.mockito.internal.exceptions.ExceptionIncludingMockitoWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +12,8 @@ public class OrganizationController {
 
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private EmployeeService employeeService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<Iterable<Organization>> getAll() {
@@ -60,6 +59,14 @@ public class OrganizationController {
         // Add the given organization.
         Organization organizationFromService = organizationService.add(organization);
 
+        // Create management user for the organization.
+        Manager manager = new Manager(organizationFromService);
+        employeeService.add(manager);
+        organizationFromService.setManager(manager);
+
+        // Update organization with manager ID.
+        organizationFromService = organizationService.update(organizationFromService);
+
         // Set response details.
         response.setSuccess(true);
         response.setData(organizationFromService);
@@ -72,7 +79,7 @@ public class OrganizationController {
     private void validateName(String name) throws BaseException {
 
         // Check for empty name.
-        if (name.trim().equals("")) {
+        if (name == null || name.trim().equals("")) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty organization name is not allowed.");
         }
         // Check for existing name.
@@ -93,6 +100,6 @@ public class OrganizationController {
         return true;
     }
 
-    // emdregion
+    // endregion
 
 }

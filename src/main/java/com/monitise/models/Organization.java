@@ -1,5 +1,7 @@
 package com.monitise.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -17,6 +19,9 @@ public class Organization implements Serializable {
     private List<Employee> employees;
     @OneToMany
     private List<JobTitle> jobTitles;
+    @OneToOne
+    @JsonIgnore
+    private Manager manager;
 
     protected Organization() {}
 
@@ -46,6 +51,10 @@ public class Organization implements Serializable {
         return jobTitles;
     }
 
+    public Manager getManager() {
+        return manager;
+    }
+
     // endregion
 
     // region Setters
@@ -68,6 +77,10 @@ public class Organization implements Serializable {
 
     public void setJobTitles(List<JobTitle> jobTitles) {
         this.jobTitles = jobTitles;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     // endregion
