@@ -6,10 +6,7 @@ import com.monitise.models.ResponseCode;
 import com.monitise.models.Team;
 import com.monitise.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class TeamService {
@@ -31,8 +28,11 @@ public class TeamService {
     }
 
     public void assingEmployeeToTeam(Employee employee, Team team) {
-
-        team.addMember(employee);
+        Team teamFromRepo = teamRepository.findOne(team.getId());
+        teamFromRepo.addMember(employee);
+        teamRepository.save(teamFromRepo);
     }
+
+
 
 }

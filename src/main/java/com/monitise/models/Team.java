@@ -25,6 +25,10 @@ public class Team {
 
     // region Getters
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -40,6 +44,10 @@ public class Team {
     // endregion
 
     // region Setters
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setName(String name) {
         this.name = name;

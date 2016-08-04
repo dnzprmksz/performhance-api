@@ -15,29 +15,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
 
-        http
-                .authorizeRequests()
-                    .antMatchers("/organizations/**").access("hasRole('MANAGER')")
-                    .anyRequest().authenticated()
+        http.authorizeRequests()
+            .antMatchers("/organizations/**").access("hasRole('MANAGER')")
+            .anyRequest().authenticated()
 
-                .and()
+            .and()
 
-                .formLogin()
-                    .loginPage("/login").permitAll()
-                    .defaultSuccessUrl("/organizations",true)
-                    .failureForwardUrl("/login?fail=true")
+            .formLogin()
+                .loginPage("/login").permitAll()
+                .defaultSuccessUrl("/organizations",true)
+                .failureForwardUrl("/login?fail=true")
 
-                .and()
+            .and()
 
-                .logout()
-                    .permitAll();
+            .logout()
+                .permitAll();
     }
 
     // temporary user db
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("user").password("123").roles("MANAGER");
+        auth.inMemoryAuthentication()
+            .withUser("user").password("123").roles("MANAGER");
     }
 }
