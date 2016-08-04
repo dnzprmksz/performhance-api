@@ -21,12 +21,12 @@ public class Organization implements Serializable {
     private String name;
     private int numberOfEmployees;
     @OneToMany
-    private List<Employee> employees;
+    private List<User> users;
     @OneToMany
     private List<JobTitle> jobTitles;
     @OneToOne
     @JsonIgnore
-    private Manager manager;
+    private User manager;
 
     protected Organization() {}
 
@@ -48,15 +48,15 @@ public class Organization implements Serializable {
         return numberOfEmployees;
     }
 
-    public List<Employee> getEmployees() {
-        return employees;
+    public List<User> getUsers() {
+        return users;
     }
 
     public List<JobTitle> getJobTitles() {
         return jobTitles;
     }
 
-    public Manager getManager() {
+    public User getManager() {
         return manager;
     }
 
@@ -76,15 +76,15 @@ public class Organization implements Serializable {
         this.numberOfEmployees = numberOfEmployees;
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     public void setJobTitles(List<JobTitle> jobTitles) {
         this.jobTitles = jobTitles;
     }
 
-    public void setManager(Manager manager) {
+    public void setManager(User manager) {
         this.manager = manager;
     }
 

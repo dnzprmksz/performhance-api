@@ -1,7 +1,7 @@
 package com.monitise.services;
 
 import com.monitise.models.BaseException;
-import com.monitise.models.Employee;
+import com.monitise.models.User;
 import com.monitise.models.ResponseCode;
 import com.monitise.models.Team;
 import com.monitise.repositories.TeamRepository;
@@ -27,9 +27,9 @@ public class TeamService {
         return  teamFromRepo;
     }
 
-    public void assingEmployeeToTeam(Employee employee, Team team) {
+    public void assingEmployeeToTeam(User user, Team team) {
         Team teamFromRepo = teamRepository.findOne(team.getId());
-        teamFromRepo.addMember(employee);
+        teamFromRepo.addMember(user);
         teamRepository.save(teamFromRepo);
     }
 

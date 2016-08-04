@@ -28,7 +28,6 @@ public class OrganizationServiceTest {
     public void setup() throws BaseException {
 
         Organization initial = new Organization("Pozitron");
-        Organization organizationFromRepo = null;
         organizationService.add(initial);
     }
 

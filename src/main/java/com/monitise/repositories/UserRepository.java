@@ -1,10 +1,10 @@
 package com.monitise.repositories;
 
-import com.monitise.models.Employee;
+import com.monitise.models.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
+public interface UserRepository extends CrudRepository<User, Integer> {
 
 }

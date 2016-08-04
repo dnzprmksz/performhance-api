@@ -16,18 +16,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
-            .antMatchers("/organizations/**").access("hasRole('MANAGER')")
-            .anyRequest().authenticated()
-
-            .and()
-
+                .antMatchers("/organizations/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
             .formLogin()
                 .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/organizations",true)
+                .defaultSuccessUrl("/organizations", true)
                 .failureForwardUrl("/login?fail=true")
-
-            .and()
-
+                .and()
             .logout()
                 .permitAll();
     }

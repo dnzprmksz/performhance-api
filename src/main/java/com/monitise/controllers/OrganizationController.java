@@ -1,11 +1,12 @@
 package com.monitise.controllers;
 
 import com.monitise.models.BaseException;
-import com.monitise.models.Manager;
 import com.monitise.models.Organization;
 import com.monitise.models.Response;
 import com.monitise.models.ResponseCode;
-import com.monitise.services.EmployeeService;
+import com.monitise.models.Role;
+import com.monitise.models.User;
+import com.monitise.services.UserService;
 import com.monitise.services.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ public class OrganizationController {
     @Autowired
     private OrganizationService organizationService;
     @Autowired
-    private EmployeeService employeeService;
+    private UserService userService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<Organization>> getAll() {
@@ -62,8 +63,8 @@ public class OrganizationController {
         Organization organizationFromService = organizationService.add(organization);
 
         // Create management user for the organization.
-        Manager manager = new Manager(organizationFromService);
-        employeeService.add(manager);
+        User manager = new User(organizationFromService.getName(), "Manager", organizationFromService, Role.MANAGER);
+        userService.add(manager);
         organizationFromService.setManager(manager);
 
         // Update organization with manager ID.

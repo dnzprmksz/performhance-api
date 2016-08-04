@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.List;
 
 @Entity
@@ -14,13 +15,14 @@ public class Team {
     private int id;
     private String name;
     @OneToMany
-    private List<Employee> members;
-    private Employee leader;
+    private List<User> members;
+    @OneToOne
+    private User leader;
 
     protected Team() {}
 
-    public boolean addMember(Employee employee) {
-        return members.add(employee);
+    public boolean addMember(User user) {
+        return members.add(user);
     }
 
     // region Getters
@@ -33,11 +35,11 @@ public class Team {
         return name;
     }
 
-    public List<Employee> getMembers() {
+    public List<User> getMembers() {
         return members;
     }
 
-    public Employee getLeader() {
+    public User getLeader() {
         return leader;
     }
 
@@ -53,11 +55,11 @@ public class Team {
         this.name = name;
     }
 
-    public void setMembers(List<Employee> members) {
+    public void setMembers(List<User> members) {
         this.members = members;
     }
 
-    public void setLeader(Employee leader) {
+    public void setLeader(User leader) {
         this.leader = leader;
     }
 
