@@ -9,6 +9,7 @@ import com.monitise.models.User;
 import com.monitise.services.UserService;
 import com.monitise.services.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +55,7 @@ public class OrganizationController {
         return response;
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
 
@@ -64,6 +66,9 @@ public class OrganizationController {
 
         // Create management user for the organization.
         User manager = new User(organizationFromService.getName(), "Manager", organizationFromService, Role.MANAGER);
+        // TODO: Change the way how manager account is created. It is fixed for now for test purposes.
+        manager.setUsername(organizationFromService.getName().toLowerCase());
+        manager.setPassword("admin");
         userService.add(manager);
         organizationFromService.setManager(manager);
 

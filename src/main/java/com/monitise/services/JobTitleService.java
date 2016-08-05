@@ -5,6 +5,7 @@ import com.monitise.models.JobTitle;
 import com.monitise.models.ResponseCode;
 import com.monitise.repositories.JobTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +14,7 @@ public class JobTitleService {
     @Autowired
     private JobTitleRepository jobTitleRepository;
 
+    @Secured("ROLE_MANAGER")
     public JobTitle add(JobTitle jobTitle) throws BaseException {
 
         JobTitle jobTitleFromRepo = jobTitleRepository.save(jobTitle);

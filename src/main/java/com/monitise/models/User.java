@@ -22,6 +22,8 @@ public class User implements Serializable {
     private Role role;
     @ManyToOne
     private Organization organization;
+    private String username;
+    private String password;
 
     private User() {}
 
@@ -65,6 +67,13 @@ public class User implements Serializable {
         return organization;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
     // endregion
 
     // region Setters
@@ -93,6 +102,13 @@ public class User implements Serializable {
         this.organization = organization;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     // endregion
 
 }
