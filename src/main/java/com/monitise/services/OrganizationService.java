@@ -1,6 +1,7 @@
 package com.monitise.services;
 
 import com.monitise.models.BaseException;
+import com.monitise.models.JobTitle;
 import com.monitise.models.Organization;
 import com.monitise.models.ResponseCode;
 import com.monitise.repositories.OrganizationRepository;
@@ -68,4 +69,15 @@ public class OrganizationService {
         return organizationFromRepo;
     }
 
+    public Organization addJobTitle(JobTitle jobTitle, Organization organization) {
+        Organization organizationFromRepo = organizationRepository.findOne(organization.getId());
+        boolean isAdded = organizationFromRepo.addJobTitle(jobTitle);
+
+        if (isAdded) {
+            organizationFromRepo = organizationRepository.save(organizationFromRepo);
+            return organizationFromRepo;
+        } else {
+            return null;
+        }
+    }
 }

@@ -21,12 +21,21 @@ public class ResponseCode {
      */
     public static final int USER_ID_DOES_NOT_EXIST = 1201;
     public static final int USER_ID_INVALID = 1202;
+    public static final int USER_ROLE_INCORRECT = 1203;
+    public static final int USER_USERNAME_NOT_EXIST = 1204;
+    public static final int USER_UNAUTHORIZED_ORGANIZATION = 1205;
 
     /**
      *  TEAM RELATED RESPONSE CODES
      */
     public static final int TEAM_ID_DOES_NOT_EXIST = 1301;
     public static final int TEAM_ID_INVALID = 1302;
+
+    /**
+     *  JOB TITLE RELATED RESPONSE CODES
+     */
+    public static final int JOB_TITLE_ID_DOES_NOT_EXIST = 1401;
+    public static final int JOB_TITLE_ID_INVALID = 1402;
 
     protected ResponseCode() {}
 }

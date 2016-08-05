@@ -29,33 +29,25 @@ public class OrganizationController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<Organization>> getAll() {
-
-        Response<List<Organization>> response = new Response<>();
-
         List<Organization> list = organizationService.getAll();
 
-        // Set response details.
+        Response<List<Organization>> response = new Response<>();
         response.setSuccess(true);
         response.setData(list);
-
         return response;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Response<Organization> get(@PathVariable int id) throws BaseException {
-
-        Response<Organization> response = new Response<>();
-
         Organization organization = organizationService.get(id);
 
-        // Set response details.
+        Response<Organization> response = new Response<>();
         response.setSuccess(true);
         response.setData(organization);
-
         return response;
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
 
@@ -69,7 +61,7 @@ public class OrganizationController {
         // TODO: Change the way how manager account is created. It is fixed for now for test purposes.
         manager.setUsername(organizationFromService.getName().toLowerCase());
         manager.setPassword("admin");
-        userService.add(manager);
+        userService.addManager(manager);
         organizationFromService.setManager(manager);
 
         // Update organization with manager ID.

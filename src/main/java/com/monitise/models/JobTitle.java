@@ -25,6 +25,9 @@ public class JobTitle implements Serializable {
         return title;
     }
 
+    public int getId() {
+        return id;
+    }
     // endregion
 
     // region Setters
@@ -33,5 +36,8 @@ public class JobTitle implements Serializable {
         this.title = title;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     // endregion
 }
