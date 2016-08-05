@@ -47,13 +47,10 @@ public class OrganizationController {
         return response;
     }
 
-    @Secured("ROLE_MANAGER")
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
-
         validateName(organization.getName());
-        Response<Organization> response = new Response<>();
-
         Organization organizationFromService = organizationService.add(organization);
 
         // Create management user for the organization.
@@ -67,10 +64,9 @@ public class OrganizationController {
         // Update organization with manager ID.
         organizationFromService = organizationService.update(organizationFromService);
 
-        // Set response details.
+        Response<Organization> response = new Response<>();
         response.setSuccess(true);
         response.setData(organizationFromService);
-
         return response;
     }
 

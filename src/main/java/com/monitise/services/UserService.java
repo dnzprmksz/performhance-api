@@ -1,7 +1,6 @@
 package com.monitise.services;
 
 import com.monitise.models.BaseException;
-import com.monitise.models.Response;
 import com.monitise.models.Role;
 import com.monitise.models.User;
 import com.monitise.models.ResponseCode;
@@ -48,35 +47,19 @@ public class UserService {
     }
 
     @Secured("ROLE_MANAGER")
-    public User add(User user) throws BaseException {
-
-        if (user.getRole() != Role.EMPLOYEE || user.getRole() != Role.TEAM_LEADER) {
-            throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non employee/team-leader user.");
+    public User addEmployee(User user) throws BaseException {
+        if (user.getRole() != Role.EMPLOYEE && user.getRole() != Role.TEAM_LEADER) {
+            throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-employee user.");
         }
-
-        User userFromRepo = userRepository.save(user);
-
-        if (userFromRepo == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given User.");
-        }
-
-        return userFromRepo;
+        return addUser(user);
     }
 
     @Secured("ROLE_ADMIN")
     public User addManager(User user) throws BaseException {
-
         if (user.getRole() != Role.MANAGER) {
             throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-manager user.");
         }
-
-        User userFromRepo = userRepository.save(user);
-
-        if (userFromRepo == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given User.");
-        }
-
-        return userFromRepo;
+        return addUser(user);
     }
 
     public User getAuthenticatedUser() throws BaseException {
@@ -84,6 +67,21 @@ public class UserService {
         String authenticatedUsername = auth.getName();
         User authenticatedUser = getByUsername(authenticatedUsername);
         return authenticatedUser;
+    }
+
+    public void checkUserOrganizationAuthorization(int organizationId) throws BaseException {
+        User authenticatedUser = getAuthenticatedUser();
+        if (authenticatedUser.getOrganization().getId() != organizationId) {
+            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized for this organization.");
+        }
+    }
+
+    private User addUser(User user) throws BaseException {
+        User userFromRepo = userRepository.save(user);
+        if (userFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given User.");
+        }
+        return userFromRepo;
     }
 
 }

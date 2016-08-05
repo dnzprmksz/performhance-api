@@ -45,7 +45,7 @@ public class UserServiceTest {
         Organization organization = organizationService.getByName("Monitise");
         User user = new User("Deniz", "Parmaksız", organization);
         User userFromService = null;
-        userFromService = userService.add(user);
+        userFromService = userService.addEmployee(user);
 
         Assert.assertNotNull(userFromService);
         Assert.assertEquals(user.getName(), userFromService.getName());

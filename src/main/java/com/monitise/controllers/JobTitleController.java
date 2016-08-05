@@ -4,8 +4,6 @@ import com.monitise.models.BaseException;
 import com.monitise.models.JobTitle;
 import com.monitise.models.Organization;
 import com.monitise.models.Response;
-import com.monitise.models.ResponseCode;
-import com.monitise.models.User;
 import com.monitise.services.JobTitleService;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.UserService;
@@ -53,7 +51,7 @@ public class JobTitleController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organization/{organizationId}", method = RequestMethod.GET)
     public Response<List<JobTitle>> getByOrganization(@PathVariable int organizationId) throws BaseException {
-        checkManagerAuthorization(organizationId);
+        userService.checkUserOrganizationAuthorization(organizationId);
         List<JobTitle> list = jobTitleService.getListFilterByOrganizationId(organizationId);
 
         Response<List<JobTitle>> response = new Response<>();
@@ -65,7 +63,7 @@ public class JobTitleController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organization/{organizationId}", method = RequestMethod.POST)
     public Response<JobTitle> add(@RequestBody JobTitle jobTitle, @PathVariable int organizationId) throws BaseException {
-        checkManagerAuthorization(organizationId);
+        userService.checkUserOrganizationAuthorization(organizationId);
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
         Organization organizationFromService = organizationService.addJobTitle(jobTitle, organization);
@@ -75,16 +73,5 @@ public class JobTitleController {
         response.setSuccess(true);
         return response;
     }
-
-    // region Helper Methods
-
-    private void checkManagerAuthorization(int organizationId) throws BaseException {
-        User authenticatedUser = userService.getAuthenticatedUser();
-        if (authenticatedUser.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized to see this organization's job titles.");
-        }
-    }
-
-    // endregion
 
 }
