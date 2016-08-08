@@ -56,6 +56,10 @@ public class UserService {
         return users;
     }
 
+    public void remove(int id){
+        userRepository.delete(id);
+    }
+
 
 
     @Secured("ROLE_MANAGER")

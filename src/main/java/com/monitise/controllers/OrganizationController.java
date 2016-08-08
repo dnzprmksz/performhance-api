@@ -73,8 +73,26 @@ public class OrganizationController {
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(value = "/{org_id}/users/{usr_id}", method = RequestMethod.GET)
+    public Response<User> getSingleUser(@PathVariable int org_id, @PathVariable int usr_id )throws BaseException {
+        //throws an exception if the user performing this op. is unauthorized
+        User currentUser = securityHelper.getAuthenticatedUser();
+        if ( currentUser.getRole().equals(Role.MANAGER) ) {
+            securityHelper.checkUserOrganizationAuthorization(org_id);
+        }
+
+        User user = userService.get(usr_id);
+
+        Response response = new Response();
+        response.setSuccess(true);
+        response.setData(user);
+        //User addedEmployee = userService.addEmployee(employee);
+        return response;
+    }
+
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/{id}/users", method = RequestMethod.POST)
-    public User addUser(@PathVariable int id, @RequestBody User employee) throws BaseException {
+    public Response<User> addUser(@PathVariable int id, @RequestBody User employee) throws BaseException {
         //throws an exception if the user performing this op. is unauthorized
         User currentUser = securityHelper.getAuthenticatedUser();
         if ( currentUser.getRole().equals(Role.MANAGER) ) {
@@ -89,11 +107,42 @@ public class OrganizationController {
         employee.setPassword("123");
 
 
-        validateEmployee(employee);
+        //validateEmployee(employee);
+        // employee object with id
+        User addedEmployee = userService.addEmployee(employee);
 
-        //User addedEmployee = userService.addEmployee(employee);
-        return employee;
+        Response<User> response = new Response<>();
+        response.setSuccess(true);
+        response.setData(addedEmployee);
+        return response;
     }
+
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(value = "/{org_id}/users/", method = RequestMethod.DELETE)
+    public Response<User> deleteUser(@PathVariable int org_id,
+                                     @RequestBody int usr_id) throws BaseException {
+        //throws an exception if the user performing this op. is unauthorized
+        User currentUser = securityHelper.getAuthenticatedUser();
+        if ( currentUser.getRole().equals(Role.MANAGER) ) {
+            securityHelper.checkUserOrganizationAuthorization(org_id);
+        }
+
+        User soonToBeDeleted = userService.get(usr_id);
+        if( soonToBeDeleted.getOrganization().getId() != org_id) {
+            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,"You are not authorized"
+            + " to perform this action.");
+        }
+
+        userService.remove(usr_id);
+
+        Response<User> response = new Response<>();
+        response.setData(soonToBeDeleted);
+        response.setSuccess(true);
+        //User addedEmployee = userService.addEmployee(employee);
+        return response;
+    }
+
+
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
