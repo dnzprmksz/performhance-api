@@ -7,6 +7,7 @@ import com.monitise.models.Response;
 import com.monitise.models.ResponseCode;
 import com.monitise.models.Role;
 import com.monitise.models.User;
+import com.monitise.services.JobTitleService;
 import com.monitise.services.UserService;
 import com.monitise.services.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class OrganizationController {
     private OrganizationService organizationService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private JobTitleService jobTitleService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<Organization>> getAll() {
@@ -52,14 +55,21 @@ public class OrganizationController {
     @RequestMapping(value = "/{id}/users", method = RequestMethod.POST)
     public User addUser(@PathVariable int id, @RequestBody User employee) throws BaseException {
         //throws an exception if the user performing this op. is unauthorized
-        //userService.checkUserOrganizationAuthorization(id);
+        User currentUser = userService.getAuthenticatedUser();
+        if ( currentUser.getRole().equals(Role.MANAGER) ) {
+            userService.checkUserOrganizationAuthorization(id);
+        }
+
         Organization organization = organizationService.get(id);
         employee.setOrganization(organization);
         employee.setRole(Role.EMPLOYEE);
-        //employee.setJobTitle(new JobTitle("forward deployed engineer"));
         // TODO: change the way this is done
         employee.setUsername(employee.getName()+"."+employee.getSurname());
         employee.setPassword("123");
+
+
+        validateEmployee(employee);
+
         User addedEmployee = userService.addEmployee(employee);
         return addedEmployee;
     }
@@ -111,6 +121,22 @@ public class OrganizationController {
         return true;
     }
 
+    private void validateEmployee(User employee) throws BaseException{
+
+        String name = employee.getName();
+        String surname = employee.getSurname();
+        if( (name == null || name.trim().equals("")) || (surname == null || surname.trim().equals("")) )  {
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty user name is not allowed.");
+        }
+
+        JobTitle title = employee.getJobTitle();
+        Organization organization = employee.getOrganization();
+        if( !organizationService.isJobTitleDefined(organization, title) ) {
+            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST, "Job Title you entered is not"
+            + " defined in this company.");
+        }
+
+    }
     // endregion
 
 }
