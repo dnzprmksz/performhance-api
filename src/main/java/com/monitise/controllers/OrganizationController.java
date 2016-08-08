@@ -8,6 +8,8 @@ import com.monitise.models.Role;
 import com.monitise.models.User;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.UserService;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,9 +28,12 @@ public class OrganizationController {
     private OrganizationService organizationService;
     @Autowired
     private UserService userService;
+    private static final Logger LOGGER = LogManager.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<Organization>> getAll() {
+        String log = "GET /organizations";
+        LOGGER.info(log);
         List<Organization> list = organizationService.getAll();
 
         Response<List<Organization>> response = new Response<>();
@@ -39,6 +44,8 @@ public class OrganizationController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Response<Organization> get(@PathVariable int id) throws BaseException {
+        String log = "GET /organizations/" + id;
+        LOGGER.info(log);
         Organization organization = organizationService.get(id);
 
         Response<Organization> response = new Response<>();
@@ -50,6 +57,8 @@ public class OrganizationController {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
+        String log = "POST /organizations - Organization Name:" + organization.getName();
+        LOGGER.info(log);
         validateName(organization.getName());
         Organization organizationFromService = organizationService.add(organization);
 
