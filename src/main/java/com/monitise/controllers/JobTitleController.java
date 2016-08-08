@@ -75,9 +75,7 @@ public class JobTitleController {
     @RequestMapping(value = "/organizations/{organizationId}/jobTitles/", method = RequestMethod.POST)
     public Response<JobTitle> addJobTitle(@RequestBody JobTitle jobTitle, @PathVariable int organizationId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
-        Organization organization = organizationService.get(organizationId);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
-        Organization organizationFromService = organizationService.addJobTitle(jobTitle, organization);
 
         Response<JobTitle> response = new Response<>();
         response.setData(jobTitleFromService);

@@ -56,12 +56,16 @@ public class TeamService {
     @Secured("ROLE_MANAGER")
     public void assingEmployeeToTeam(User user, Team team) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(team.getOrganization().getId());
+        securityHelper.checkUserOrganizationAuthorization(user.getOrganization().getId());
         Team teamFromRepo = teamRepository.findOne(team.getId());
 
         if (teamFromRepo == null) {
             throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST, "Could not add given user to team, since the team does not exist.");
         }
-        teamFromRepo.addMember(user);
+
+        List<User> members = teamFromRepo.getMembers();
+        members.add(user);
+        teamFromRepo.setMembers(members);
         teamRepository.save(teamFromRepo);
     }
 

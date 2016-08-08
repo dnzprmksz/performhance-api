@@ -69,15 +69,4 @@ public class OrganizationService {
         return organizationFromRepo;
     }
 
-    public Organization addJobTitle(JobTitle jobTitle, Organization organization) {
-        Organization organizationFromRepo = organizationRepository.findOne(organization.getId());
-        boolean isAdded = organizationFromRepo.addJobTitle(jobTitle);
-
-        if (isAdded) {
-            organizationFromRepo = organizationRepository.save(organizationFromRepo);
-            return organizationFromRepo;
-        } else {
-            return null;
-        }
-    }
 }
