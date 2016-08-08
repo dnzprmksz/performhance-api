@@ -1,8 +1,11 @@
 package com.monitise.services;
 
+import com.monitise.helpers.SecurityHelper;
 import com.monitise.models.BaseException;
 import com.monitise.models.JobTitle;
+import com.monitise.models.Organization;
 import com.monitise.models.ResponseCode;
+import com.monitise.models.User;
 import com.monitise.repositories.JobTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -17,13 +20,21 @@ public class JobTitleService {
     private JobTitleRepository jobTitleRepository;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private SecurityHelper securityHelper;
 
     @Secured("ROLE_MANAGER")
     public JobTitle add(JobTitle jobTitle) throws BaseException {
-
         JobTitle jobTitleFromRepo = jobTitleRepository.save(jobTitle);
+        User manager = securityHelper.getAuthenticatedUser();
+        Organization organization = organizationService.get(manager.getOrganization().getId());
 
-        if (jobTitleFromRepo == null) {
+        List<JobTitle> jobTitles = organization.getJobTitles();
+        jobTitles.add(jobTitle);
+        organization.setJobTitles(jobTitles);
+        Organization organizationFromService = organizationService.update(organization);
+
+        if (jobTitleFromRepo == null || organizationFromService == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given job title.");
         }
 

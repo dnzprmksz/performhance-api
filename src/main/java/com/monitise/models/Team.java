@@ -32,10 +32,6 @@ public class Team {
         this.organization = organization;
     }
 
-    public boolean addMember(User user) {
-        return members.add(user);
-    }
-
     // region Getters
 
     public int getId() {

@@ -41,11 +41,6 @@ public class Organization implements Serializable {
         this.id = id;
     }
 
-    public boolean addJobTitle(JobTitle jobTitle) {
-        boolean isAdded = jobTitles.add(jobTitle);
-        return isAdded;
-    }
-
     // region Getters
 
     public int getId() {
