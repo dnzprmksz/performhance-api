@@ -1,6 +1,7 @@
 package com.monitise.controllers;
 
 import com.monitise.models.BaseException;
+import com.monitise.models.JobTitle;
 import com.monitise.models.Organization;
 import com.monitise.models.Response;
 import com.monitise.models.ResponseCode;
@@ -47,9 +48,26 @@ public class OrganizationController {
         return response;
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(value = "/{id}/users", method = RequestMethod.POST)
+    public User addUser(@PathVariable int id, @RequestBody User employee) throws BaseException {
+        //throws an exception if the user performing this op. is unauthorized
+        //userService.checkUserOrganizationAuthorization(id);
+        Organization organization = organizationService.get(id);
+        employee.setOrganization(organization);
+        employee.setRole(Role.EMPLOYEE);
+        //employee.setJobTitle(new JobTitle("forward deployed engineer"));
+        // TODO: change the way this is done
+        employee.setUsername(employee.getName()+"."+employee.getSurname());
+        employee.setPassword("123");
+        User addedEmployee = userService.addEmployee(employee);
+        return addedEmployee;
+    }
+
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
+        System.out.println("add Org");
         validateName(organization.getName());
         Organization organizationFromService = organizationService.add(organization);
 
