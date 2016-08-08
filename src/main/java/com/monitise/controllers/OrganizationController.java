@@ -1,5 +1,6 @@
 package com.monitise.controllers;
 
+import com.monitise.helpers.SecurityHelper;
 import com.monitise.models.BaseException;
 import com.monitise.models.JobTitle;
 import com.monitise.models.Organization;
@@ -10,6 +11,7 @@ import com.monitise.models.User;
 import com.monitise.services.JobTitleService;
 import com.monitise.services.UserService;
 import com.monitise.services.OrganizationService;
+import com.monitise.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +32,8 @@ public class OrganizationController {
     private UserService userService;
     @Autowired
     private JobTitleService jobTitleService;
+    @Autowired
+    private SecurityHelper securityHelper;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<Organization>> getAll() {
@@ -52,12 +56,29 @@ public class OrganizationController {
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(value = "/{id}/users", method = RequestMethod.GET)
+    public Response< List<User> > getUsers(@PathVariable int id ) throws BaseException {
+        //throws an exception if the user performing this op. is unauthorized
+        User currentUser = securityHelper.getAuthenticatedUser();
+        if ( currentUser.getRole().equals(Role.MANAGER) ) {
+            securityHelper.checkUserOrganizationAuthorization(id);
+        }
+
+        Response response = new Response();
+        response.setSuccess(true);
+        List<User> users = userService.getByOrganizationId(id);
+        response.setData(users);
+        //User addedEmployee = userService.addEmployee(employee);
+        return response;
+    }
+
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/{id}/users", method = RequestMethod.POST)
     public User addUser(@PathVariable int id, @RequestBody User employee) throws BaseException {
         //throws an exception if the user performing this op. is unauthorized
-        User currentUser = userService.getAuthenticatedUser();
+        User currentUser = securityHelper.getAuthenticatedUser();
         if ( currentUser.getRole().equals(Role.MANAGER) ) {
-            userService.checkUserOrganizationAuthorization(id);
+            securityHelper.checkUserOrganizationAuthorization(id);
         }
 
         Organization organization = organizationService.get(id);
@@ -70,8 +91,8 @@ public class OrganizationController {
 
         validateEmployee(employee);
 
-        User addedEmployee = userService.addEmployee(employee);
-        return addedEmployee;
+        //User addedEmployee = userService.addEmployee(employee);
+        return employee;
     }
 
     @Secured("ROLE_ADMIN")

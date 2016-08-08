@@ -21,9 +21,12 @@ public class Organization implements Serializable {
     private String name;
     private int numberOfEmployees;
     @OneToMany
+    @JsonIgnore
     private List<User> users;
     @OneToMany
     private List<JobTitle> jobTitles;
+    @OneToMany
+    private List<Team> teams;
     @OneToOne
     @JsonIgnore
     private User manager;
@@ -32,6 +35,10 @@ public class Organization implements Serializable {
 
     public Organization(String name) {
         this.name = name;
+    }
+
+    public Organization(int id) {
+        this.id = id;
     }
 
     public boolean addJobTitle(JobTitle jobTitle) {

@@ -1,12 +1,12 @@
 package com.monitise.controllers;
 
+import com.monitise.helpers.SecurityHelper;
 import com.monitise.models.BaseException;
 import com.monitise.models.JobTitle;
 import com.monitise.models.Organization;
 import com.monitise.models.Response;
 import com.monitise.services.JobTitleService;
 import com.monitise.services.OrganizationService;
-import com.monitise.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RequestMapping("/jobTitles")
 @RestController
 public class JobTitleController {
 
@@ -26,9 +25,9 @@ public class JobTitleController {
     @Autowired
     private OrganizationService organizationService;
     @Autowired
-    private UserService userService;
+    private SecurityHelper securityHelper;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/jobTitles/", method = RequestMethod.GET)
     public Response<List<JobTitle>> getAll() {
         List<JobTitle> list = jobTitleService.getAll();
 
@@ -38,7 +37,7 @@ public class JobTitleController {
         return response;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/jobTitles/{id}", method = RequestMethod.GET)
     public Response<JobTitle> get(@PathVariable int id) throws BaseException {
         JobTitle jobTitle = jobTitleService.get(id);
 
@@ -49,9 +48,9 @@ public class JobTitleController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organization/{organizationId}", method = RequestMethod.GET)
-    public Response<List<JobTitle>> getByOrganization(@PathVariable int organizationId) throws BaseException {
-        userService.checkUserOrganizationAuthorization(organizationId);
+    @RequestMapping(value = "/organizations/{organizationId}/jobTitles/", method = RequestMethod.GET)
+    public Response<List<JobTitle>> getJobTitleByOrganization(@PathVariable int organizationId) throws BaseException {
+        securityHelper.checkUserOrganizationAuthorization(organizationId);
         List<JobTitle> list = jobTitleService.getListFilterByOrganizationId(organizationId);
 
         Response<List<JobTitle>> response = new Response<>();
@@ -61,9 +60,21 @@ public class JobTitleController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organization/{organizationId}", method = RequestMethod.POST)
-    public Response<JobTitle> add(@RequestBody JobTitle jobTitle, @PathVariable int organizationId) throws BaseException {
-        userService.checkUserOrganizationAuthorization(organizationId);
+    @RequestMapping(value = "/organizations/{organizationId}/jobTitles/{jobTitleId}", method = RequestMethod.GET)
+    public Response<JobTitle> getJobTitle(@PathVariable int organizationId, @PathVariable int jobTitleId) throws BaseException {
+        securityHelper.checkUserOrganizationAuthorization(organizationId);
+        JobTitle jobTitle = jobTitleService.get(jobTitleId);
+
+        Response<JobTitle> response = new Response<>();
+        response.setData(jobTitle);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/organizations/{organizationId}/jobTitles/", method = RequestMethod.POST)
+    public Response<JobTitle> addJobTitle(@RequestBody JobTitle jobTitle, @PathVariable int organizationId) throws BaseException {
+        securityHelper.checkUserOrganizationAuthorization(organizationId);
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
         Organization organizationFromService = organizationService.addJobTitle(jobTitle, organization);

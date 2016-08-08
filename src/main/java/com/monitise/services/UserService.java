@@ -40,11 +40,23 @@ public class UserService {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "An user with given username does not exist.");
+            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "A user with given username does not exist.");
         }
 
         return user;
     }
+
+    public List<User> getByOrganizationId(int id) throws BaseException {
+        List<User> users = userRepository.findByOrganizationId(id);
+
+        if ( users.size() == 0 ) {
+            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "This organization has no employees.");
+        }
+
+        return users;
+    }
+
+
 
     @Secured("ROLE_MANAGER")
     public User addEmployee(User user) throws BaseException {
@@ -62,19 +74,7 @@ public class UserService {
         return addUser(user);
     }
 
-    public User getAuthenticatedUser() throws BaseException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUsername = auth.getName();
-        User authenticatedUser = getByUsername(authenticatedUsername);
-        return authenticatedUser;
-    }
-
-    public void checkUserOrganizationAuthorization(int organizationId) throws BaseException {
-        User authenticatedUser = getAuthenticatedUser();
-        if (authenticatedUser.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized for this organization.");
-        }
-    }
+    // region Helper Methods
 
     private User addUser(User user) throws BaseException {
         User userFromRepo = userRepository.save(user);
@@ -83,5 +83,7 @@ public class UserService {
         }
         return userFromRepo;
     }
+
+    // endregion
 
 }
