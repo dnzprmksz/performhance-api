@@ -1,11 +1,15 @@
 package com.monitise.controllers;
 
+import com.monitise.helpers.SecurityHelper;
 import com.monitise.models.BaseException;
+import com.monitise.models.JobTitle;
 import com.monitise.models.Organization;
 import com.monitise.models.Response;
 import com.monitise.models.ResponseCode;
 import com.monitise.models.Role;
 import com.monitise.models.User;
+import com.monitise.services.JobTitleService;
+import com.monitise.services.UserService;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.UserService;
 import org.apache.log4j.LogManager;
@@ -28,6 +32,10 @@ public class OrganizationController {
     private OrganizationService organizationService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private JobTitleService jobTitleService;
+    @Autowired
+    private SecurityHelper securityHelper;
     private static final Logger LOGGER = LogManager.getLogger(OrganizationController.class);
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -54,11 +62,13 @@ public class OrganizationController {
         return response;
     }
 
+
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
-        String log = "POST /organizations - Organization Name:" + organization.getName();
+        String  log = "POST /organizations - Organization Name:" + organization.getName();
         LOGGER.info(log);
+
         validateName(organization.getName());
         Organization organizationFromService = organizationService.add(organization);
 
@@ -101,6 +111,7 @@ public class OrganizationController {
 
         return true;
     }
+
 
     // endregion
 

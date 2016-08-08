@@ -69,4 +69,16 @@ public class OrganizationService {
         return organizationFromRepo;
     }
 
+    public boolean isJobTitleDefined(Organization organization, JobTitle title){
+
+        List<JobTitle> titleList = organization.getJobTitles();
+
+        for(JobTitle i : titleList) {
+            if( i.getTitle().equals(title.getTitle()) ) {
+                return true;
+            }
+        }
+        return false;
+
+    }
 }

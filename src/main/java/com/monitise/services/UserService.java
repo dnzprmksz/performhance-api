@@ -40,11 +40,27 @@ public class UserService {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "An user with given username does not exist.");
+            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "A user with given username does not exist.");
         }
 
         return user;
     }
+
+    public List<User> getByOrganizationId(int id) throws BaseException {
+        List<User> users = userRepository.findByOrganizationId(id);
+
+        if ( users.size() == 0 ) {
+            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "This organization has no employees.");
+        }
+
+        return users;
+    }
+
+    public void remove(int id){
+        userRepository.delete(id);
+    }
+
+
 
     @Secured("ROLE_MANAGER")
     public User addEmployee(User user) throws BaseException {
