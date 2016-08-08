@@ -1,8 +1,11 @@
 package com.monitise.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.List;
@@ -16,10 +19,18 @@ public class Team {
     private String name;
     @OneToMany
     private List<User> members;
+    @ManyToOne
+    @JsonIgnore
+    private Organization organization;
     @OneToOne
     private User leader;
 
     protected Team() {}
+
+    public Team(String name, Organization organization) {
+        this.name = name;
+        this.organization = organization;
+    }
 
     public boolean addMember(User user) {
         return members.add(user);
@@ -43,6 +54,10 @@ public class Team {
         return leader;
     }
 
+    public Organization getOrganization() {
+        return organization;
+    }
+
     // endregion
 
     // region Setters
@@ -61,6 +76,10 @@ public class Team {
 
     public void setLeader(User leader) {
         this.leader = leader;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
 
     // endregion

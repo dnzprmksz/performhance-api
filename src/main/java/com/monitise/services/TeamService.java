@@ -1,6 +1,9 @@
 package com.monitise.services;
 
+import com.monitise.helpers.SecurityHelper;
 import com.monitise.models.BaseException;
+import com.monitise.models.Organization;
+import com.monitise.models.Response;
 import com.monitise.models.User;
 import com.monitise.models.ResponseCode;
 import com.monitise.models.Team;
@@ -9,28 +12,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TeamService {
 
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private SecurityHelper securityHelper;
+
+    public List<Team> getAll() {
+        List<Team> list = (List<Team>) teamRepository.findAll();
+        return list;
+    }
+
+    public Team get(int id) throws BaseException {
+        Team team = teamRepository.findOne(id);
+        if (team == null) {
+            throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST, "A team with given ID does not exist.");
+        }
+        return team;
+    }
+
+    @Secured("ROLE_MANAGER")
+    public List<Team> getListFilterByOrganizationId(int organizationId) throws BaseException {
+        securityHelper.checkUserOrganizationAuthorization(organizationId);
+        List<Team> list = teamRepository.findByOrganizationId(organizationId);
+        return list;
+    }
 
     @Secured("ROLE_MANAGER")
     public Team add(Team team) throws BaseException {
-
-        // Add given team to repository.
+        securityHelper.checkUserOrganizationAuthorization(team.getOrganization().getId());
         Team teamFromRepo = teamRepository.save(team);
 
-        // Check the success of the action and throw an exception if the action fails.
-        if (team == null) {
+        if (teamFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given team.");
         }
-
-        return  teamFromRepo;
+        return teamFromRepo;
     }
 
     @Secured("ROLE_MANAGER")
     public void assingEmployeeToTeam(User user, Team team) throws BaseException {
+        securityHelper.checkUserOrganizationAuthorization(team.getOrganization().getId());
         Team teamFromRepo = teamRepository.findOne(team.getId());
 
         if (teamFromRepo == null) {

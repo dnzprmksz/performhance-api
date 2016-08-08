@@ -62,19 +62,7 @@ public class UserService {
         return addUser(user);
     }
 
-    public User getAuthenticatedUser() throws BaseException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUsername = auth.getName();
-        User authenticatedUser = getByUsername(authenticatedUsername);
-        return authenticatedUser;
-    }
-
-    public void checkUserOrganizationAuthorization(int organizationId) throws BaseException {
-        User authenticatedUser = getAuthenticatedUser();
-        if (authenticatedUser.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized for this organization.");
-        }
-    }
+    // region Helper Methods
 
     private User addUser(User user) throws BaseException {
         User userFromRepo = userRepository.save(user);
@@ -83,5 +71,7 @@ public class UserService {
         }
         return userFromRepo;
     }
+
+    // endregion
 
 }
