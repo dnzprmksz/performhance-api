@@ -37,5 +37,15 @@ public class ResponseCode {
     public static final int JOB_TITLE_ID_DOES_NOT_EXIST = 1401;
     public static final int JOB_TITLE_ID_INVALID = 1402;
 
+    /**
+     *  CRITERIA RELATED RESPONSE CODES
+     */
+    public static final int CRITERIA_ID_DOES_NOT_EXIST = 1501;
+    public static final int CRITERIA_ID_INVALID = 1502;
+    public static final int CRITERIA_EXISTS_IN_ORGANIZATION = 1503;
+    public static final int CRITERIA_EMPTY = 1504;
+    public static final int CRITERIA_EMPTY_ORGANIZATION = 1505;
+    public static final int CRITERIA_EXISTS = 1506;
+
     protected ResponseCode() {}
 }

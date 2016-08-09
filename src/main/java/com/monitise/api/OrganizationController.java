@@ -1,4 +1,4 @@
-package com.monitise.controllers;
+package com.monitise.api;
 
 import com.monitise.api.model.BaseException;
 import com.monitise.entity.Organization;
@@ -49,7 +49,6 @@ public class OrganizationController {
         return response;
     }
 
-
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
@@ -95,7 +94,6 @@ public class OrganizationController {
 
         return true;
     }
-
 
     // endregion
 
