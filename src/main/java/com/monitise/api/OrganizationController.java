@@ -1,17 +1,15 @@
 package com.monitise.controllers;
 
 import com.monitise.helpers.SecurityHelper;
-import com.monitise.models.BaseException;
-import com.monitise.models.JobTitle;
-import com.monitise.models.Organization;
-import com.monitise.models.Response;
-import com.monitise.models.ResponseCode;
-import com.monitise.models.Role;
-import com.monitise.models.User;
+import com.monitise.entity.BaseException;
+import com.monitise.entity.Organization;
+import com.monitise.entity.Response;
+import com.monitise.entity.ResponseCode;
+import com.monitise.entity.Role;
+import com.monitise.entity.User;
 import com.monitise.services.JobTitleService;
 import com.monitise.services.UserService;
 import com.monitise.services.OrganizationService;
-import com.monitise.services.UserService;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

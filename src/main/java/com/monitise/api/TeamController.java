@@ -1,9 +1,9 @@
 package com.monitise.controllers;
 
 import com.monitise.helpers.SecurityHelper;
-import com.monitise.models.BaseException;
-import com.monitise.models.Response;
-import com.monitise.models.Team;
+import com.monitise.entity.BaseException;
+import com.monitise.entity.Response;
+import com.monitise.entity.Team;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.TeamService;
 import org.apache.logging.log4j.LogManager;
