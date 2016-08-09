@@ -1,9 +1,9 @@
 package com.monitise.services;
 
-import com.monitise.entity.BaseException;
-import com.monitise.entity.Role;
+import com.monitise.api.model.BaseException;
+import com.monitise.api.model.Role;
 import com.monitise.entity.User;
-import com.monitise.entity.ResponseCode;
+import com.monitise.api.model.ResponseCode;
 import com.monitise.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;

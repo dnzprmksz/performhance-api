@@ -1,8 +1,8 @@
-package com.monitise.controllers;
+package com.monitise.api;
 
 import com.monitise.helpers.SecurityHelper;
-import com.monitise.entity.BaseException;
-import com.monitise.entity.Response;
+import com.monitise.api.model.BaseException;
+import com.monitise.api.model.Response;
 import com.monitise.entity.Team;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.TeamService;

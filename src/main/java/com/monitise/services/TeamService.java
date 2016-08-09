@@ -1,9 +1,9 @@
 package com.monitise.services;
 
 import com.monitise.helpers.SecurityHelper;
-import com.monitise.entity.BaseException;
+import com.monitise.api.model.BaseException;
 import com.monitise.entity.User;
-import com.monitise.entity.ResponseCode;
+import com.monitise.api.model.ResponseCode;
 import com.monitise.entity.Team;
 import com.monitise.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;

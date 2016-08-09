@@ -1,4 +1,4 @@
-package com.monitise.entity;
+package com.monitise.api.model;
 
 public enum Role {
     ADMIN,

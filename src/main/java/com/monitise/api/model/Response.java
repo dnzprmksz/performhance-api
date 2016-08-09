@@ -1,4 +1,6 @@
-package com.monitise.entity;
+package com.monitise.api.model;
+
+import com.monitise.api.model.Error;
 
 public class Response<T> {
 

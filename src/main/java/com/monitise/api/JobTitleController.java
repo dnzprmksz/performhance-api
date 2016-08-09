@@ -1,9 +1,9 @@
-package com.monitise.controllers;
+package com.monitise.api;
 
 import com.monitise.helpers.SecurityHelper;
-import com.monitise.entity.BaseException;
+import com.monitise.api.model.BaseException;
 import com.monitise.entity.JobTitle;
-import com.monitise.entity.Response;import com.monitise.services.JobTitleService;
+import com.monitise.api.model.Response;import com.monitise.services.JobTitleService;
 import com.monitise.services.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -35,7 +35,7 @@ public class JobTitleController {
         return response;
     }
 
-    @RequestMapping(value = "/jobTitles/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/jobTitles/{organizationId}", method = RequestMethod.GET)
     public Response<JobTitle> get(@PathVariable int id) throws BaseException {
         JobTitle jobTitle = jobTitleService.get(id);
 
