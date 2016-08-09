@@ -1,9 +1,9 @@
 package com.monitise.api;
 
 import com.monitise.helpers.SecurityHelper;
-import com.monitise.entity.BaseException;
+import com.monitise.api.model.BaseException;
 import com.monitise.entity.JobTitle;
-import com.monitise.entity.Response;import com.monitise.services.JobTitleService;
+import com.monitise.api.model.Response;import com.monitise.services.JobTitleService;
 import com.monitise.services.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;

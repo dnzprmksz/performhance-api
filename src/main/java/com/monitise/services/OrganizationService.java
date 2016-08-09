@@ -1,6 +1,6 @@
 package com.monitise.services;
 
-import com.monitise.entity.BaseException;
+import com.monitise.api.model.BaseException;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
 import com.monitise.entity.ResponseCode;
