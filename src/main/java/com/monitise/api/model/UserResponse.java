@@ -29,17 +29,16 @@ public class UserResponse {
 
 
     public static UserResponse fromUser(User user) {
-        UserResponse userResponse = new UserResponse(user);
-        return userResponse;
+        return new UserResponse(user);
     }
 
     public static List<UserResponse> fromUserList(List<User> users) {
-        List<UserResponse> userResponses = new ArrayList<>();
-        for(User u : users){
-            UserResponse cur = UserResponse.fromUser(u);
-            userResponses.add(cur);
+        List<UserResponse> responses = new ArrayList<>();
+        for(User user : users){
+            UserResponse current = fromUser(user);
+            responses.add(current);
         }
-        return userResponses;
+        return responses;
     }
 
 }

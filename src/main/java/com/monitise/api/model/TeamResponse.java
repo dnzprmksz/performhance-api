@@ -3,6 +3,7 @@ package com.monitise.api.model;
 import com.monitise.entity.Organization;
 import com.monitise.entity.Team;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TeamResponse {
@@ -23,7 +24,16 @@ public class TeamResponse {
     }
 
     public static TeamResponse fromTeam(Team team) {
-        TeamResponse teamResponse = new TeamResponse(team);
-        return teamResponse;
+        return new TeamResponse(team);
     }
+
+    public static List<TeamResponse> fromTeamList(List<Team> teams){
+        List<TeamResponse> responses = new ArrayList<>();
+        for(Team team : teams){
+            TeamResponse current = fromTeam(team);
+            responses.add(current);
+        }
+        return responses;
+    }
+
 }
