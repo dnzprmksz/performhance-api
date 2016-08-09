@@ -10,16 +10,15 @@ public class TeamResponse {
 
     private int id;
     private String name;
-    private List<UserResponse> members;
-    private Organization organization;
+    private List<SimplifiedUser> members;
+    private String organizationName;
     private UserResponse leader;
 
     public TeamResponse(Team team) {
         id = team.getId();
         name = team.getName();
-        members = UserResponse.fromUserList(team.getMembers());
-        // TODO: Implement organization model
-        organization = team.getOrganization();
+        members = SimplifiedUser.fromUserList(team.getMembers());
+        organizationName = team.getOrganization().getName();
         leader = UserResponse.fromUser(team.getLeader());
     }
 
@@ -35,5 +34,53 @@ public class TeamResponse {
         }
         return responses;
     }
+
+    // region Getters
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<SimplifiedUser> getMembers() {
+        return members;
+    }
+
+    public String getOrganization() {
+        return organizationName;
+    }
+
+    public UserResponse getLeader() {
+        return leader;
+    }
+
+    // endregion
+
+    // region Setters
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMembers(List<SimplifiedUser> members) {
+        this.members = members;
+    }
+
+    public void setOrganization(String organizationName) {
+        this.organizationName= organizationName;
+    }
+
+    public void setLeader(UserResponse leader) {
+        this.leader = leader;
+    }
+
+    // endregion
 
 }

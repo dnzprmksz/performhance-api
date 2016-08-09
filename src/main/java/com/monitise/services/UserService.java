@@ -7,6 +7,7 @@ import com.monitise.api.model.ResponseCode;
 import com.monitise.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,33 +25,26 @@ public class UserService {
     }
 
     public User get(int id) throws BaseException {
-
         User user = userRepository.findOne(id);
-
         if (user == null) {
             throw new BaseException(ResponseCode.USER_ID_DOES_NOT_EXIST, "An user with given ID does not exist.");
         }
-
         return user;
     }
 
     public User getByUsername(String username) throws BaseException {
         User user = userRepository.findByUsername(username);
-
         if (user == null) {
             throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "A user with given username does not exist.");
         }
-
         return user;
     }
 
     public List<User> getByOrganizationId(int id) throws BaseException {
         List<User> users = userRepository.findByOrganizationId(id);
-
-        if ( users.size() == 0 ) {
+        if (users.size() == 0) {
             throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "This organization has no employees.");
         }
-
         return users;
     }
 

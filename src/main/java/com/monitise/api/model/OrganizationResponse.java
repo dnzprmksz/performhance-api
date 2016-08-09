@@ -13,7 +13,7 @@ public class OrganizationResponse {
 
     private String name;
     private int numberOfEmployees;
-    private List<UserResponse> users;
+    private List<SimplifiedUser> users;
     private List<JobTitle> jobTitles;
     private List<TeamResponse>  teams;
 
@@ -21,7 +21,7 @@ public class OrganizationResponse {
 
         name = organization.getName();
         numberOfEmployees = organization.getNumberOfEmployees();
-        users = UserResponse.fromUserList(organization.getUsers());
+        users = SimplifiedUser.fromUserList(organization.getUsers());
         jobTitles = organization.getJobTitles();
         teams = TeamResponse.fromTeamList(organization.getTeams());
     }
@@ -39,4 +39,51 @@ public class OrganizationResponse {
         return responses;
     }
 
+    // region Getters
+
+    public String getName() {
+        return name;
+    }
+
+    public int getNumberOfEmployees() {
+        return numberOfEmployees;
+    }
+
+    public List<SimplifiedUser> getUsers() {
+        return users;
+    }
+
+    public List<JobTitle> getJobTitles() {
+        return jobTitles;
+    }
+
+    public List<TeamResponse> getTeams() {
+        return teams;
+    }
+
+    // endregion
+
+    // region Setters
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNumberOfEmployees(int numberOfEmployees) {
+        this.numberOfEmployees = numberOfEmployees;
+    }
+
+    public void setUsers(List<SimplifiedUser> users) {
+        this.users = users;
+    }
+
+    public void setJobTitles(List<JobTitle> jobTitles) {
+        this.jobTitles = jobTitles;
+    }
+
+    public void setTeams(List<TeamResponse> teams) {
+        this.teams = teams;
+    }
+
+    // endregion
 }
