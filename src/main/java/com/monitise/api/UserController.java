@@ -1,11 +1,11 @@
 package com.monitise.api;
 
 import com.monitise.api.model.BaseException;
+import com.monitise.api.model.ResponseCode;
 import com.monitise.helpers.SecurityHelper;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
 import com.monitise.api.model.Response;
-import com.monitise.entity.ResponseCode;
 import com.monitise.api.model.Role;
 import com.monitise.entity.User;
 import com.monitise.services.OrganizationService;

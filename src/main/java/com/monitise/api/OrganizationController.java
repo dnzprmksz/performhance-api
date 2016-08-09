@@ -3,7 +3,7 @@ package com.monitise.api;
 import com.monitise.api.model.BaseException;
 import com.monitise.entity.Organization;
 import com.monitise.api.model.Response;
-import com.monitise.entity.ResponseCode;
+import com.monitise.api.model.ResponseCode;
 import com.monitise.api.model.Role;
 import com.monitise.entity.User;
 import com.monitise.services.UserService;
@@ -27,6 +27,8 @@ public class OrganizationController {
     @Autowired
     private UserService userService;
 
+
+    // TODO: Only available to admin
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<Organization>> getAll() {
         List<Organization> list = organizationService.getAll();
@@ -37,7 +39,7 @@ public class OrganizationController {
         return response;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{organizationId}", method = RequestMethod.GET)
     public Response<Organization> get(@PathVariable int id) throws BaseException {
         Organization organization = organizationService.get(id);
 

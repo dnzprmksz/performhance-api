@@ -67,6 +67,9 @@ public class Organization implements Serializable {
         return manager;
     }
 
+    public List<Team> getTeams() {
+        return teams;
+    }
     // endregion
 
     // region Setters
@@ -95,6 +98,9 @@ public class Organization implements Serializable {
         this.manager = manager;
     }
 
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
     // endregion
 
 }

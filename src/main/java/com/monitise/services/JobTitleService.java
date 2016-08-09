@@ -4,7 +4,7 @@ import com.monitise.helpers.SecurityHelper;
 import com.monitise.api.model.BaseException;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
-import com.monitise.entity.ResponseCode;
+import com.monitise.api.model.ResponseCode;
 import com.monitise.entity.User;
 import com.monitise.repositories.JobTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package com.monitise.services;
 import com.monitise.api.model.BaseException;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
-import com.monitise.entity.ResponseCode;
+import com.monitise.api.model.ResponseCode;
 import com.monitise.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

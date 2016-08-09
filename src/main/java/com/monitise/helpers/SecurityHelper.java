@@ -1,7 +1,7 @@
 package com.monitise.helpers;
 
 import com.monitise.api.model.BaseException;
-import com.monitise.entity.ResponseCode;
+import com.monitise.api.model.ResponseCode;
 import com.monitise.entity.User;
 import com.monitise.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

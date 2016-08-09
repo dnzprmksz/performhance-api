@@ -35,7 +35,7 @@ public class JobTitleController {
         return response;
     }
 
-    @RequestMapping(value = "/jobTitles/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/jobTitles/{organizationId}", method = RequestMethod.GET)
     public Response<JobTitle> get(@PathVariable int id) throws BaseException {
         JobTitle jobTitle = jobTitleService.get(id);
 
