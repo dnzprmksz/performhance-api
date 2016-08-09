@@ -32,20 +32,24 @@ public class CriteriaController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/criteria/", method = RequestMethod.GET)
-    public Response<List<Criteria>> getAll() {
+    public Response<List<CriteriaResponse>> getAll() {
         List<Criteria> list = criteriaService.getAll();
-        Response<List<Criteria>> response = new Response<>();
-        response.setData(list);
+        List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(list);
+
+        Response<List<CriteriaResponse>> response = new Response<>();
+        response.setData(criteriaResponseList);
         response.setSuccess(true);
         return response;
     }
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/criteria/{criteriaId}", method = RequestMethod.GET)
-    public Response<Criteria> get(@PathVariable int criteriaId) throws BaseException {
-        Criteria criteria = criteriaService.get(criteriaId);
-        Response<Criteria> response = new Response<>();
-        response.setData(criteria);
+    public Response<CriteriaResponse> get(@PathVariable int criteriaId) throws BaseException {
+        Criteria criteriaFromService = criteriaService.get(criteriaId);
+        CriteriaResponse criteriaResponse = new CriteriaResponse(criteriaFromService.getId(), criteriaFromService.getCriteria());
+
+        Response<CriteriaResponse> response = new Response<>();
+        response.setData(criteriaResponse);
         response.setSuccess(true);
         return response;
     }
