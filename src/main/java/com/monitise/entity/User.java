@@ -1,5 +1,7 @@
 package com.monitise.entity;
 
+import com.monitise.api.model.Role;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;

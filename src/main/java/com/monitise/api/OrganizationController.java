@@ -1,16 +1,13 @@
-package com.monitise.controllers;
+package com.monitise.api;
 
-import com.monitise.helpers.SecurityHelper;
 import com.monitise.entity.BaseException;
 import com.monitise.entity.Organization;
 import com.monitise.entity.Response;
 import com.monitise.entity.ResponseCode;
-import com.monitise.entity.Role;
+import com.monitise.api.model.Role;
 import com.monitise.entity.User;
-import com.monitise.services.JobTitleService;
 import com.monitise.services.UserService;
 import com.monitise.services.OrganizationService;
-import com.monitise.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +46,6 @@ public class OrganizationController {
         response.setData(organization);
         return response;
     }
-
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
@@ -96,7 +92,6 @@ public class OrganizationController {
 
         return true;
     }
-
 
     // endregion
 

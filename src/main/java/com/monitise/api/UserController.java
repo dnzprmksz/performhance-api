@@ -6,7 +6,7 @@ import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
 import com.monitise.entity.Response;
 import com.monitise.entity.ResponseCode;
-import com.monitise.entity.Role;
+import com.monitise.api.model.Role;
 import com.monitise.entity.User;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.UserService;
@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
-//TODO: ADD LOGGER
 
 @RestController
 public class UserController {

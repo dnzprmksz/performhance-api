@@ -1,7 +1,7 @@
 package com.monitise.services;
 
 import com.monitise.entity.BaseException;
-import com.monitise.entity.Role;
+import com.monitise.api.model.Role;
 import com.monitise.entity.User;
 import com.monitise.entity.ResponseCode;
 import com.monitise.repositories.UserRepository;
