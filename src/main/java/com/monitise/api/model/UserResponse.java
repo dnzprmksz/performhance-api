@@ -23,11 +23,12 @@ public class UserResponse {
         surname = user.getSurname();
         jobTitle = user.getJobTitle();
         role = user.getRole();
+        // TODO: Implement organization model.
         organization = user.getOrganization();
     }
 
 
-    public static UserResponse fromUser(User user){
+    public static UserResponse fromUser(User user) {
         UserResponse userResponse = new UserResponse(user);
         return userResponse;
     }
