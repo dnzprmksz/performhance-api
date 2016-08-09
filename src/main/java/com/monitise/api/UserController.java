@@ -1,4 +1,4 @@
-package com.monitise.controllers;
+package com.monitise.api;
 
 import com.monitise.helpers.SecurityHelper;
 import com.monitise.entity.BaseException;

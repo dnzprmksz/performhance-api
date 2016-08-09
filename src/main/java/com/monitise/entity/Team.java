@@ -1,4 +1,4 @@
-package com.monitise.models;
+package com.monitise.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

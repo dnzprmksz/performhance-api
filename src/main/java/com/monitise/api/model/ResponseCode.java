@@ -1,4 +1,4 @@
-package com.monitise.models;
+package com.monitise.entity;
 
 public class ResponseCode {
 

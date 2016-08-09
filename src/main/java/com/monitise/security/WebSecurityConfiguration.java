@@ -1,6 +1,6 @@
 package com.monitise.security;
 
-import com.monitise.models.User;
+import com.monitise.entity.User;
 import com.monitise.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

@@ -1,8 +1,8 @@
 package com.monitise.services;
 
 import com.monitise.AppConfig;
-import com.monitise.models.BaseException;
-import com.monitise.models.Organization;
+import com.monitise.entity.BaseException;
+import com.monitise.entity.Organization;
 import com.monitise.repositories.OrganizationRepository;
 import org.junit.After;
 import org.junit.Assert;

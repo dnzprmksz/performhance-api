@@ -1,11 +1,11 @@
 package com.monitise.services;
 
 import com.monitise.helpers.SecurityHelper;
-import com.monitise.models.BaseException;
-import com.monitise.models.JobTitle;
-import com.monitise.models.Organization;
-import com.monitise.models.ResponseCode;
-import com.monitise.models.User;
+import com.monitise.entity.BaseException;
+import com.monitise.entity.JobTitle;
+import com.monitise.entity.Organization;
+import com.monitise.entity.ResponseCode;
+import com.monitise.entity.User;
 import com.monitise.repositories.JobTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;

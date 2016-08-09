@@ -1,7 +1,6 @@
 package com.monitise.repositories;
 
-import com.monitise.models.Organization;
-import com.monitise.models.User;
+import com.monitise.entity.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

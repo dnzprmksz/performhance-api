@@ -6,7 +6,7 @@ import com.monitise.entity.Role;
 import com.monitise.entity.User;
 
 
-public class UserView {
+public class UserResponse {
 
     private String name;
     private String surname;
@@ -14,7 +14,7 @@ public class UserView {
     private Role role;
     private Organization organization;
 
-    public UserView(User user){
+    public UserResponse(User user){
         name = user.getName();
         surname = user.getSurname();
         jobTitle = user.getJobTitle();
