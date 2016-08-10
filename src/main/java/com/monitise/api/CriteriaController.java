@@ -5,6 +5,7 @@ import com.monitise.api.model.CriteriaResponse;
 import com.monitise.api.model.CriteriaUserResponse;
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.Error;
+import com.monitise.api.model.ExtendedResponse;
 import com.monitise.api.model.Response;
 import com.monitise.api.model.ResponseCode;
 import com.monitise.entity.Criteria;
@@ -15,7 +16,6 @@ import com.monitise.services.CriteriaService;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.TeamService;
 import com.monitise.services.UserService;
-import org.junit.Test;
 import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -118,14 +118,14 @@ public class CriteriaController {
         ArrayList<Integer> existingUserList = new ArrayList<>();
         existingUserList = assignCriteriaToUserList(criteriaId, userIdList);
 
-        Response<Object> response = new Response<>();
+        ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setSuccess(true);
         if (!existingUserList.isEmpty()) {
             String message = "Completed successfully, however, the criteria was already assigned for the following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
-            response.setError(new Error(ResponseCode.CRITERIA_EXISTS_IN_SOME_USERS, message));
+            response.setMessage(message);
         }
         return response;
     }
@@ -218,14 +218,14 @@ public class CriteriaController {
         ArrayList<Integer> existingUserList = new ArrayList<>();
         existingUserList = assignCriteriaToUserList(criteriaId, userIdList);
 
-        Response<Object> response = new Response<>();
+        ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setSuccess(true);
         if (!existingUserList.isEmpty()) {
             String message = "Completed successfully, however, the criteria was already assigned for the following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
-            response.setError(new Error(ResponseCode.CRITERIA_EXISTS_IN_SOME_USERS, message));
+            response.setMessage(message);
         }
         return response;
     }
@@ -242,14 +242,14 @@ public class CriteriaController {
         ArrayList<Integer> existingUserList = new ArrayList<>();
         existingUserList = assignCriteriaToUserList(criteriaId, userIdList);
 
-        Response<Object> response = new Response<>();
+        ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setSuccess(true);
         if (!existingUserList.isEmpty()) {
             String message = "Completed successfully, however, the criteria was already assigned for the following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
-            response.setError(new Error(ResponseCode.CRITERIA_EXISTS_IN_SOME_USERS, message));
+            response.setMessage(message);
         }
         return response;
     }
