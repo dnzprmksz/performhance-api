@@ -3,9 +3,7 @@ package com.monitise.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 public class JobTitle implements Serializable {
@@ -14,8 +12,6 @@ public class JobTitle implements Serializable {
     @GeneratedValue
     private int id;
     private String title;
-    @ManyToMany
-    private List<Criteria> criteriaList;
 
     protected JobTitle() {}
 
@@ -33,10 +29,6 @@ public class JobTitle implements Serializable {
         return id;
     }
 
-    public List<Criteria> getCriteriaList() {
-        return criteriaList;
-    }
-
     // endregion
 
     // region Setters
@@ -47,10 +39,6 @@ public class JobTitle implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setCriteriaList(List<Criteria> criteriaList) {
-        this.criteriaList = criteriaList;
     }
 
     // endregion

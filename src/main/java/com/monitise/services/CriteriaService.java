@@ -3,7 +3,9 @@ package com.monitise.services;
 import com.monitise.api.model.BaseException;
 import com.monitise.entity.Criteria;
 import com.monitise.api.model.ResponseCode;
+import com.monitise.entity.User;
 import com.monitise.repositories.CriteriaRepository;
+import com.sun.tools.javac.jvm.CRTFlags;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ public class CriteriaService {
 
     @Autowired
     private CriteriaRepository criteriaRepository;
+    @Autowired
+    private UserService userService;
 
     public List<Criteria> getAll() {
         List<Criteria> criteriaList = (List<Criteria>) criteriaRepository.findAll();
@@ -61,6 +65,30 @@ public class CriteriaService {
         return criteriaFromRepo;
     }
 
+    public User assignCriteriaToUserById(Criteria criteria, int userId) throws BaseException {
+        User user = userService.get(userId);
+        checkExistenceInUser(user, criteria);
+        List<Criteria> criteriaList = user.getCriteriaList();
+        criteriaList.add(criteria);
+        user.setCriteriaList(criteriaList);
+        User userFromRepo = userService.update(user);
+        return userFromRepo;
+    }
+
+    public void removeCriteriaFromUserByID(Criteria criteria, int userId) throws BaseException {
+        User user = userService.get(userId);
+        List<Criteria> criteriaList = user.getCriteriaList();
+        if (!criteriaList.contains(criteria)) {
+            throw new BaseException(ResponseCode.CRITERIA_DOES_NOT_EXIST_IN_USER, "Given user does not have this criteria.");
+        }
+        criteriaList.remove(criteria);
+        user.setCriteriaList(criteriaList);
+        User userFromService = userService.update(user);
+        if (userFromService == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not remove the given criteria for the given user.");
+        }
+    }
+
     // region Helper Methods
 
     // Throws exception if the criteria DOES NOT EXIST.
@@ -84,6 +112,12 @@ public class CriteriaService {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY, "Empty criteria is not allowed.");
         } else if (criteria.getOrganization() == null) {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY_ORGANIZATION, "Criteria must belong to an organization.");
+        }
+    }
+
+    private void checkExistenceInUser(User user, Criteria criteria) throws BaseException {
+        if (user.getCriteriaList().contains(criteria)) {
+            throw new BaseException(ResponseCode.CRITERIA_EXISTS_IN_USER, "Given user already has this criteria.");
         }
     }
 

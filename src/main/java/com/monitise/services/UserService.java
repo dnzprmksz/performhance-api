@@ -7,7 +7,6 @@ import com.monitise.api.model.ResponseCode;
 import com.monitise.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,6 @@ public class UserService {
     private UserRepository userRepository;
 
     public List<User> getAll() {
-
         List<User> list = (List<User>) userRepository.findAll();
         return list;
     }
@@ -52,7 +50,14 @@ public class UserService {
         userRepository.delete(id);
     }
 
-
+    public User update(User user) throws BaseException {
+        ensureExistence(user);
+        User userFromRepo = userRepository.save(user);
+        if (userFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not update the user with given ID.");
+        }
+        return userFromRepo;
+    }
 
     @Secured("ROLE_MANAGER")
     public User addEmployee(User user) throws BaseException {
@@ -78,6 +83,14 @@ public class UserService {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given User.");
         }
         return userFromRepo;
+    }
+
+    // Throws exception if the criteria DOES NOT EXIST.
+    private void ensureExistence(User user) throws BaseException {
+        User userFromRepo = userRepository.findOne(user.getId());
+        if (userFromRepo == null) {
+            throw new BaseException(ResponseCode.USER_ID_DOES_NOT_EXIST, "A user with given ID does not exist.");
+        }
     }
 
     // endregion
