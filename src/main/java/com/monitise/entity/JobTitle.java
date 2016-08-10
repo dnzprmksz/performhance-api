@@ -3,10 +3,9 @@ package com.monitise.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.io.Serializable;
 
 @Entity
-public class JobTitle implements Serializable {
+public class JobTitle {
 
     @Id
     @GeneratedValue
