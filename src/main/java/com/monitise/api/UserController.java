@@ -3,6 +3,7 @@ package com.monitise.api;
 import com.monitise.api.model.AddUserRequest;
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.ResponseCode;
+import com.monitise.api.model.SimplifiedUser;
 import com.monitise.helpers.SecurityHelper;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
@@ -13,6 +14,7 @@ import com.monitise.services.JobTitleService;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateCustomizer;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,38 +38,40 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.GET)
-    public Response<List<User>> getUsers(@PathVariable int organizationId ) throws BaseException {
+    public Response<List<SimplifiedUser>> getUsers(@PathVariable int organizationId ) throws BaseException {
         // Throws an exception if the user performing this op. is unauthorized.
         checkAuthentication(organizationId);
-
         List<User> users = userService.getByOrganizationId(organizationId);
 
+        List<SimplifiedUser> responseList = SimplifiedUser.fromUserList(users);
         Response response = new Response();
         response.setSuccess(true);
-        response.setData(users);
+        response.setData(responseList);
+
         return response;
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users/{userId}", method = RequestMethod.GET)
-    public Response<User> getSingleUser(@PathVariable int organizationId,
+    public Response<SimplifiedUser> getSingleUser(@PathVariable int organizationId,
                                         @PathVariable int userId )throws BaseException {
         // Throws an exception if the user performing this op. is unauthorized.
         checkAuthentication(organizationId);
 
         User user = userService.get(userId);
+        SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
 
         Response response = new Response();
         response.setSuccess(true);
-        response.setData(user);
+        response.setData(responseUser);
 
         return response;
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.POST)
-    public Response<User> addUser(@PathVariable int organizationId,
-                                  @RequestBody AddUserRequest userRequest) throws BaseException {
+    public Response<SimplifiedUser> addUser(@PathVariable int organizationId,
+                                            @RequestBody AddUserRequest userRequest) throws BaseException {
         // Throws an exception if the user performing this op. is unauthorized.
         checkAuthentication(organizationId);
 
@@ -81,17 +85,20 @@ public class UserController {
 
         // Employee object with id.
         User addedEmployee = userService.addEmployee(employee);
+        organizationService.addEmployee(organization,employee);
 
-        Response<User> response = new Response<>();
+        SimplifiedUser responseEmployee = SimplifiedUser.fromUser(addedEmployee);
+        Response<SimplifiedUser> response = new Response<>();
         response.setSuccess(true);
-        response.setData(addedEmployee);
+        response.setData(responseEmployee);
 
         return response;
     }
 
+    // TODO: remove user from org. as well
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users/", method = RequestMethod.DELETE)
-    public Response<User> deleteUser(@PathVariable int organizationId,
+    public Response<SimplifiedUser> deleteUser(@PathVariable int organizationId,
                                      @PathVariable int userId) throws BaseException {
         // Throws an exception if the user performing this op. is unauthorized.
         checkAuthentication(organizationId);
@@ -103,9 +110,9 @@ public class UserController {
         }
 
         userService.remove(userId);
-
-        Response<User> response = new Response<>();
-        response.setData(soonToBeDeleted);
+        SimplifiedUser responseUser = SimplifiedUser.fromUser(soonToBeDeleted);
+        Response response = new Response<>();
+        response.setData(responseUser);
         response.setSuccess(true);
 
         return response;

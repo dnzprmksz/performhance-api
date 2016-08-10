@@ -23,10 +23,16 @@ public class TeamResponse {
     }
 
     public static TeamResponse fromTeam(Team team) {
+        if (team == null) {
+            return null;
+        }
         return new TeamResponse(team);
     }
 
-    public static List<TeamResponse> fromTeamList(List<Team> teams){
+    public static List<TeamResponse> fromTeamList(List<Team> teams) {
+        if (teams == null) {
+            return null;
+        }
         List<TeamResponse> responses = new ArrayList<>();
         for(Team team : teams){
             TeamResponse current = fromTeam(team);

@@ -27,10 +27,16 @@ public class OrganizationResponse {
     }
 
     public static OrganizationResponse fromOrganization(Organization organization) {
+        if (organization == null) {
+            return null;
+        }
         return new OrganizationResponse(organization);
     }
 
     public static List<OrganizationResponse> fromOrganizationList(List<Organization> organizations){
+        if (organizations == null) {
+            return null;
+        }
         List<OrganizationResponse> responses = new ArrayList<>();
         for(Organization organization : organizations){
             OrganizationResponse current = fromOrganization(organization);

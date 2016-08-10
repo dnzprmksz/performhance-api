@@ -26,6 +26,7 @@ public class OrganizationServiceTest {
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    private static boolean INIT = false;
     @Before
     public void setup() throws BaseException {
         organizationService.add(new Organization("Google"));
@@ -33,10 +34,28 @@ public class OrganizationServiceTest {
         organizationService.add(new Organization("Palantir"));
     }
 
-//    @After
-//    public void cleanup() {
-//        organizationRepository.deleteAll();
-//    }
+    @After
+    public void cleanup() {
+        organizationRepository.deleteAll();
+    }
+
+    @Test
+    public void getByExistingId() throws BaseException {
+        Organization fetched;
+
+        fetched = organizationService.getByName("Google");
+        fetched = organizationService.get(fetched.getId());
+        Assert.assertNotNull(fetched);
+        Assert.assertEquals("Google", fetched.getName());
+        Assert.assertEquals(0, fetched.getNumberOfEmployees());
+
+        fetched = organizationService.getByName("Palantir");
+        fetched = organizationService.get(fetched.getId());
+        Assert.assertNotNull(fetched);
+        Assert.assertEquals("Palantir", fetched.getName());
+        Assert.assertEquals(0, fetched.getNumberOfEmployees());
+
+    }
 
     @Test
     public void getAll() {
@@ -44,51 +63,15 @@ public class OrganizationServiceTest {
 
         Assert.assertEquals(3, organizationList.size());
 
-        Assert.assertEquals(1, organizationList.get(0).getId() );
-        Assert.assertEquals(2, organizationList.get(1).getId() );
-        Assert.assertEquals(3, organizationList.get(2).getId() );
-
         Assert.assertEquals("Google", organizationList.get(0).getName());
         Assert.assertEquals("Monitise", organizationList.get(1).getName());
         Assert.assertEquals("Palantir", organizationList.get(2).getName());
 
     }
 
-    @Test
-    public void getByExistingId() throws BaseException {
-        Organization fetched;
-
-        fetched = organizationService.get(1);
-        Assert.assertNotNull(fetched);
-        Assert.assertEquals(1, fetched.getId());
-        Assert.assertEquals("Google", fetched.getName());
-        Assert.assertEquals(0, fetched.getNumberOfEmployees());
-
-        fetched = organizationService.get(2);
-        Assert.assertNotNull(fetched);
-        Assert.assertEquals(2, fetched.getId());
-        Assert.assertEquals("Monitise", fetched.getName());
-        Assert.assertEquals(0, fetched.getNumberOfEmployees());
-
-        fetched = organizationService.get(3);
-        Assert.assertNotNull(fetched);
-        Assert.assertEquals(3, fetched.getId());
-        Assert.assertEquals("Palantir", fetched.getName());
-        Assert.assertEquals(0, fetched.getNumberOfEmployees());
-
-    }
-
     @Test(expected = BaseException.class)
     public void getByNonExistingId() throws BaseException {
         Organization fetched = organizationService.get(1000001);
-    }
-
-    @Test
-    public void getByUsername_existingName() throws BaseException {
-
-        Organization organizationFromService = organizationService.getByName("Pozitron");
-        Assert.assertNotNull(organizationFromService);
-        Assert.assertEquals("Pozitron", organizationFromService.getName());
     }
 
     @Test(expected = BaseException.class)
@@ -99,11 +82,8 @@ public class OrganizationServiceTest {
     @Test(expected = BaseException.class)
     public void add_existingOrganization_shouldNotAdd() throws BaseException {
         Organization organization = new Organization("Monitise");
-        Organization organizationFromRepo = null;
-        organizationFromRepo = organizationService.add(organization);
+        Organization organizationFromRepo = organizationService.add(organization);
 
-        Assert.assertNotNull(organizationFromRepo);
-        Assert.assertEquals(organization.getName(), organizationFromRepo.getName());
     }
 
     @Test
@@ -112,7 +92,6 @@ public class OrganizationServiceTest {
         Organization addedOrganization = organizationService.add(new Organization(organizationName));
 
         Assert.assertNotNull(addedOrganization);
-        Assert.assertEquals(4, addedOrganization.getId());
         Assert.assertEquals(organizationName, addedOrganization.getName());
         Assert.assertEquals(0, addedOrganization.getNumberOfEmployees());
     }
