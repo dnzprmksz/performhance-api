@@ -40,8 +40,8 @@ public class OrganizationController {
     }
 
     @RequestMapping(value = "/{organizationId}", method = RequestMethod.GET)
-    public Response<Organization> get(@PathVariable int id) throws BaseException {
-        Organization organization = organizationService.get(id);
+    public Response<Organization> get(@PathVariable int organizationId) throws BaseException {
+        Organization organization = organizationService.get(organizationId);
 
         Response<Organization> response = new Response<>();
         response.setSuccess(true);
