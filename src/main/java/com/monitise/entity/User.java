@@ -7,13 +7,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class User implements Serializable {
+public class User {
 
     @Id
     @GeneratedValue
@@ -26,7 +25,9 @@ public class User implements Serializable {
     private Role role;
     @ManyToOne
     private Organization organization;
-    @OneToMany
+    @ManyToOne
+    private Team team;
+    @ManyToMany
     private List<Criteria> criteriaList;
     private String username;
     private String password;

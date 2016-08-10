@@ -49,6 +49,16 @@ public class UserService {
         return users;
     }
 
+    public List<Integer> getIdListByTeamId(int teamId) {
+        List<Integer> idList = userRepository.findAllByTeamIdSelectUserId(teamId);
+        return idList;
+    }
+
+    public List<Integer> getIdListByJobTitleId(int jobTitleId) {
+        List<Integer> idList = userRepository.findAllByJobTitleIdSelectUserId(jobTitleId);
+        return idList;
+    }
+
     @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public void remove(int id) throws BaseException {
         get(id);
@@ -97,6 +107,7 @@ public class UserService {
         if (user != null)
             throw new BaseException(ResponseCode.USER_USERNAME_ALREADY_TAKEN, "That username is taken.");
     }
+
     // Throws exception if the criteria DOES NOT EXIST.
     private void ensureExistence(User user) throws BaseException {
         User userFromRepo = userRepository.findOne(user.getId());

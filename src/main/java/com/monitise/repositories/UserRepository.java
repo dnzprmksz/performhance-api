@@ -12,6 +12,12 @@ public interface UserRepository extends CrudRepository<User, Integer> {
 
     User findByUsername(String username);
 
-    @Query(value = "select * from user where organization_id = ?1 ", nativeQuery = true )
     List<User> findByOrganizationId(int organizationId);
+
+    @Query(value = "SELECT id FROM user WHERE team_id = ?1", nativeQuery = true)
+    List<Integer> findAllByTeamIdSelectUserId(int teamId);
+
+    @Query(value = "SELECT id FROM user WHERE job_title_id = ?1", nativeQuery = true)
+    List<Integer> findAllByJobTitleIdSelectUserId(int jobTitleId);
+
 }

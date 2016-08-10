@@ -49,6 +49,7 @@ public class ResponseCode {
     public static final int CRITERIA_EXISTS = 1506;
     public static final int CRITERIA_EXISTS_IN_USER = 1507;
     public static final int CRITERIA_DOES_NOT_EXIST_IN_USER = 1508;
+    public static final int CRITERIA_EXISTS_IN_SOME_USERS = 1509;
 
     protected ResponseCode() {}
 }
