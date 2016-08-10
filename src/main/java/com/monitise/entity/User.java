@@ -1,5 +1,6 @@
 package com.monitise.entity;
 
+import com.monitise.api.model.AddUserRequest;
 import com.monitise.api.model.Role;
 
 import javax.persistence.Entity;
@@ -46,6 +47,15 @@ public class User {
         this.surname = surname;
         this.organization = organization;
         this.role = role;
+    }
+
+    public User(AddUserRequest userRequest, Organization organization, String username, String password) {
+        name = userRequest.getName();
+        surname = userRequest.getSurname();
+        this.organization = organization;
+        this.password = password;
+        this.username = username;
+        role = Role.EMPLOYEE;
     }
 
     // region Getters
