@@ -2,9 +2,9 @@ package com.monitise.api.model;
 
 public class Response<T> {
 
-    private boolean success;
-    private T data;
-    private Error error;
+    protected boolean success;
+    protected T data;
+    protected Error error;
 
     // region Getters
 

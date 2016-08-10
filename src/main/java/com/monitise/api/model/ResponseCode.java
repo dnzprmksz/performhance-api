@@ -25,18 +25,21 @@ public class ResponseCode {
     public static final int USER_USERNAME_NOT_EXIST = 1204;
     public static final int USER_USERNAME_ALREADY_TAKEN = 1205;
     public static final int USER_UNAUTHORIZED_ORGANIZATION = 1206;
+    public static final int USER_BELONGS_TO_ANOTHER_ORGANIZATION = 1207;
 
     /**
      *  TEAM RELATED RESPONSE CODES
      */
     public static final int TEAM_ID_DOES_NOT_EXIST = 1301;
     public static final int TEAM_ID_INVALID = 1302;
+    public static final int TEAM_BELONGS_TO_ANOTHER_ORGANIZATION = 1303;
 
     /**
      *  JOB TITLE RELATED RESPONSE CODES
      */
     public static final int JOB_TITLE_ID_DOES_NOT_EXIST = 1401;
     public static final int JOB_TITLE_ID_INVALID = 1402;
+    public static final int JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION = 1403;
 
     /**
      *  CRITERIA RELATED RESPONSE CODES
@@ -50,6 +53,7 @@ public class ResponseCode {
     public static final int CRITERIA_EXISTS_IN_USER = 1507;
     public static final int CRITERIA_DOES_NOT_EXIST_IN_USER = 1508;
     public static final int CRITERIA_EXISTS_IN_SOME_USERS = 1509;
+    public static final int CRITERIA_BELONGS_TO_ANOTHER_ORGANIZATION = 1510;
 
     protected ResponseCode() {}
 }
