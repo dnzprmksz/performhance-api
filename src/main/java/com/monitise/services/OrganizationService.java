@@ -46,17 +46,19 @@ public class OrganizationService {
 
     public Organization add(Organization organization) throws BaseException {
 
-        Organization organizationFromRepo = organizationRepository.save(organization);
-        boolean isAdded = false;
-
-        // Check if the given organization is added correctly.
-        if (organizationFromRepo != null && (organizationFromRepo.getName().equals(organization.getName()))) {
-            isAdded = true;
+        // Check if the organization name is unique.
+        Organization shouldBeNull = organizationRepository.findByName(organization.getName());
+        if(shouldBeNull != null) {
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS,
+                    "An organization with given name already exists.");
         }
 
-        if (!isAdded) {
+        Organization organizationFromRepo = organizationRepository.save(organization);
+        // Check if the given organization is added correctly.
+        if (organizationFromRepo == null || !(organizationFromRepo.getName().equals(organization.getName()))) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add the given organization.");
         }
+
 
         return organizationFromRepo;
     }
@@ -74,7 +76,7 @@ public class OrganizationService {
         List<JobTitle> titleList = organization.getJobTitles();
 
         for(JobTitle i : titleList) {
-            if( i.getTitle().equals(title.getTitle()) ) {
+            if( i.getId() == title.getId() ) {
                 return true;
             }
         }

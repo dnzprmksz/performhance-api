@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
