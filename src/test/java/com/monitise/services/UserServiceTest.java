@@ -77,7 +77,7 @@ public class UserServiceTest {
         Assert.assertEquals(user.getSurname(), userFromService.getSurname());
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     @WithMockUser(roles={"MANAGER"})
     public void add_employeeExistingNameSurname_shouldAdd() throws BaseException {
 
@@ -86,16 +86,6 @@ public class UserServiceTest {
         User duplicate = new User("Deniz", "Parmaksiz", organization);
         User addedUser = userService.addEmployee(user);
         User addedDuplicate = userService.addEmployee(duplicate);
-
-        Assert.assertNotNull(addedUser);
-        Assert.assertEquals(user.getName(), addedUser.getName());
-        Assert.assertEquals(user.getSurname(), addedUser.getSurname());
-
-        Assert.assertNotNull(addedDuplicate);
-        Assert.assertEquals(duplicate.getName(), addedDuplicate.getName());
-        Assert.assertEquals(duplicate.getSurname(), addedDuplicate.getSurname());
-
-        Assert.assertNotEquals(addedDuplicate.getId(), addedUser.getId() );
     }
 
     @Test(expected = BaseException.class)

@@ -11,15 +11,15 @@ public class TeamResponse {
     private int id;
     private String name;
     private List<SimplifiedUser> members;
-    private String organizationName;
-    private UserResponse leader;
+    private int organizationId;
+    private SimplifiedUser leader;
 
     public TeamResponse(Team team) {
         id = team.getId();
         name = team.getName();
         members = SimplifiedUser.fromUserList(team.getMembers());
-        organizationName = team.getOrganization().getName();
-        leader = UserResponse.fromUser(team.getLeader());
+        organizationId = team.getOrganization().getId();
+        leader = SimplifiedUser.fromUser(team.getLeader());
     }
 
     public static TeamResponse fromTeam(Team team) {
@@ -49,11 +49,11 @@ public class TeamResponse {
         return members;
     }
 
-    public String getOrganization() {
-        return organizationName;
+    public int getOrganizationId() {
+        return organizationId;
     }
 
-    public UserResponse getLeader() {
+    public SimplifiedUser getLeader() {
         return leader;
     }
 
@@ -73,11 +73,11 @@ public class TeamResponse {
         this.members = members;
     }
 
-    public void setOrganization(String organizationName) {
-        this.organizationName= organizationName;
+    public void setOrganizationId(int organizationId) {
+        this.organizationId= organizationId;
     }
 
-    public void setLeader(UserResponse leader) {
+    public void setLeader(SimplifiedUser leader) {
         this.leader = leader;
     }
 

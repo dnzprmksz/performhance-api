@@ -1,5 +1,6 @@
 package com.monitise.services;
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.Role;
 import com.monitise.entity.User;
@@ -18,6 +19,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+
     public List<User> getAll() {
 
         List<User> list = (List<User>) userRepository.findAll();
@@ -27,7 +29,7 @@ public class UserService {
     public User get(int id) throws BaseException {
         User user = userRepository.findOne(id);
         if (user == null) {
-            throw new BaseException(ResponseCode.USER_ID_DOES_NOT_EXIST, "An user with given ID does not exist.");
+            throw new BaseException(ResponseCode.USER_ID_DOES_NOT_EXIST, "A user with given ID does not exist.");
         }
         return user;
     }
@@ -40,6 +42,7 @@ public class UserService {
         return user;
     }
 
+    @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public List<User> getByOrganizationId(int id) throws BaseException {
         List<User> users = userRepository.findByOrganizationId(id);
         if (users.size() == 0) {
@@ -48,13 +51,13 @@ public class UserService {
         return users;
     }
 
-    public void remove(int id){
+    @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
+    public void remove(int id) throws BaseException {
+        get(id);
         userRepository.delete(id);
     }
 
-
-
-    @Secured("ROLE_MANAGER")
+    @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public User addEmployee(User user) throws BaseException {
         if (user.getRole() != Role.EMPLOYEE && user.getRole() != Role.TEAM_LEADER) {
             throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-employee user.");
@@ -73,11 +76,19 @@ public class UserService {
     // region Helper Methods
 
     private User addUser(User user) throws BaseException {
+        String userName = user.getUsername();
+        checkUserNameExistence(userName);
         User userFromRepo = userRepository.save(user);
         if (userFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given User.");
         }
         return userFromRepo;
+    }
+
+    private void checkUserNameExistence(String userName) throws BaseException {
+        User user = userRepository.findByUsername(userName);
+        if(user!=null)
+            throw new BaseException(ResponseCode.USER_USERNAME_ALREADY_TAKEN, "That username is taken.");
     }
 
     // endregion

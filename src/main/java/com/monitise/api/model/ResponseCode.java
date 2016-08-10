@@ -23,7 +23,8 @@ public class ResponseCode {
     public static final int USER_ID_INVALID = 1202;
     public static final int USER_ROLE_INCORRECT = 1203;
     public static final int USER_USERNAME_NOT_EXIST = 1204;
-    public static final int USER_UNAUTHORIZED_ORGANIZATION = 1205;
+    public static final int USER_USERNAME_ALREADY_TAKEN = 1205;
+    public static final int USER_UNAUTHORIZED_ORGANIZATION = 1206;
 
     /**
      *  TEAM RELATED RESPONSE CODES

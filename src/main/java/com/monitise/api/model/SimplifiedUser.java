@@ -8,6 +8,7 @@ import java.util.List;
 
 public class SimplifiedUser {
     private int id;
+    private int organizationId;
     private String name;
     private String surname;
     private JobTitle jobTitle;
@@ -15,6 +16,7 @@ public class SimplifiedUser {
 
     public SimplifiedUser(User user) {
         id = user.getId();
+        organizationId = user.getOrganization().getId();
         name = user.getName();
         surname = user.getSurname();
         jobTitle = user.getJobTitle();
@@ -41,6 +43,10 @@ public class SimplifiedUser {
         return id;
     }
 
+    public int getOrganizationId() {
+        return organizationId;
+    }
+
     public String getName() {
         return name;
     }
@@ -63,6 +69,10 @@ public class SimplifiedUser {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setOrganizationId(int organizationId) {
+        this.organizationId = organizationId;
     }
 
     public void setName(String name) {
