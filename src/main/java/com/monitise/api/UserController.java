@@ -4,6 +4,7 @@ import com.monitise.api.model.AddUserRequest;
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.ResponseCode;
 import com.monitise.api.model.SimplifiedUser;
+import com.monitise.api.model.TeamUserResponse;
 import com.monitise.helpers.SecurityHelper;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
@@ -37,11 +38,11 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.GET)
-    public Response<List<SimplifiedUser>> getUsers(@PathVariable int organizationId ) throws BaseException {
+    public Response<List<TeamUserResponse>> getUsers(@PathVariable int organizationId ) throws BaseException {
         checkAuthentication(organizationId);
         List<User> users = userService.getByOrganizationId(organizationId);
 
-        List<SimplifiedUser> responseList = SimplifiedUser.fromUserList(users);
+        List<TeamUserResponse> responseList = TeamUserResponse.fromUserList(users);
         Response response = new Response();
         response.setSuccess(true);
         response.setData(responseList);

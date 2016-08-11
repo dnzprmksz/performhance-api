@@ -65,11 +65,7 @@ public class OrganizationService {
     public boolean isJobTitleDefined(Organization organization, int titleId) {
         List<JobTitle> titleList = organization.getJobTitles();
         for(JobTitle jobTitle : titleList) {
-<<<<<<< HEAD
-            if(jobTitle.getId() == titleId) {
-=======
             if (jobTitle.getId() == titleId) {
->>>>>>> 05a11b3b796d3b608e6f02af5f2cbc3752b752c2
                 return true;
             }
         }

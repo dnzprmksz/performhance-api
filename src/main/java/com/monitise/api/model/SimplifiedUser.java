@@ -11,7 +11,7 @@ public class SimplifiedUser {
     private int organizationId;
     private String name;
     private String surname;
-    private JobTitle jobTitle;
+    private String jobTitle;
     private Role role;
 
     public SimplifiedUser(User user) {
@@ -19,10 +19,11 @@ public class SimplifiedUser {
         organizationId = user.getOrganization().getId();
         name = user.getName();
         surname = user.getSurname();
-        jobTitle = user.getJobTitle();
         role = user.getRole();
+        if (user.getJobTitle() != null) {
+            jobTitle = user.getJobTitle().getTitle();
+        }
     }
-
 
     public static SimplifiedUser fromUser(User user) {
         if (user == null) {
@@ -61,7 +62,7 @@ public class SimplifiedUser {
         return surname;
     }
 
-    public JobTitle getJobTitle() {
+    public String getJobTitle() {
         return jobTitle;
     }
 
@@ -90,7 +91,7 @@ public class SimplifiedUser {
     }
 
     public void setJobTitle(JobTitle jobTitle) {
-        this.jobTitle = jobTitle;
+        this.jobTitle = jobTitle.getTitle();
     }
 
     public void setRole(Role role) {

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,6 +38,9 @@ public class TeamService {
     public List<Team> getListFilterByOrganizationId(int organizationId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         List<Team> list = teamRepository.findByOrganizationId(organizationId);
+        if (list == null) {
+            return new ArrayList<>();
+        }
         return list;
     }
 

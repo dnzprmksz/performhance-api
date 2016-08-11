@@ -2,15 +2,13 @@ package com.monitise.api.model;
 
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
-import com.monitise.entity.Team;
-import com.monitise.entity.User;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrganizationResponse {
 
+    private int id;
     private String name;
     private int numberOfEmployees;
     private List<SimplifiedUser> users;
@@ -18,7 +16,7 @@ public class OrganizationResponse {
     private List<TeamResponse>  teams;
 
     public OrganizationResponse(Organization organization) {
-
+        id = organization.getId();
         name = organization.getName();
         numberOfEmployees = organization.getNumberOfEmployees();
         users = SimplifiedUser.fromUserList(organization.getUsers());
@@ -47,6 +45,10 @@ public class OrganizationResponse {
 
     // region Getters
 
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
@@ -70,6 +72,10 @@ public class OrganizationResponse {
     // endregion
 
     // region Setters
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setName(String name) {
         this.name = name;
