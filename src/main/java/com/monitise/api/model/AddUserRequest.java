@@ -5,9 +5,9 @@ import java.io.Serializable;
 public class AddUserRequest implements Serializable{
     private String name;
     private String surname;
-    int jobTitleId;
+    private int jobTitleId;
 
-    protected AddUserRequest() {}
+    public AddUserRequest() {}
 
     // region Getters
 

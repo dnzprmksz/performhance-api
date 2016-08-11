@@ -1,6 +1,7 @@
 package com.monitise.services;
 
 import com.monitise.api.model.BaseException;
+import com.monitise.entity.Criteria;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
 import com.monitise.api.model.ResponseCode;
@@ -59,10 +60,10 @@ public class OrganizationService {
         return organizationFromRepo;
     }
 
-    public boolean isJobTitleDefined(Organization organization, int titleId){
+    public boolean isJobTitleDefined(Organization organization, int titleId) {
         List<JobTitle> titleList = organization.getJobTitles();
-        for(JobTitle i : titleList) {
-            if( i.getId() == titleId ) {
+        for(JobTitle jobTitle : titleList) {
+            if(jobTitle.getId() == titleId) {
                 return true;
             }
         }

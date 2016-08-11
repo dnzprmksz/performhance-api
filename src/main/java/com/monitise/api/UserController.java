@@ -38,8 +38,6 @@ public class UserController {
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.GET)
     public Response<List<User>> getUsers(@PathVariable int organizationId ) throws BaseException {
         // Throws an exception if the user performing this op. is unauthorized.
-        checkAuthentication(organizationId);
-
         List<User> users = userService.getByOrganizationId(organizationId);
 
         Response response = new Response();
@@ -52,15 +50,12 @@ public class UserController {
     @RequestMapping(value = "/organizations/{organizationId}/users/{userId}", method = RequestMethod.GET)
     public Response<User> getSingleUser(@PathVariable int organizationId,
                                         @PathVariable int userId )throws BaseException {
-        // Throws an exception if the user performing this op. is unauthorized.
         checkAuthentication(organizationId);
-
         User user = userService.get(userId);
 
         Response response = new Response();
         response.setSuccess(true);
         response.setData(user);
-
         return response;
     }
 
@@ -68,9 +63,7 @@ public class UserController {
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.POST)
     public Response<User> addUser(@PathVariable int organizationId,
                                   @RequestBody AddUserRequest userRequest) throws BaseException {
-        // Throws an exception if the user performing this op. is unauthorized.
         checkAuthentication(organizationId);
-
         Organization organization = organizationService.get(organizationId);
         validateUserRequest(organization, userRequest);
         JobTitle title = jobTitleService.get(userRequest.getJobTitleId());
@@ -78,14 +71,11 @@ public class UserController {
         User employee = new User(userRequest,organization,
                 userRequest.getName()+"."+userRequest.getSurname(),"password");
         employee.setJobTitle(title);
-
-        // Employee object with id.
         User addedEmployee = userService.addEmployee(employee);
 
         Response<User> response = new Response<>();
         response.setSuccess(true);
         response.setData(addedEmployee);
-
         return response;
     }
 
@@ -93,40 +83,32 @@ public class UserController {
     @RequestMapping(value = "/organizations/{organizationId}/users/", method = RequestMethod.DELETE)
     public Response<User> deleteUser(@PathVariable int organizationId,
                                      @PathVariable int userId) throws BaseException {
-        // Throws an exception if the user performing this op. is unauthorized.
         checkAuthentication(organizationId);
-
         User soonToBeDeleted = userService.get(userId);
-        if( soonToBeDeleted.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,"You are not authorized"
-                    + " to perform this action.");
+        if(soonToBeDeleted.getOrganization().getId() != organizationId) {
+            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized to perform this action.");
         }
-
         userService.remove(userId);
 
         Response<User> response = new Response<>();
         response.setData(soonToBeDeleted);
         response.setSuccess(true);
-
         return response;
     }
 
     // region Helper Methods
 
     private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException{
-
         String name = employee.getName();
         String surname = employee.getSurname();
-        if( (name == null || name.trim().equals("")) || (surname == null || surname.trim().equals("")) )  {
+        if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty user name is not allowed.");
         }
 
         int titleId = employee.getJobTitleId();
-        if( !organizationService.isJobTitleDefined(organization, titleId) ) {
-            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST, "Job Title you entered is not"
-                    + " defined in this company.");
+        if(!organizationService.isJobTitleDefined(organization, titleId)) {
+            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST, "A job title with given ID does not exist in this organization.");
         }
-
     }
 
     private void checkAuthentication(int organizationId) throws BaseException {
