@@ -25,10 +25,16 @@ public class SimplifiedUser {
 
 
     public static SimplifiedUser fromUser(User user) {
+        if (user == null) {
+            return null;
+        }
         return new SimplifiedUser(user);
     }
 
     public static List<SimplifiedUser> fromUserList(List<User> users) {
+        if (users == null) {
+            return null;
+        }
         List<SimplifiedUser> responses = new ArrayList<>();
         for (User user : users) {
             SimplifiedUser current = fromUser(user);

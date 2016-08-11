@@ -33,7 +33,7 @@ public class User {
     private String username;
     private String password;
 
-    private User() {}
+    public User() {}
 
     public User(String name, String surname, Organization organization) {
         this.name = name;

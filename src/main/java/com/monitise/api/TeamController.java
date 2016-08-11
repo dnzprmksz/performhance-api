@@ -1,5 +1,7 @@
 package com.monitise.api;
 
+import com.monitise.api.model.TeamResponse;
+import com.monitise.entity.Organization;
 import com.monitise.helpers.SecurityHelper;
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.Response;
@@ -28,48 +30,55 @@ public class TeamController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/teams/", method = RequestMethod.GET)
-    public Response<List<Team>> getAll() {
+    public Response<List<TeamResponse>> getAll() {
         List<Team> list = teamService.getAll();
+        List<TeamResponse> responseList = TeamResponse.fromTeamList(list);
 
-        Response<List<Team>> response = new Response<>();
-        response.setData(list);
+        Response<List<TeamResponse>> response = new Response();
+        response.setData(responseList);
         response.setSuccess(true);
         return response;
     }
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/teams/", method = RequestMethod.GET)
-    public Response<List<Team>> getTeamListByOrganizationId(@PathVariable int organizationId) throws BaseException {
+    public Response<List<TeamResponse>> getTeamListByOrganizationId(@PathVariable int organizationId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
+        List<TeamResponse> responseList = TeamResponse.fromTeamList(list);
 
-        Response<List<Team>> response = new Response<>();
-        response.setData(list);
+        Response<List<TeamResponse>> response = new Response<>();
+        response.setData(responseList);
         response.setSuccess(true);
         return response;
     }
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/teams/{teamId}", method = RequestMethod.GET)
-    public Response<Team> getTeamByOrganizationId(@PathVariable int organizationId, @PathVariable int teamId) throws BaseException {
+    public Response<TeamResponse> getTeamByOrganizationId(@PathVariable int organizationId, @PathVariable int teamId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         Team team = teamService.get(teamId);
+        TeamResponse responseTeam = TeamResponse.fromTeam(team);
 
-        Response<Team> response = new Response<>();
-        response.setData(team);
+        Response<TeamResponse> response = new Response<>();
+        response.setData(responseTeam);
         response.setSuccess(true);
         return response;
     }
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/teams/", method = RequestMethod.POST)
-    public Response<Team> addTeam(@PathVariable int organizationId, @RequestBody Team team) throws BaseException {
+    public Response<TeamResponse> addTeam(@PathVariable int organizationId, @RequestBody String teamName) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
-        team.setOrganization(organizationService.get(organizationId));
-        Team teamFromService = teamService.add(team);
+        Organization organization = organizationService.get(organizationId);
+        Team team = new Team(teamName,organization);
+        Team addedTeam = teamService.add(team);
+        organizationService.addTeam(organization,addedTeam);
 
-        Response<Team> response = new Response<>();
-        response.setData(teamFromService);
+        TeamResponse responseTeam = TeamResponse.fromTeam(addedTeam);
+
+        Response<TeamResponse> response = new Response<>();
+        response.setData(responseTeam);
         response.setSuccess(true);
         return response;
     }

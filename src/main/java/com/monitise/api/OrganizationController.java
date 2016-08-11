@@ -1,6 +1,7 @@
 package com.monitise.api;
 
 import com.monitise.api.model.BaseException;
+import com.monitise.api.model.OrganizationResponse;
 import com.monitise.entity.Organization;
 import com.monitise.api.model.Response;
 import com.monitise.api.model.ResponseCode;
@@ -30,45 +31,47 @@ public class OrganizationController {
 
     // TODO: Only available to admin
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<Organization>> getAll() {
-        List<Organization> list = organizationService.getAll();
-
-        Response<List<Organization>> response = new Response<>();
+    public Response<List<OrganizationResponse>> getAll() {
+        List<Organization> entityList = organizationService.getAll();
+        List<OrganizationResponse> responseList = OrganizationResponse.fromOrganizationList(entityList);
+        Response<List<OrganizationResponse>> response = new Response<>();
         response.setSuccess(true);
-        response.setData(list);
+        response.setData(responseList);
         return response;
     }
 
     @RequestMapping(value = "/{organizationId}", method = RequestMethod.GET)
-    public Response<Organization> get(@PathVariable int organizationId) throws BaseException {
-        Organization organization = organizationService.get(organizationId);
-
-        Response<Organization> response = new Response<>();
+    public Response<OrganizationResponse> get(@PathVariable int organizationId) throws BaseException {
+        Organization fetchedOrganization = organizationService.get(organizationId);
+        OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(fetchedOrganization);
+        Response<OrganizationResponse> response = new Response<>();
         response.setSuccess(true);
-        response.setData(organization);
+        response.setData(responseOrganization);
         return response;
     }
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response<Organization> add(@RequestBody Organization organization) throws BaseException {
+    public Response<OrganizationResponse> add(@RequestBody Organization organization) throws BaseException {
         validateName(organization.getName());
-        Organization organizationFromService = organizationService.add(organization);
+        Organization addedOrganization = organizationService.add(organization);
 
         // Create management user for the organization.
-        User manager = new User(organizationFromService.getName(), "Manager", organizationFromService, Role.MANAGER);
+        User manager = new User(addedOrganization.getName(), "Manager", addedOrganization, Role.MANAGER);
         // TODO: Change the way how manager account is created. It is fixed for now for test purposes.
-        manager.setUsername(organizationFromService.getName().toLowerCase());
+        manager.setUsername(addedOrganization.getName().toLowerCase());
         manager.setPassword("admin");
         userService.addManager(manager);
-        organizationFromService.setManager(manager);
-
+        addedOrganization.setManager(manager);
+        // TODO: Add set employee method.
         // Update organization with manager ID.
-        organizationFromService = organizationService.update(organizationFromService);
+        addedOrganization= organizationService.update(addedOrganization);
 
-        Response<Organization> response = new Response<>();
+        OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(addedOrganization);
+
+        Response<OrganizationResponse> response = new Response<>();
         response.setSuccess(true);
-        response.setData(organizationFromService);
+        response.setData(responseOrganization);
         return response;
     }
 

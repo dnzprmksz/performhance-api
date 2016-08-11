@@ -5,6 +5,8 @@ import com.monitise.entity.Criteria;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
 import com.monitise.api.model.ResponseCode;
+import com.monitise.entity.Team;
+import com.monitise.entity.User;
 import com.monitise.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class OrganizationService {
     public Organization add(Organization organization) throws BaseException {
         // Check if the organization name is unique.
         Organization shouldBeNull = organizationRepository.findByName(organization.getName());
-        if(shouldBeNull != null) {
+        if (shouldBeNull != null) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS,
                     "An organization with given name already exists.");
         }
@@ -63,11 +65,58 @@ public class OrganizationService {
     public boolean isJobTitleDefined(Organization organization, int titleId) {
         List<JobTitle> titleList = organization.getJobTitles();
         for(JobTitle jobTitle : titleList) {
+<<<<<<< HEAD
             if(jobTitle.getId() == titleId) {
+=======
+            if (jobTitle.getId() == titleId) {
+>>>>>>> 05a11b3b796d3b608e6f02af5f2cbc3752b752c2
                 return true;
             }
         }
         return false;
     }
+
+    // TODO: TEST THIS METHOD
+    public Organization addEmployee(Organization organization, User employee) throws BaseException {
+        List<User> userList = organization.getUsers();
+
+        // Add the employee & increment numberOfEmployees field.
+        userList.add(employee);
+        organization.setUsers(userList);
+        organization.setNumberOfEmployees(organization.getNumberOfEmployees()+1) ;
+        Organization updatedOrganization = organizationRepository.save(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add employee");
+        }
+        return updatedOrganization;
+    }
+
+    // TODO: TEST THIS METHOD
+    public Organization setManager(Organization organization, User manager) throws BaseException {
+        organization.setManager(manager);
+        Organization updatedOrganization = organizationRepository.save(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to set manager to given organization.");
+        }
+        return updatedOrganization;
+    }
+
+    // TODO: TEST THIS METHOD
+    public Organization addTeam(Organization organization, Team team) throws BaseException {
+        List<Team> teamList = organization.getTeams();
+
+        // TODO Sil
+        if (teamList == null) System.out.println("addTeam--> takim listesi null dondu");
+
+        teamList.add(team);
+        organization.setTeams(teamList);
+        Organization updatedOrganization = organizationRepository.save(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
+        }
+        return updatedOrganization;
+    }
+
+
 
 }

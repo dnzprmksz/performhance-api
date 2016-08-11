@@ -3,6 +3,7 @@ package com.monitise.api;
 import com.monitise.api.model.AddUserRequest;
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.ResponseCode;
+import com.monitise.api.model.SimplifiedUser;
 import com.monitise.helpers.SecurityHelper;
 import com.monitise.entity.JobTitle;
 import com.monitise.entity.Organization;
@@ -36,33 +37,36 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.GET)
-    public Response<List<User>> getUsers(@PathVariable int organizationId ) throws BaseException {
-        // Throws an exception if the user performing this op. is unauthorized.
+    public Response<List<SimplifiedUser>> getUsers(@PathVariable int organizationId ) throws BaseException {
+        checkAuthentication(organizationId);
         List<User> users = userService.getByOrganizationId(organizationId);
 
+        List<SimplifiedUser> responseList = SimplifiedUser.fromUserList(users);
         Response response = new Response();
         response.setSuccess(true);
-        response.setData(users);
+        response.setData(responseList);
         return response;
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users/{userId}", method = RequestMethod.GET)
-    public Response<User> getSingleUser(@PathVariable int organizationId,
+    public Response<SimplifiedUser> getSingleUser(@PathVariable int organizationId,
                                         @PathVariable int userId )throws BaseException {
         checkAuthentication(organizationId);
         User user = userService.get(userId);
+        SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
 
         Response response = new Response();
         response.setSuccess(true);
-        response.setData(user);
+        response.setData(responseUser);
         return response;
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.POST)
-    public Response<User> addUser(@PathVariable int organizationId,
-                                  @RequestBody AddUserRequest userRequest) throws BaseException {
+
+    public Response<SimplifiedUser> addUser(@PathVariable int organizationId,
+                                            @RequestBody AddUserRequest userRequest) throws BaseException {
         checkAuthentication(organizationId);
         Organization organization = organizationService.get(organizationId);
         validateUserRequest(organization, userRequest);
@@ -72,16 +76,19 @@ public class UserController {
                 userRequest.getName()+"."+userRequest.getSurname(),"password");
         employee.setJobTitle(title);
         User addedEmployee = userService.addEmployee(employee);
+        organizationService.addEmployee(organization,employee);
 
-        Response<User> response = new Response<>();
+        SimplifiedUser responseEmployee = SimplifiedUser.fromUser(addedEmployee);
+        Response<SimplifiedUser> response = new Response<>();
         response.setSuccess(true);
-        response.setData(addedEmployee);
+        response.setData(responseEmployee);
         return response;
     }
 
+    // TODO: remove user from org. as well
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users/", method = RequestMethod.DELETE)
-    public Response<User> deleteUser(@PathVariable int organizationId,
+    public Response<SimplifiedUser> deleteUser(@PathVariable int organizationId,
                                      @PathVariable int userId) throws BaseException {
         checkAuthentication(organizationId);
         User soonToBeDeleted = userService.get(userId);
@@ -89,9 +96,9 @@ public class UserController {
             throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized to perform this action.");
         }
         userService.remove(userId);
-
-        Response<User> response = new Response<>();
-        response.setData(soonToBeDeleted);
+        SimplifiedUser responseUser = SimplifiedUser.fromUser(soonToBeDeleted);
+        Response response = new Response<>();
+        response.setData(responseUser);
         response.setSuccess(true);
         return response;
     }
