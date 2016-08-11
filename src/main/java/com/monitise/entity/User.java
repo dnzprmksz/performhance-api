@@ -96,6 +96,10 @@ public class User {
         return criteriaList;
     }
 
+    public Team getTeam() {
+        return team;
+    }
+
     // endregion
 
     // region Setters
@@ -136,6 +140,9 @@ public class User {
         this.criteriaList = criteriaList;
     }
 
+    public void setTeam(Team team) {
+        this.team = team;
+    }
     // endregion
 
 }
