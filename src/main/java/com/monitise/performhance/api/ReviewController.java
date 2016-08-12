@@ -5,13 +5,17 @@ import com.monitise.performhance.api.model.BaseException;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.ReviewResponse;
+import com.monitise.performhance.api.model.SimplifiedReview;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.ReviewService;
 import com.monitise.performhance.services.UserService;
+import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,13 +36,36 @@ public class ReviewController {
     @Autowired
     private CriteriaService criteriaService;
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public Response<List<SimplifiedReview>> getAll() {
+        List<Review> list = reviewService.getAll();
+        List<SimplifiedReview> simplifiedReviews = SimplifiedReview.fromList(list);
+
+        Response<List<SimplifiedReview>> response = new Response<>();
+        response.setData(simplifiedReviews);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @RequestMapping(value = "/{reviewId}", method = RequestMethod.GET)
+    public Response<ReviewResponse> get(@PathVariable int reviewId) throws BaseException {
+        Review review = reviewService.get(reviewId);
+        ReviewResponse reviewResponse = new ReviewResponse(review);
+
+        Response<ReviewResponse> response = new Response<>();
+        response.setData(reviewResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<ReviewResponse> add(@RequestBody AddReviewRequest reviewRequest) throws BaseException {
         validate(reviewRequest);
         Review review = new Review(userService.get(reviewRequest.getReviewedEmployeeId()),
-                                   userService.get(reviewRequest.getReviewerId()),
-                                   buildCriteriaMapFromIdMap(reviewRequest.getEvaluationIdMap()),
-                                   reviewRequest.getComment());
+                userService.get(reviewRequest.getReviewerId()),
+                buildCriteriaMapFromIdMap(reviewRequest.getEvaluationIdMap()),
+                reviewRequest.getComment());
+
         Review reviewFromService = reviewService.add(review);
         ReviewResponse reviewResponse = new ReviewResponse(reviewFromService);
 
@@ -47,6 +74,17 @@ public class ReviewController {
         response.setSuccess(true);
         return response;
     }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{reviewId}", method = RequestMethod.DELETE)
+    public Response<Object> remove(@PathVariable int reviewId) throws BaseException {
+        reviewService.remove(reviewId);
+        Response<Object> response = new Response<>();
+        response.setSuccess(true);
+        return response;
+    }
+
+    // region Helper Methods
 
     private void validate(AddReviewRequest reviewRequest) throws BaseException {
         User reviewedUser = userService.get(reviewRequest.getReviewedEmployeeId());
@@ -60,25 +98,30 @@ public class ReviewController {
             Criteria criteria = (Criteria) entry.getKey();
             int value = (Integer) entry.getValue();
 
-            // Remove this criteria from user's criteria list. At the end the list should be empty, so that all criteria are evaluated.
+            // Remove this criteria from user's criteria list.
+            // At the end the list should be empty, so that all criteria are evaluated.
             if (!criteriaList.contains(criteria)) {
-                throw new BaseException(ResponseCode.CRITERIA_DOES_NOT_EXIST_IN_USER, "Criteria (" + criteria.getId() + ") does not belong to this employee.");
+                throw new BaseException(ResponseCode.CRITERIA_DOES_NOT_EXIST_IN_USER,
+                        "Criteria (" + criteria.getId() + ") does not belong to this employee.");
             }
             requestCriteriaCount++;
 
             if (value < 0 || value > 100) {
-                throw new BaseException(ResponseCode.REVIEW_EVALUATION_VALUE_INVALID, "Evaluation values must be between 0 and 100.");
+                throw new BaseException(ResponseCode.REVIEW_EVALUATION_VALUE_INVALID,
+                        "Evaluation values must be between 0 and 100.");
             }
         }
 
         if (userCriteriaCount != requestCriteriaCount) {
-            throw new BaseException(ResponseCode.REVIEW_USER_CRITERIA_LIST_NOT_SATISFIED, "You must evaluate all criteria of the employee.");
+            throw new BaseException(ResponseCode.REVIEW_USER_CRITERIA_LIST_NOT_SATISFIED,
+                    "You must evaluate all criteria of the employee.");
         }
     }
 
     private void checkUserRelationship(User first, User second) throws BaseException {
         if (first.getTeam() != second.getTeam()) {
-            throw new BaseException(ResponseCode.REVIEW_USER_IN_DIFFERENT_TEAM, "Reviewed employee and reviewer are in different teams.");
+            throw new BaseException(ResponseCode.REVIEW_USER_IN_DIFFERENT_TEAM,
+                    "Reviewed employee and reviewer are in different teams.");
         } else if (first.getId() == second.getId()) {
             throw new BaseException(ResponseCode.REVIEW_SAME_USER, "You cannot review yourself.");
         }
@@ -94,5 +137,7 @@ public class ReviewController {
         }
         return hashMap;
     }
+
+    // endregion
 
 }

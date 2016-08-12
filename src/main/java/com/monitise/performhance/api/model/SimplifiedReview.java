@@ -1,32 +1,30 @@
 package com.monitise.performhance.api.model;
 
-import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Review;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ReviewResponse {
+public class SimplifiedReview {
 
     private int id;
     private String reviewedEmployeeName;
     private String reviewerName;
-    private Map<String, Integer> evaluation;
     private String comment;
 
-    public ReviewResponse(Review review) {
+    public SimplifiedReview(Review review) {
         id = review.getId();
-        reviewedEmployeeName = review.getReviewedEmployee().getName() + " " + review.getReviewedEmployee().getSurname();
-        reviewerName = review.getReviewer().getName() + " " + review.getReviewer().getSurname();
-
-        HashMap<String, Integer> hashMap = new HashMap<>();
-        for (Map.Entry entry : review.getEvaluation().entrySet()) {
-            String criteriaName = ((Criteria)entry.getKey()).getCriteria();
-            int value = ((Integer)entry.getValue());
-            hashMap.put(criteriaName, value);
-        }
-        evaluation = hashMap;
+        reviewedEmployeeName = review.getReviewedEmployee().getName();
+        reviewerName = review.getReviewer().getName();
         comment = review.getComment();
+    }
+
+    public static List<SimplifiedReview> fromList(List<Review> reviewList) {
+        List<SimplifiedReview> list = new ArrayList<>();
+        for (Review review : reviewList) {
+            list.add(new SimplifiedReview(review));
+        }
+        return list;
     }
 
     // region Getters
@@ -41,10 +39,6 @@ public class ReviewResponse {
 
     public String getReviewerName() {
         return reviewerName;
-    }
-
-    public Map<String, Integer> getEvaluation() {
-        return evaluation;
     }
 
     public String getComment() {
@@ -65,10 +59,6 @@ public class ReviewResponse {
 
     public void setReviewerName(String reviewerName) {
         this.reviewerName = reviewerName;
-    }
-
-    public void setEvaluation(Map<String, Integer> evaluation) {
-        this.evaluation = evaluation;
     }
 
     public void setComment(String comment) {
