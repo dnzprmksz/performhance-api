@@ -2,6 +2,14 @@ package com.monitise.entity;
 
 import com.monitise.api.model.AddUserRequest;
 import com.monitise.api.model.Role;
+import jdk.nashorn.internal.codegen.types.Type;
+import jdk.nashorn.internal.ir.Expression;
+import jdk.nashorn.internal.ir.LexicalContext;
+import jdk.nashorn.internal.ir.Node;
+import jdk.nashorn.internal.ir.visitor.NodeVisitor;
+import org.apache.tomcat.jni.Status;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +18,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Entity
@@ -57,6 +69,37 @@ public class User {
         this.username = username;
         role = Role.EMPLOYEE;
     }
+
+    public static Specification<User> alwaysTrue() {
+        return (root, query, cb) -> {
+            return cb.greaterThanOrEqualTo(root.get("id"),-1);
+        };
+    }
+
+    public static Specification<User> teamIdIs(int teamId) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("team"),teamId);
+        };
+    }
+
+    public static Specification<User> titleIdIs(int titleId) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("jobTitle"),titleId);
+        };
+    }
+
+    public static Specification<User> idMoreThan(int id) {
+        return (root, query, cb) -> {
+            return cb.greaterThan(root.get("id"),id);
+        };
+    }
+
+    public static Specification<User> organizationIdIs(int organizationId) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("organization"),organizationId);
+        };
+    }
+
 
     // region Getters
 

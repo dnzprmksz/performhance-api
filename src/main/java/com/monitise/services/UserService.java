@@ -7,10 +7,13 @@ import com.monitise.entity.User;
 import com.monitise.api.model.ResponseCode;
 import com.monitise.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 public class UserService {
@@ -18,6 +21,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public static final String UNDEFINED = "C8E7279CD035B23BB9C0F1F954DFF5B3";
 
     public List<User> getAll() {
         List<User> list = (List<User>) userRepository.findAll();
@@ -59,6 +63,28 @@ public class UserService {
         return idList;
     }
 
+    @Secured("ROLE_MANAGER")
+    public List<User> searchUsers(int organizationId, String teamId, String titleId){
+
+        Specification<User> predicate = User.organizationIdIs(organizationId);
+
+        if (!teamId.equals(UNDEFINED)) {
+            System.out.println("TEAMID");
+            int intTeamId = Integer.parseInt(teamId);
+            predicate = Specifications.where(predicate).and(User.teamIdIs(intTeamId));
+        }
+
+        if (!titleId.equals(UNDEFINED)) {
+            System.out.println("TITLEID");
+            int intTitleId = Integer.parseInt(titleId);
+            predicate = Specifications.where(predicate).and(User.titleIdIs(intTitleId));
+        }
+        predicate = Specifications.where(predicate).and(User.idMoreThan(5));
+
+        List<User> userList = userRepository.findAll(predicate);
+
+        return userList;
+    }
     @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public void remove(int id) throws BaseException {
         get(id);

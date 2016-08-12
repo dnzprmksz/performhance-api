@@ -61,10 +61,20 @@ public class OrganizationService {
         return organizationFromRepo;
     }
 
-    public boolean isJobTitleDefined(Organization organization, int titleId){
+    public boolean isJobTitleDefined(Organization organization, int titleId) {
         List<JobTitle> titleList = organization.getJobTitles();
         for(JobTitle jobTitle : titleList) {
             if (jobTitle.getId() == titleId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTeamIdDefined(Organization organization, int teamId) {
+        List<Team>  teams = organization.getTeams();
+        for(Team team : teams) {
+            if (team.getId() == teamId) {
                 return true;
             }
         }

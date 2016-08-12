@@ -1,5 +1,6 @@
 package com.monitise.api;
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.monitise.api.model.AddUserRequest;
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.ResponseCode;
@@ -10,16 +11,20 @@ import com.monitise.entity.Organization;
 import com.monitise.api.model.Response;
 import com.monitise.api.model.Role;
 import com.monitise.entity.User;
+import com.monitise.repositories.UserRepository;
 import com.monitise.services.JobTitleService;
 import com.monitise.services.OrganizationService;
 import com.monitise.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoRestTemplateCustomizer;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -35,6 +40,7 @@ public class UserController {
     OrganizationService organizationService;
     @Autowired
     JobTitleService jobTitleService;
+
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.GET)
@@ -118,6 +124,34 @@ public class UserController {
         return response;
     }
 
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/users/search", method = RequestMethod.GET)
+    public Response< List<SimplifiedUser> > searchUsers(
+            @RequestParam(value = "titleId", required = false, defaultValue = UserService.UNDEFINED) String titleId,
+            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId) throws BaseException {
+
+        if (titleId.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
+            throw new BaseException(ResponseCode.UNEXPECTED,
+                    "At least one of titleId and teamId must be specified.");
+        }
+
+        User manager = securityHelper.getAuthenticatedUser();
+        Organization organization = manager.getOrganization();
+        int organizationId = organization.getId();
+        formatValidateSearchRequest(titleId, teamId);
+        semanticallyValidate(organization, titleId, teamId);
+        List<User> userList = userService.searchUsers(organizationId, teamId, titleId);
+        
+        List<SimplifiedUser> simpleList = SimplifiedUser.fromUserList(userList);
+        Response response = new Response();
+        response.setData(simpleList);
+        response.setSuccess(true);
+
+        return response;
+    }
+
+
+
     // region Helper Methods
 
     private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException{
@@ -142,6 +176,50 @@ public class UserController {
         if (currentUser.getRole().equals(Role.MANAGER)) {
             securityHelper.checkUserOrganizationAuthorization(organizationId);
         }
+    }
+
+    private void formatValidateSearchRequest(String titleId, String teamId) throws BaseException {
+        if( ( !titleId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(titleId)) ) {
+            throw new BaseException(ResponseCode.UNEXPECTED,
+                    "titleId must be positive integers");
+        }
+
+        if( ( !teamId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(teamId)) ) {
+            throw new BaseException(ResponseCode.UNEXPECTED,
+                    "teamId must be positive integers");
+        }
+
+    }
+
+    private void semanticallyValidate(Organization organization, String titleId, String teamId) throws BaseException {
+        // Check if the title is defined in the organization.
+        if (!titleId.equals(UserService.UNDEFINED)) {
+            int intTitleId = Integer.parseInt(titleId);
+            if (!organizationService.isJobTitleDefined(organization,intTitleId)) {
+               throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
+                       "Given job title id is not existent in the organization");
+            }
+        }
+
+        // Check if the team is defined in the organization.
+        if (!teamId.equals(UserService.UNDEFINED)) {
+            int intTeamId = Integer.parseInt(teamId);
+            if (!organizationService.isTeamIdDefined(organization,intTeamId)) {
+                throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST,
+                        "Given team's id is not existent in the organization");
+            }
+        }
+    }
+
+    private boolean isNonNegativeInteger(String K) {
+        int len = K.length();
+        for(int i=0 ; i<len ; ++i){
+            char cur = K.charAt(i);
+            if( !('0'<=cur && cur<='9') ){
+                return false;
+            }
+        }
+        return true;
     }
 
     // endregion
