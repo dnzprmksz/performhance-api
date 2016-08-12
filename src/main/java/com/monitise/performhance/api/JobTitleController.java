@@ -1,7 +1,7 @@
 package com.monitise.performhance.api;
 
 import com.monitise.performhance.helpers.SecurityHelper;
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.services.JobTitleService;

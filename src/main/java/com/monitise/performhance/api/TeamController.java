@@ -4,7 +4,7 @@ import com.monitise.performhance.api.model.SimplifiedTeamResponse;
 import com.monitise.performhance.api.model.TeamResponse;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.helpers.SecurityHelper;
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.services.OrganizationService;

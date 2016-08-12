@@ -1,4 +1,4 @@
-package com.monitise.performhance.api.model;
+package com.monitise.performhance;
 
 public class BaseException extends Exception {
 
@@ -10,7 +10,7 @@ public class BaseException extends Exception {
         this.message = message;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getCode() {
         return code;
@@ -19,10 +19,6 @@ public class BaseException extends Exception {
     public void setCode(int code) {
         this.code = code;
     }
-
-    // endregion
-
-    // region Setters
 
     @Override
     public String getMessage() {

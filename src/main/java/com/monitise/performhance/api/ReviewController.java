@@ -1,7 +1,7 @@
 package com.monitise.performhance.api;
 
 import com.monitise.performhance.api.model.AddReviewRequest;
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.ReviewResponse;

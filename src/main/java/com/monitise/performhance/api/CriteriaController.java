@@ -3,7 +3,7 @@ package com.monitise.performhance.api;
 import com.monitise.performhance.api.model.CriteriaRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.CriteriaUserResponse;
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
