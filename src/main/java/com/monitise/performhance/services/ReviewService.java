@@ -20,6 +20,16 @@ public class ReviewService {
         return list;
     }
 
+    public List<Review> getAllFilterByOrganizationId(int organizationId) {
+        List<Review> list = reviewRepository.findByOrganizationId(organizationId);
+        return list;
+    }
+
+    public List<Review> getAllFilterByTeamId(int teamId) {
+        List<Review> list = reviewRepository.findByOrganizationId(teamId);
+        return list;
+    }
+
     public Review get(int reviewId) throws BaseException {
         Review review = reviewRepository.findOne(reviewId);
         if (review == null) {

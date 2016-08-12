@@ -65,6 +65,12 @@ public class ResponseCode {
     public static final int REVIEW_USER_IN_DIFFERENT_TEAM = 1605;
     public static final int REVIEW_SAME_USER = 1606;
 
+    /**
+     * RELATIONSHIP RELAETED RESPONSE CODES
+     */
+    public static final int RELATIONSHIP_MANAGER_REVIEW_UNSATISFIED = 1701;
+    public static final int RELATIONSHIP_TEAM_LEADER_REVIEW_UNSATISFIED = 1702;
+
     protected ResponseCode() {
     }
 }

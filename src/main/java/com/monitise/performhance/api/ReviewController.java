@@ -1,7 +1,7 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.api.model.AddReviewRequest;
 import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.AddReviewRequest;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.ReviewResponse;
@@ -9,6 +9,8 @@ import com.monitise.performhance.api.model.SimplifiedReview;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.helpers.RelationshipHelper;
+import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.ReviewService;
 import com.monitise.performhance.services.UserService;
@@ -35,10 +37,21 @@ public class ReviewController {
     private UserService userService;
     @Autowired
     private CriteriaService criteriaService;
+    @Autowired
+    private SecurityHelper securityHelper;
+    @Autowired
+    private RelationshipHelper relationshipHelper;
 
+    @Secured({"ROLE_MANAGER", "ROLE_TEAM_LEADER"})
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<SimplifiedReview>> getAll() {
-        List<Review> list = reviewService.getAll();
+    public Response<List<SimplifiedReview>> getAll() throws BaseException {
+        List<Review> list = null;
+        User user = securityHelper.getAuthenticatedUser();
+        if (securityHelper.isAuthenticatedUserManager()) {
+            list = reviewService.getAllFilterByOrganizationId(user.getOrganization().getId());
+        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
+            list = reviewService.getAllFilterByTeamId(user.getTeam().getId());
+        }
         List<SimplifiedReview> simplifiedReviews = SimplifiedReview.fromList(list);
 
         Response<List<SimplifiedReview>> response = new Response<>();
@@ -47,17 +60,23 @@ public class ReviewController {
         return response;
     }
 
+    @Secured({"ROLE_MANAGER", "ROLE_TEAM_LEADER"})
     @RequestMapping(value = "/{reviewId}", method = RequestMethod.GET)
     public Response<ReviewResponse> get(@PathVariable int reviewId) throws BaseException {
         Review review = reviewService.get(reviewId);
+        if (securityHelper.isAuthenticatedUserManager()) {
+            relationshipHelper.checkManagerReviewRelationship(review);
+        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
+            relationshipHelper.checkTeamLeaderReviewRelationship(review);
+        }
         ReviewResponse reviewResponse = new ReviewResponse(review);
-
         Response<ReviewResponse> response = new Response<>();
         response.setData(reviewResponse);
         response.setSuccess(true);
         return response;
     }
 
+    @Secured({"ROLE_EMPLOYEE", "ROLE_TEAM_LEADER"})
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<ReviewResponse> add(@RequestBody AddReviewRequest reviewRequest) throws BaseException {
         validate(reviewRequest);
@@ -78,7 +97,10 @@ public class ReviewController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{reviewId}", method = RequestMethod.DELETE)
     public Response<Object> remove(@PathVariable int reviewId) throws BaseException {
+        Review review = reviewService.get(reviewId);
+        relationshipHelper.checkManagerReviewRelationship(review);
         reviewService.remove(reviewId);
+
         Response<Object> response = new Response<>();
         response.setSuccess(true);
         return response;
@@ -89,7 +111,8 @@ public class ReviewController {
     private void validate(AddReviewRequest reviewRequest) throws BaseException {
         User reviewedUser = userService.get(reviewRequest.getReviewedEmployeeId());
         User reviewer = userService.get(reviewRequest.getReviewerId());
-        checkUserRelationship(reviewedUser, reviewer);
+        relationshipHelper.checkEmployeeRelationship(reviewedUser, reviewer);
+
         List<Criteria> criteriaList = reviewedUser.getCriteriaList();
         int userCriteriaCount = criteriaList.size();
         int requestCriteriaCount = 0;
@@ -115,15 +138,6 @@ public class ReviewController {
         if (userCriteriaCount != requestCriteriaCount) {
             throw new BaseException(ResponseCode.REVIEW_USER_CRITERIA_LIST_NOT_SATISFIED,
                     "You must evaluate all criteria of the employee.");
-        }
-    }
-
-    private void checkUserRelationship(User first, User second) throws BaseException {
-        if (first.getTeam() != second.getTeam()) {
-            throw new BaseException(ResponseCode.REVIEW_USER_IN_DIFFERENT_TEAM,
-                    "Reviewed employee and reviewer are in different teams.");
-        } else if (first.getId() == second.getId()) {
-            throw new BaseException(ResponseCode.REVIEW_SAME_USER, "You cannot review yourself.");
         }
     }
 
