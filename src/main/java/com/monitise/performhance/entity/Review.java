@@ -25,7 +25,8 @@ public class Review {
     @ManyToOne
     private Team team;
 
-    protected Review() {}
+    protected Review() {
+    }
 
     public Review(User reviewedEmployee, User reviewer, Map<Criteria, Integer> evaluation, String comment) {
         this.reviewedEmployee = reviewedEmployee;
@@ -42,56 +43,56 @@ public class Review {
         return id;
     }
 
-    public User getReviewedEmployee() {
-        return reviewedEmployee;
-    }
-
-    public User getReviewer() {
-        return reviewer;
-    }
-
-    public Map<Criteria, Integer> getEvaluation() {
-        return evaluation;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public User getReviewedEmployee() {
+        return reviewedEmployee;
     }
 
     public void setReviewedEmployee(User reviewedEmployee) {
         this.reviewedEmployee = reviewedEmployee;
     }
 
+    public User getReviewer() {
+        return reviewer;
+    }
+
     public void setReviewer(User reviewer) {
         this.reviewer = reviewer;
     }
 
+    public Map<Criteria, Integer> getEvaluation() {
+        return evaluation;
+    }
+
+    // endregion
+
+    // region Setters
+
     public void setEvaluation(Map<Criteria, Integer> evaluation) {
         this.evaluation = evaluation;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public void setComment(String comment) {
         this.comment = comment;
     }
 
+    public Organization getOrganization() {
+        return organization;
+    }
+
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+
+    public Team getTeam() {
+        return team;
     }
 
     public void setTeam(Team team) {

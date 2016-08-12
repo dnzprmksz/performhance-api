@@ -38,16 +38,16 @@ public class CriteriaResponse {
         return id;
     }
 
-    public String getCriteria() {
-        return criteria;
+    public void setId(int id) {
+        this.id = id;
     }
 
     // endregion
 
     // region Setters
 
-    public void setId(int id) {
-        this.id = id;
+    public String getCriteria() {
+        return criteria;
     }
 
     public void setCriteria(String criteria) {

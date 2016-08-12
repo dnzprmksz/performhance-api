@@ -8,7 +8,7 @@ public class ResponseCode {
     public static final int UNEXPECTED = 1000;
 
     /**
-     *  ORGANIZATION RELATED RESPONSE CODES
+     * ORGANIZATION RELATED RESPONSE CODES
      */
     public static final int ORGANIZATION_ID_DOES_NOT_EXIST = 1101;
     public static final int ORGANIZATION_ID_INVALID = 1102;
@@ -17,7 +17,7 @@ public class ResponseCode {
     public static final int ORGANIZATION_NAME_EXISTS = 1105;
 
     /**
-     *  USER RELATED RESPONSE CODES
+     * USER RELATED RESPONSE CODES
      */
     public static final int USER_ID_DOES_NOT_EXIST = 1201;
     public static final int USER_ID_INVALID = 1202;
@@ -28,21 +28,21 @@ public class ResponseCode {
     public static final int USER_BELONGS_TO_ANOTHER_ORGANIZATION = 1207;
 
     /**
-     *  TEAM RELATED RESPONSE CODES
+     * TEAM RELATED RESPONSE CODES
      */
     public static final int TEAM_ID_DOES_NOT_EXIST = 1301;
     public static final int TEAM_ID_INVALID = 1302;
     public static final int TEAM_BELONGS_TO_ANOTHER_ORGANIZATION = 1303;
 
     /**
-     *  JOB TITLE RELATED RESPONSE CODES
+     * JOB TITLE RELATED RESPONSE CODES
      */
     public static final int JOB_TITLE_ID_DOES_NOT_EXIST = 1401;
     public static final int JOB_TITLE_ID_INVALID = 1402;
     public static final int JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION = 1403;
 
     /**
-     *  CRITERIA RELATED RESPONSE CODES
+     * CRITERIA RELATED RESPONSE CODES
      */
     public static final int CRITERIA_ID_DOES_NOT_EXIST = 1501;
     public static final int CRITERIA_ID_INVALID = 1502;
@@ -56,7 +56,7 @@ public class ResponseCode {
     public static final int CRITERIA_BELONGS_TO_ANOTHER_ORGANIZATION = 1510;
 
     /**
-     *  REVIEW RELATED RESPONSE CODES
+     * REVIEW RELATED RESPONSE CODES
      */
     public static final int REVIEW_ID_DOES_NOT_EXIST = 1601;
     public static final int REVIEW_ID_INVALID = 1602;
@@ -65,5 +65,6 @@ public class ResponseCode {
     public static final int REVIEW_USER_IN_DIFFERENT_TEAM = 1605;
     public static final int REVIEW_SAME_USER = 1606;
 
-    protected ResponseCode() {}
+    protected ResponseCode() {
+    }
 }

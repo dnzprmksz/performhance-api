@@ -1,11 +1,11 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.repositories.JobTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;

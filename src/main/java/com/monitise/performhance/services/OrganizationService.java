@@ -1,9 +1,9 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.OrganizationRepository;
@@ -63,7 +63,7 @@ public class OrganizationService {
 
     public boolean isJobTitleDefined(Organization organization, int titleId) {
         List<JobTitle> titleList = organization.getJobTitles();
-        for(JobTitle jobTitle : titleList) {
+        for (JobTitle jobTitle : titleList) {
             if (jobTitle.getId() == titleId) {
                 return true;
             }
@@ -72,8 +72,8 @@ public class OrganizationService {
     }
 
     public boolean isTeamIdDefined(Organization organization, int teamId) {
-        List<Team>  teams = organization.getTeams();
-        for(Team team : teams) {
+        List<Team> teams = organization.getTeams();
+        for (Team team : teams) {
             if (team.getId() == teamId) {
                 return true;
             }
@@ -88,7 +88,7 @@ public class OrganizationService {
         // Add the employee & increment numberOfEmployees field.
         userList.add(employee);
         organization.setUsers(userList);
-        organization.setNumberOfEmployees(organization.getNumberOfEmployees()+1) ;
+        organization.setNumberOfEmployees(organization.getNumberOfEmployees() + 1);
         Organization updatedOrganization = organizationRepository.save(organization);
         if (updatedOrganization == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add employee");
@@ -121,7 +121,6 @@ public class OrganizationService {
         }
         return updatedOrganization;
     }
-
 
 
 }

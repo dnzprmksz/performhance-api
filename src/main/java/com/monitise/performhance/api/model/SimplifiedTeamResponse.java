@@ -33,24 +33,24 @@ public class SimplifiedTeamResponse {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getLeaderName() {
-        return leaderName;
+    public String getName() {
+        return name;
     }
 
     // endregion
 
     // region Setters
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLeaderName() {
+        return leaderName;
     }
 
     public void setLeaderName(String leaderName) {

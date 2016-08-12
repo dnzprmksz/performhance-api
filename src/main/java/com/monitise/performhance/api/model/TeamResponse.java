@@ -35,7 +35,7 @@ public class TeamResponse {
             return null;
         }
         List<TeamResponse> responses = new ArrayList<>();
-        for(Team team : teams){
+        for (Team team : teams) {
             TeamResponse current = fromTeam(team);
             responses.add(current);
         }
@@ -48,40 +48,40 @@ public class TeamResponse {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public List<TeamUserResponse> getMembers() {
-        return members;
-    }
-
-    public int getOrganizationId() {
-        return organizationId;
-    }
-
-    public TeamUserResponse getLeader() {
-        return leader;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public List<TeamUserResponse> getMembers() {
+        return members;
+    }
+
+    // endregion
+
+    // region Setters
+
     public void setMembers(List<TeamUserResponse> members) {
         this.members = members;
     }
 
+    public int getOrganizationId() {
+        return organizationId;
+    }
+
     public void setOrganizationId(int organizationId) {
-        this.organizationId= organizationId;
+        this.organizationId = organizationId;
+    }
+
+    public TeamUserResponse getLeader() {
+        return leader;
     }
 
     public void setLeader(TeamUserResponse leader) {

@@ -4,7 +4,8 @@ public class ExtendedResponse<T> extends Response<T> {
 
     private String message;
 
-    public ExtendedResponse() {}
+    public ExtendedResponse() {
+    }
 
     public ExtendedResponse(String message) {
         this.message = message;

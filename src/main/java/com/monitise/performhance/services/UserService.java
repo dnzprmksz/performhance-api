@@ -1,9 +1,9 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.User;
-import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,10 +16,9 @@ import java.util.List;
 @Service
 public class UserService {
 
+    public static final String UNDEFINED = "C8E7279CD035B23BB9C0F1F954DFF5B3";
     @Autowired
     private UserRepository userRepository;
-
-    public static final String UNDEFINED = "C8E7279CD035B23BB9C0F1F954DFF5B3";
 
     public List<User> getAll() {
         List<User> list = (List<User>) userRepository.findAll();
@@ -62,7 +61,7 @@ public class UserService {
     }
 
     @Secured("ROLE_MANAGER")
-    public List<User> searchUsers(int organizationId, String teamId, String titleId){
+    public List<User> searchUsers(int organizationId, String teamId, String titleId) {
 
         Specification<User> predicate = User.organizationIdIs(organizationId);
 
@@ -83,6 +82,7 @@ public class UserService {
 
         return userList;
     }
+
     @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public void remove(int id) throws BaseException {
         get(id);

@@ -72,9 +72,9 @@ public class TeamController {
     public Response<TeamResponse> addTeam(@PathVariable int organizationId, @RequestBody String teamName) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         Organization organization = organizationService.get(organizationId);
-        Team team = new Team(teamName,organization);
+        Team team = new Team(teamName, organization);
         Team addedTeam = teamService.add(team);
-        organizationService.addTeam(organization,addedTeam);
+        organizationService.addTeam(organization, addedTeam);
 
         TeamResponse responseTeam = TeamResponse.fromTeam(addedTeam);
 

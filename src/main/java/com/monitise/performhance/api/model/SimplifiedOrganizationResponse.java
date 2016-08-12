@@ -35,24 +35,24 @@ public class SimplifiedOrganizationResponse {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getNumberOfEmployees() {
-        return numberOfEmployees;
+    public String getName() {
+        return name;
     }
 
     // endregion
 
     // region Setters
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getNumberOfEmployees() {
+        return numberOfEmployees;
     }
 
     public void setNumberOfEmployees(int numberOfEmployees) {

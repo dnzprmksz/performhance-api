@@ -15,7 +15,8 @@ public class Criteria {
     @ManyToOne
     private Organization organization;
 
-    protected Criteria() {}
+    protected Criteria() {
+    }
 
     public Criteria(String criteria, Organization organization) {
         this.criteria = criteria;
@@ -28,24 +29,24 @@ public class Criteria {
         return id;
     }
 
-    public String getCriteria() {
-        return criteria;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Organization getOrganization() {
-        return organization;
+    public String getCriteria() {
+        return criteria;
     }
 
     // endregion
 
     // region Setters
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setCriteria(String criteria) {
         this.criteria = criteria;
+    }
+
+    public Organization getOrganization() {
+        return organization;
     }
 
     public void setOrganization(Organization organization) {

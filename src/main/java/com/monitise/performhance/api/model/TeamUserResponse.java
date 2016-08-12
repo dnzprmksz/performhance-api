@@ -35,32 +35,32 @@ public class TeamUserResponse {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    // endregion
+
+    // region Setters
+
+    public String getSurname() {
+        return surname;
+    }
+
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
     }
 
     public void setJobTitle(String jobTitle) {

@@ -33,32 +33,32 @@ public class SimplifiedReview {
         return id;
     }
 
-    public String getReviewedEmployeeName() {
-        return reviewedEmployeeName;
-    }
-
-    public String getReviewerName() {
-        return reviewerName;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getReviewedEmployeeName() {
+        return reviewedEmployeeName;
     }
 
     public void setReviewedEmployeeName(String reviewedEmployeeName) {
         this.reviewedEmployeeName = reviewedEmployeeName;
     }
 
+    // endregion
+
+    // region Setters
+
+    public String getReviewerName() {
+        return reviewerName;
+    }
+
     public void setReviewerName(String reviewerName) {
         this.reviewerName = reviewerName;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public void setComment(String comment) {

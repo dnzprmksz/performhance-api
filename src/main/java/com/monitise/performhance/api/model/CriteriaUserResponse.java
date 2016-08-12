@@ -27,40 +27,40 @@ public class CriteriaUserResponse {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public JobTitle getJobTitle() {
-        return jobTitle;
-    }
-
-    public List<CriteriaResponse> getCriteriaList() {
-        return criteriaList;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getSurname() {
+        return surname;
+    }
+
+    // endregion
+
+    // region Setters
+
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+    public JobTitle getJobTitle() {
+        return jobTitle;
+    }
+
     public void setJobTitle(JobTitle jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public List<CriteriaResponse> getCriteriaList() {
+        return criteriaList;
     }
 
     public void setCriteriaList(List<CriteriaResponse> criteriaList) {

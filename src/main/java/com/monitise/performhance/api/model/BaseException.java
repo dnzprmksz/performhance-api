@@ -16,17 +16,17 @@ public class BaseException extends Exception {
         return code;
     }
 
-    @Override
-    public String getMessage() {
-        return message;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     // endregion
 
     // region Setters
 
-    public void setCode(int code) {
-        this.code = code;
+    @Override
+    public String getMessage() {
+        return message;
     }
 
     public void setMessage(String message) {

@@ -66,7 +66,7 @@ public class OrganizationController {
         addedOrganization.setManager(manager);
         // TODO: Add set employee method.
         // Update organization with manager ID.
-        addedOrganization= organizationService.update(addedOrganization);
+        addedOrganization = organizationService.update(addedOrganization);
 
         OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(addedOrganization);
 

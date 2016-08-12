@@ -50,48 +50,48 @@ public class SimplifiedUser {
         return id;
     }
 
-    public int getOrganizationId() {
-        return organizationId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getOrganizationId() {
+        return organizationId;
     }
 
     public void setOrganizationId(int organizationId) {
         this.organizationId = organizationId;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    // endregion
+
+    // region Setters
+
+    public String getSurname() {
+        return surname;
     }
 
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
     public void setJobTitle(JobTitle jobTitle) {
         this.jobTitle = jobTitle.getTitle();
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public void setRole(Role role) {
