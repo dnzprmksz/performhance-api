@@ -1,0 +1,12 @@
+package com.monitise.performhance.repositories;
+
+import com.monitise.performhance.entity.Organization;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface OrganizationRepository extends CrudRepository<Organization, Integer> {
+
+    Organization findByName(String name);
+
+}
