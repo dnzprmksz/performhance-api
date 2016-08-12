@@ -4,3 +4,5 @@ build/
 classes/
 out/
 logs/
+
+*.iml
