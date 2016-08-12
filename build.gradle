@@ -13,6 +13,9 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'application'
+
+mainClassName = "com.monitise.Application"
 
 repositories {
     mavenCentral()

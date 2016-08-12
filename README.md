@@ -7,11 +7,11 @@ Different user roles such as Employee, Team Leader, Manager and Admin.
 
 Employees can review and comment on their colleagues.
 
-Managers can alter review criteria for a person, team or job title.
+Managers can alter review criteria for a person, team, job title or a given list of users.
 
 Managers can assign employees to a team and select one of them as the team leader, who can read the reviews in that team.
 
-CRUD operations for Organizations, Employees, Teams, JobTitles,
+CRUD operations for Organizations, Employees, Teams, JobTitles, Criteria, Reviews.
 
 Logging incoming requests.
 
@@ -19,10 +19,18 @@ Logging incoming requests.
 # Installation
 Install JDK and Gradle.
 
-Let Gradle fetch the build dependencies.
+You should run following command to compile the application with Gradle. It will also fetch the missing dependencies.
+
+````
+gradle build
+````
 
 Start a local MySQL server and create a schema with name Performhance, or edit application.properties file to connect your own database.
 
 JPA Hibernate creates the tables in database, you do not need to design it.
 
-Start the application and it will be ready for requests.
+Start the application with following command and it will start to listen requests on port 8080.
+
+````
+gradle run
+````

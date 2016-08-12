@@ -1,6 +1,5 @@
 package com.monitise.api.model;
 
-import com.monitise.entity.Organization;
 import com.monitise.entity.Team;
 
 import java.util.ArrayList;
@@ -9,17 +8,19 @@ import java.util.List;
 public class TeamResponse {
 
     private int id;
-    private String name;
-    private List<SimplifiedUser> members;
     private int organizationId;
-    private SimplifiedUser leader;
+    private String name;
+    private TeamUserResponse leader;
+    private List<TeamUserResponse> members;
 
     public TeamResponse(Team team) {
         id = team.getId();
         name = team.getName();
-        members = SimplifiedUser.fromUserList(team.getMembers());
+        members = TeamUserResponse.fromUserList(team.getMembers());
         organizationId = team.getOrganization().getId();
-        leader = SimplifiedUser.fromUser(team.getLeader());
+        if (team.getLeader() != null) {
+            leader = new TeamUserResponse(team.getLeader());
+        }
     }
 
     public static TeamResponse fromTeam(Team team) {
@@ -51,7 +52,7 @@ public class TeamResponse {
         return name;
     }
 
-    public List<SimplifiedUser> getMembers() {
+    public List<TeamUserResponse> getMembers() {
         return members;
     }
 
@@ -59,7 +60,7 @@ public class TeamResponse {
         return organizationId;
     }
 
-    public SimplifiedUser getLeader() {
+    public TeamUserResponse getLeader() {
         return leader;
     }
 
@@ -75,7 +76,7 @@ public class TeamResponse {
         this.name = name;
     }
 
-    public void setMembers(List<SimplifiedUser> members) {
+    public void setMembers(List<TeamUserResponse> members) {
         this.members = members;
     }
 
@@ -83,7 +84,7 @@ public class TeamResponse {
         this.organizationId= organizationId;
     }
 
-    public void setLeader(SimplifiedUser leader) {
+    public void setLeader(TeamUserResponse leader) {
         this.leader = leader;
     }
 

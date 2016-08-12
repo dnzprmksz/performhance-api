@@ -45,7 +45,7 @@ public class User {
     private String username;
     private String password;
 
-    public User() {}
+    protected User() {}
 
     public User(String name, String surname, Organization organization) {
         this.name = name;
@@ -139,6 +139,10 @@ public class User {
         return criteriaList;
     }
 
+    public Team getTeam() {
+        return team;
+    }
+
     // endregion
 
     // region Setters
@@ -179,6 +183,9 @@ public class User {
         this.criteriaList = criteriaList;
     }
 
+    public void setTeam(Team team) {
+        this.team = team;
+    }
     // endregion
 
 }

@@ -2,6 +2,7 @@ package com.monitise.api;
 
 import com.monitise.api.model.BaseException;
 import com.monitise.api.model.OrganizationResponse;
+import com.monitise.api.model.SimplifiedOrganizationResponse;
 import com.monitise.entity.Organization;
 import com.monitise.api.model.Response;
 import com.monitise.api.model.ResponseCode;
@@ -31,10 +32,10 @@ public class OrganizationController {
 
     // TODO: Only available to admin
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<OrganizationResponse>> getAll() {
+    public Response<List<SimplifiedOrganizationResponse>> getAll() {
         List<Organization> entityList = organizationService.getAll();
-        List<OrganizationResponse> responseList = OrganizationResponse.fromOrganizationList(entityList);
-        Response<List<OrganizationResponse>> response = new Response<>();
+        List<SimplifiedOrganizationResponse> responseList = SimplifiedOrganizationResponse.fromOrganizationList(entityList);
+        Response<List<SimplifiedOrganizationResponse>> response = new Response<>();
         response.setSuccess(true);
         response.setData(responseList);
         return response;

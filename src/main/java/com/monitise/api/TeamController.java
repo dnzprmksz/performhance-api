@@ -1,5 +1,6 @@
 package com.monitise.api;
 
+import com.monitise.api.model.SimplifiedTeamResponse;
 import com.monitise.api.model.TeamResponse;
 import com.monitise.entity.Organization;
 import com.monitise.helpers.SecurityHelper;
@@ -30,11 +31,11 @@ public class TeamController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/teams/", method = RequestMethod.GET)
-    public Response<List<TeamResponse>> getAll() {
+    public Response<List<SimplifiedTeamResponse>> getAll() {
         List<Team> list = teamService.getAll();
-        List<TeamResponse> responseList = TeamResponse.fromTeamList(list);
+        List<SimplifiedTeamResponse> responseList = SimplifiedTeamResponse.fromTeamList(list);
 
-        Response<List<TeamResponse>> response = new Response();
+        Response<List<SimplifiedTeamResponse>> response = new Response<>();
         response.setData(responseList);
         response.setSuccess(true);
         return response;
@@ -42,12 +43,12 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/teams/", method = RequestMethod.GET)
-    public Response<List<TeamResponse>> getTeamListByOrganizationId(@PathVariable int organizationId) throws BaseException {
+    public Response<List<SimplifiedTeamResponse>> getTeamListByOrganizationId(@PathVariable int organizationId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
-        List<TeamResponse> responseList = TeamResponse.fromTeamList(list);
+        List<SimplifiedTeamResponse> responseList = SimplifiedTeamResponse.fromTeamList(list);
 
-        Response<List<TeamResponse>> response = new Response<>();
+        Response<List<SimplifiedTeamResponse>> response = new Response<>();
         response.setData(responseList);
         response.setSuccess(true);
         return response;

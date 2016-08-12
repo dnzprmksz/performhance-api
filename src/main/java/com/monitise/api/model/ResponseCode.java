@@ -55,5 +55,15 @@ public class ResponseCode {
     public static final int CRITERIA_EXISTS_IN_SOME_USERS = 1509;
     public static final int CRITERIA_BELONGS_TO_ANOTHER_ORGANIZATION = 1510;
 
+    /**
+     *  REVIEW RELATED RESPONSE CODES
+     */
+    public static final int REVIEW_ID_DOES_NOT_EXIST = 1601;
+    public static final int REVIEW_ID_INVALID = 1602;
+    public static final int REVIEW_EVALUATION_VALUE_INVALID = 1603;
+    public static final int REVIEW_USER_CRITERIA_LIST_NOT_SATISFIED = 1604;
+    public static final int REVIEW_USER_IN_DIFFERENT_TEAM = 1605;
+    public static final int REVIEW_SAME_USER = 1606;
+
     protected ResponseCode() {}
 }
