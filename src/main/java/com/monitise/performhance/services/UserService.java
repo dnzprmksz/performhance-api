@@ -128,8 +128,9 @@ public class UserService {
 
     private void checkUserNameExistence(String userName) throws BaseException {
         User user = userRepository.findByUsername(userName);
-        if (user != null)
+        if (user != null) {
             throw new BaseException(ResponseCode.USER_USERNAME_ALREADY_TAKEN, "That username is taken.");
+        }
     }
 
     // Throws exception if the criteria DOES NOT EXIST.

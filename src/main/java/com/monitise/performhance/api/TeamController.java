@@ -1,12 +1,12 @@
 package com.monitise.performhance.api;
 
+import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.SimplifiedTeamResponse;
 import com.monitise.performhance.api.model.TeamResponse;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.helpers.SecurityHelper;
-import com.monitise.performhance.BaseException;
-import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.entity.Team;
+import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,8 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/teams/", method = RequestMethod.GET)
-    public Response<List<SimplifiedTeamResponse>> getTeamListByOrganizationId(@PathVariable int organizationId) throws BaseException {
+    public Response<List<SimplifiedTeamResponse>> getTeamListByOrganizationId(@PathVariable int organizationId)
+            throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
         List<SimplifiedTeamResponse> responseList = SimplifiedTeamResponse.fromTeamList(list);
@@ -56,7 +57,8 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/teams/{teamId}", method = RequestMethod.GET)
-    public Response<TeamResponse> getTeamByOrganizationId(@PathVariable int organizationId, @PathVariable int teamId) throws BaseException {
+    public Response<TeamResponse> getTeamByOrganizationId(@PathVariable int organizationId,
+                                                          @PathVariable int teamId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         Team team = teamService.get(teamId);
         TeamResponse responseTeam = TeamResponse.fromTeam(team);
@@ -69,7 +71,8 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/teams/", method = RequestMethod.POST)
-    public Response<TeamResponse> addTeam(@PathVariable int organizationId, @RequestBody String teamName) throws BaseException {
+    public Response<TeamResponse> addTeam(@PathVariable int organizationId, @RequestBody String teamName)
+            throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         Organization organization = organizationService.get(organizationId);
         Team team = new Team(teamName, organization);

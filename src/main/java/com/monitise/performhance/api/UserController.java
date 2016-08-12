@@ -1,16 +1,16 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.api.model.AddUserRequest;
 import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.AddUserRequest;
+import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.TeamUserResponse;
-import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.api.model.Response;
-import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.UserService;
@@ -192,10 +192,10 @@ public class UserController {
         }
     }
 
-    private boolean isNonNegativeInteger(String K) {
-        int len = K.length();
+    private boolean isNonNegativeInteger(String str) {
+        int len = str.length();
         for (int i = 0; i < len; ++i) {
-            char cur = K.charAt(i);
+            char cur = str.charAt(i);
             if (!('0' <= cur && cur <= '9')) {
                 return false;
             }

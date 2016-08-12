@@ -4,6 +4,7 @@ import com.monitise.performhance.api.model.AddUserRequest;
 import com.monitise.performhance.api.model.Role;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import java.util.List;
 
 @Entity
 public class User {

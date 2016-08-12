@@ -10,9 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 
 import java.util.List;
 
@@ -21,12 +21,12 @@ import java.util.List;
 @WebAppConfiguration
 public class OrganizationServiceTest {
 
+    private static boolean INIT = false;
     @Autowired
     private OrganizationService organizationService;
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    private static boolean INIT = false;
     @Before
     public void setup() throws BaseException {
         organizationService.add(new Organization("Google"));
@@ -75,7 +75,7 @@ public class OrganizationServiceTest {
     }
 
     @Test(expected = BaseException.class)
-    public void getByUsername_nonExistingName() throws BaseException{
+    public void getByUsername_nonExistingName() throws BaseException {
         Organization organization = organizationService.getByName("AksarayBilgisayar");
     }
 
@@ -100,23 +100,23 @@ public class OrganizationServiceTest {
     public void update_existingOrganization() throws BaseException {
         final String newName = "Donitise";
         final int newNumberOfEmployees = 17;
-        final int ID = 2;
+        final int Id = 2;
 
-        Organization monitise = organizationService.get(ID);
+        Organization monitise = organizationService.get(Id);
         monitise.setNumberOfEmployees(newNumberOfEmployees);
         monitise.setName(newName);
         organizationService.update(monitise);
 
-        Organization updated = organizationService.get(ID);
+        Organization updated = organizationService.get(Id);
         Assert.assertNotNull(updated);
-        Assert.assertEquals(ID, updated.getId());
+        Assert.assertEquals(Id, updated.getId());
         Assert.assertEquals(newNumberOfEmployees, updated.getNumberOfEmployees());
         Assert.assertEquals(newName, updated.getName());
 
     }
 
     @Test(expected = BaseException.class)
-    public void update_non_existingOrganization() throws BaseException{
+    public void update_non_existingOrganization() throws BaseException {
         Organization nonExistent = new Organization("Oh non non non");
         nonExistent.setId(-7);
         organizationService.update(nonExistent);

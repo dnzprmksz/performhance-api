@@ -26,7 +26,8 @@ public class OrganizationService {
     public Organization get(int id) throws BaseException {
         Organization organization = organizationRepository.findOne(id);
         if (organization == null) {
-            throw new BaseException(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST, "An organization with given ID does not exist.");
+            throw new BaseException(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST,
+                    "An organization with given ID does not exist.");
         }
         return organization;
     }
@@ -34,7 +35,8 @@ public class OrganizationService {
     public Organization getByName(String name) throws BaseException {
         Organization organization = organizationRepository.findByName(name);
         if (organization == null) {
-            throw new BaseException(ResponseCode.ORGANIZATION_NAME_DOES_NOT_EXIST, "An organization with given name does not exist.");
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_DOES_NOT_EXIST,
+                    "An organization with given name does not exist.");
         }
         return organization;
     }
@@ -109,9 +111,6 @@ public class OrganizationService {
     // TODO: TEST THIS METHOD
     public Organization addTeam(Organization organization, Team team) throws BaseException {
         List<Team> teamList = organization.getTeams();
-
-        // TODO Sil
-        if (teamList == null) System.out.println("addTeam--> takim listesi null dondu");
 
         teamList.add(team);
         organization.setTeams(teamList);

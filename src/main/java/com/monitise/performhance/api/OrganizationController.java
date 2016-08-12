@@ -2,14 +2,14 @@ package com.monitise.performhance.api;
 
 import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.OrganizationResponse;
-import com.monitise.performhance.api.model.SimplifiedOrganizationResponse;
-import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
+import com.monitise.performhance.api.model.SimplifiedOrganizationResponse;
+import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
-import com.monitise.performhance.services.UserService;
 import com.monitise.performhance.services.OrganizationService;
+import com.monitise.performhance.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,12 +29,12 @@ public class OrganizationController {
     @Autowired
     private UserService userService;
 
-
     // TODO: Only available to admin
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<SimplifiedOrganizationResponse>> getAll() {
         List<Organization> entityList = organizationService.getAll();
-        List<SimplifiedOrganizationResponse> responseList = SimplifiedOrganizationResponse.fromOrganizationList(entityList);
+        List<SimplifiedOrganizationResponse> responseList;
+        responseList = SimplifiedOrganizationResponse.fromOrganizationList(entityList);
         Response<List<SimplifiedOrganizationResponse>> response = new Response<>();
         response.setSuccess(true);
         response.setData(responseList);
@@ -83,7 +83,8 @@ public class OrganizationController {
         if (name == null || name.trim().equals("")) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty organization name is not allowed.");
         } else if (doesNameExists(name)) {
-            throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS, "Given name is used by another organization.");
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS,
+                    "Given name is used by another organization.");
         }
     }
 

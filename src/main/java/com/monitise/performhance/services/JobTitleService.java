@@ -50,7 +50,8 @@ public class JobTitleService {
         JobTitle jobTitle = jobTitleRepository.findOne(id);
 
         if (jobTitle == null) {
-            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST, "An job title with given ID does not exist.");
+            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
+                    "An job title with given ID does not exist.");
         }
 
         return jobTitle;

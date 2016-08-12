@@ -1,9 +1,9 @@
 package com.monitise.performhance.api;
 
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.CriteriaRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.CriteriaUserResponse;
-import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
@@ -57,7 +57,41 @@ public class CriteriaController {
     @RequestMapping(value = "/criteria/{criteriaId}", method = RequestMethod.GET)
     public Response<CriteriaResponse> get(@PathVariable int criteriaId) throws BaseException {
         Criteria criteriaFromService = criteriaService.get(criteriaId);
-        CriteriaResponse criteriaResponse = new CriteriaResponse(criteriaFromService.getId(), criteriaFromService.getCriteria());
+        CriteriaResponse criteriaResponse = new CriteriaResponse(criteriaFromService.getId(),
+                criteriaFromService.getCriteria());
+
+        Response<CriteriaResponse> response = new Response<>();
+        response.setData(criteriaResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/organizations/{organizationId}/criteria/{criteriaId}", method = RequestMethod.GET)
+    public Response<CriteriaResponse> get(@PathVariable int organizationId, @PathVariable int criteriaId)
+            throws BaseException {
+        securityHelper.checkUserOrganizationAuthorization(organizationId);
+        checkOrganizationCriteriaRelationship(organizationId, criteriaId);
+
+        Criteria criteriaFromService = criteriaService.get(criteriaId);
+        CriteriaResponse criteriaResponse = new CriteriaResponse(criteriaFromService.getId(),
+                criteriaFromService.getCriteria());
+
+        Response<CriteriaResponse> response = new Response<>();
+        response.setData(criteriaResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/organizations/{organizationId}/criteria/", method = RequestMethod.POST)
+    public Response<CriteriaResponse> add(@PathVariable int organizationId,
+                                          @RequestBody CriteriaRequest criteriaRequest) throws BaseException {
+        securityHelper.checkUserOrganizationAuthorization(organizationId);
+        Criteria criteria = new Criteria(criteriaRequest.getCriteria(), organizationService.get(organizationId));
+        Criteria criteriaFromService = criteriaService.add(criteria);
+        CriteriaResponse criteriaResponse = new CriteriaResponse(criteriaFromService.getId(),
+                criteriaFromService.getCriteria());
 
         Response<CriteriaResponse> response = new Response<>();
         response.setData(criteriaResponse);
@@ -67,7 +101,8 @@ public class CriteriaController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/criteria/", method = RequestMethod.GET)
-    public Response<List<CriteriaResponse>> getAllFilterByOrganizationId(@PathVariable int organizationId) throws BaseException {
+    public Response<List<CriteriaResponse>> getAllFilterByOrganizationId(@PathVariable int organizationId)
+            throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         List<Criteria> list = criteriaService.getAllFilterByOrganizationId(organizationId);
         List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(list);
@@ -79,37 +114,10 @@ public class CriteriaController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organizations/{organizationId}/criteria/", method = RequestMethod.POST)
-    public Response<CriteriaResponse> add(@PathVariable int organizationId, @RequestBody CriteriaRequest criteriaRequest) throws BaseException {
-        securityHelper.checkUserOrganizationAuthorization(organizationId);
-        Criteria criteria = new Criteria(criteriaRequest.getCriteria(), organizationService.get(organizationId));
-        Criteria criteriaFromService = criteriaService.add(criteria);
-        CriteriaResponse criteriaResponse = new CriteriaResponse(criteriaFromService.getId(), criteriaFromService.getCriteria());
-
-        Response<CriteriaResponse> response = new Response<>();
-        response.setData(criteriaResponse);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organizations/{organizationId}/criteria/{criteriaId}", method = RequestMethod.GET)
-    public Response<CriteriaResponse> get(@PathVariable int organizationId, @PathVariable int criteriaId) throws BaseException {
-        securityHelper.checkUserOrganizationAuthorization(organizationId);
-        checkOrganizationCriteriaRelationship(organizationId, criteriaId);
-
-        Criteria criteriaFromService = criteriaService.get(criteriaId);
-        CriteriaResponse criteriaResponse = new CriteriaResponse(criteriaFromService.getId(), criteriaFromService.getCriteria());
-
-        Response<CriteriaResponse> response = new Response<>();
-        response.setData(criteriaResponse);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/criteria/{criteriaId}", method = RequestMethod.POST)
-    public Response<Object> assignCriteriaToGroup(@PathVariable int organizationId, @PathVariable int criteriaId, @RequestBody List<Integer> userIdList) throws BaseException {
+    public Response<Object> assignCriteriaToGroup(@PathVariable int organizationId,
+                                                  @PathVariable int criteriaId,
+                                                  @RequestBody List<Integer> userIdList) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationCriteriaRelationship(organizationId, criteriaId);
         checkOrganizationUserListRelationship(organizationId, userIdList);
@@ -120,7 +128,7 @@ public class CriteriaController {
         ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setSuccess(true);
         if (!existingUserList.isEmpty()) {
-            String message = "Completed successfully, however, the criteria was already assigned for the following users:";
+            String message = "Completed successfully, however, the criteria was already assigned for following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
@@ -131,7 +139,9 @@ public class CriteriaController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/criteria/{criteriaId}", method = RequestMethod.PUT)
-    public Response<CriteriaResponse> update(@PathVariable int organizationId, @PathVariable int criteriaId, @RequestBody CriteriaRequest criteriaRequest) throws BaseException {
+    public Response<CriteriaResponse> update(@PathVariable int organizationId,
+                                             @PathVariable int criteriaId,
+                                             @RequestBody CriteriaRequest criteriaRequest) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationCriteriaRelationship(organizationId, criteriaId);
 
@@ -147,7 +157,8 @@ public class CriteriaController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/criteria/{criteriaId}", method = RequestMethod.DELETE)
-    public Response<Object> remove(@PathVariable int organizationId, @PathVariable int criteriaId) throws BaseException {
+    public Response<Object> remove(@PathVariable int organizationId, @PathVariable int criteriaId)
+            throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationCriteriaRelationship(organizationId, criteriaId);
         criteriaService.remove(criteriaId);
@@ -159,7 +170,8 @@ public class CriteriaController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/users/{userId}/criteria/", method = RequestMethod.GET)
-    public Response<List<CriteriaResponse>> getUserCriteriaList(@PathVariable int organizationId, @PathVariable int userId) throws BaseException {
+    public Response<List<CriteriaResponse>> getUserCriteriaList(@PathVariable int organizationId,
+                                                                @PathVariable int userId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationUserRelationship(organizationId, userId);
 
@@ -174,8 +186,11 @@ public class CriteriaController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organizations/{organizationId}/users/{userId}/criteria/{criteriaId}", method = RequestMethod.POST)
-    public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int organizationId, @PathVariable int userId, @PathVariable int criteriaId) throws BaseException {
+    @RequestMapping(value = "/organizations/{organizationId}/users/{userId}/criteria/{criteriaId}",
+            method = RequestMethod.POST)
+    public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int organizationId,
+                                                               @PathVariable int userId,
+                                                               @PathVariable int criteriaId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationUserRelationship(organizationId, userId);
         checkOrganizationCriteriaRelationship(organizationId, criteriaId);
@@ -191,14 +206,17 @@ public class CriteriaController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organizations/{organizationId}/users/{userId}/criteria/{criteriaId}", method = RequestMethod.DELETE)
-    public Response<Object> removeCriteriaFromUser(@PathVariable int organizationId, @PathVariable int userId, @PathVariable int criteriaId) throws BaseException {
+    @RequestMapping(value = "/organizations/{organizationId}/users/{userId}/criteria/{criteriaId}",
+            method = RequestMethod.DELETE)
+    public Response<Object> removeCriteriaFromUser(@PathVariable int organizationId,
+                                                   @PathVariable int userId,
+                                                   @PathVariable int criteriaId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationUserRelationship(organizationId, userId);
         checkOrganizationCriteriaRelationship(organizationId, criteriaId);
 
         Criteria criteria = criteriaService.get(criteriaId);
-        criteriaService.removeCriteriaFromUserByID(criteria, userId);
+        criteriaService.removeCriteriaFromUserById(criteria, userId);
 
         Response<Object> response = new Response<>();
         response.setSuccess(true);
@@ -206,8 +224,11 @@ public class CriteriaController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organizations/{organizationId}/teams/{teamId}/criteria/{criteriaId}", method = RequestMethod.POST)
-    public Response<Object> assignCriteriaToTeamUsers(@PathVariable int organizationId, @PathVariable int teamId, @PathVariable int criteriaId) throws BaseException {
+    @RequestMapping(value = "/organizations/{organizationId}/teams/{teamId}/criteria/{criteriaId}",
+            method = RequestMethod.POST)
+    public Response<Object> assignCriteriaToTeamUsers(@PathVariable int organizationId,
+                                                      @PathVariable int teamId,
+                                                      @PathVariable int criteriaId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationTeamRelationship(organizationId, teamId);
         checkOrganizationCriteriaRelationship(organizationId, criteriaId);
@@ -220,7 +241,7 @@ public class CriteriaController {
         ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setSuccess(true);
         if (!existingUserList.isEmpty()) {
-            String message = "Completed successfully, however, the criteria was already assigned for the following users:";
+            String message = "Completed successfully, however, the criteria was already assigned for following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
@@ -230,8 +251,11 @@ public class CriteriaController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/organizations/{organizationId}/jobTitles/{jobTitleId}/criteria/{criteriaId}", method = RequestMethod.POST)
-    public Response<Object> assignCriteriaToJobTitleUsers(@PathVariable int organizationId, @PathVariable int jobTitleId, @PathVariable int criteriaId) throws BaseException {
+    @RequestMapping(value = "/organizations/{organizationId}/jobTitles/{jobTitleId}/criteria/{criteriaId}",
+            method = RequestMethod.POST)
+    public Response<Object> assignCriteriaToJobTitleUsers(@PathVariable int organizationId,
+                                                          @PathVariable int jobTitleId,
+                                                          @PathVariable int criteriaId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         checkOrganizationJobTitleRelationship(organizationId, jobTitleId);
         checkOrganizationCriteriaRelationship(organizationId, criteriaId);
@@ -244,7 +268,7 @@ public class CriteriaController {
         ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setSuccess(true);
         if (!existingUserList.isEmpty()) {
-            String message = "Completed successfully, however, the criteria was already assigned for the following users:";
+            String message = "Completed successfully, however, the criteria was already assigned for following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
@@ -290,7 +314,8 @@ public class CriteriaController {
 
     private void checkOrganizationJobTitleRelationship(int organizationId, int jobTitleId) throws BaseException {
         if (!organizationService.isJobTitleDefined(organizationService.get(organizationId), jobTitleId)) {
-            throw new BaseException(ResponseCode.JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION, "Given job title does not belong to this organization.");
+            throw new BaseException(ResponseCode.JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION,
+                    "Given job title does not belong to this organization.");
         }
     }
 
@@ -298,7 +323,8 @@ public class CriteriaController {
         Criteria criteria = criteriaService.get(criteriaId);
         int id = criteria.getOrganization().getId();
         if (id != organizationId) {
-            throw new BaseException(ResponseCode.CRITERIA_BELONGS_TO_ANOTHER_ORGANIZATION, "Given criteria does not belong to this organization.");
+            throw new BaseException(ResponseCode.CRITERIA_BELONGS_TO_ANOTHER_ORGANIZATION,
+                    "Given criteria does not belong to this organization.");
         }
     }
 
@@ -306,7 +332,8 @@ public class CriteriaController {
         Team team = teamService.get(teamId);
         int id = team.getOrganization().getId();
         if (id != organizationId) {
-            throw new BaseException(ResponseCode.TEAM_BELONGS_TO_ANOTHER_ORGANIZATION, "Given team does not belong to this organization.");
+            throw new BaseException(ResponseCode.TEAM_BELONGS_TO_ANOTHER_ORGANIZATION,
+                    "Given team does not belong to this organization.");
         }
     }
 
@@ -314,11 +341,13 @@ public class CriteriaController {
         User user = userService.get(userId);
         int id = user.getOrganization().getId();
         if (id != organizationId) {
-            throw new BaseException(ResponseCode.USER_BELONGS_TO_ANOTHER_ORGANIZATION, "Given user does not belong to this organization.");
+            throw new BaseException(ResponseCode.USER_BELONGS_TO_ANOTHER_ORGANIZATION,
+                    "Given user does not belong to this organization.");
         }
     }
 
-    private void checkOrganizationUserListRelationship(int organizationId, List<Integer> userIdList) throws BaseException {
+    private void checkOrganizationUserListRelationship(int organizationId, List<Integer> userIdList)
+            throws BaseException {
         for (int userId : userIdList) {
             checkOrganizationUserRelationship(organizationId, userId);
         }

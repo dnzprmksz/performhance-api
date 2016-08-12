@@ -20,22 +20,21 @@ import java.util.List;
 @SpringApplicationConfiguration(classes = AppConfig.class)
 @WebAppConfiguration
 public class SimplifiedUserTest {
+    private static boolean init = false;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    private static boolean init = false;
-
     @Before
     public void initialize() {
-        if(init) {
-            return ;
+        if (init) {
+            return;
         }
         Organization palantir = new Organization("Palantir");
         organizationRepository.save(palantir);
-        userRepository.save(new User("Can","Guler",palantir));
-        userRepository.save(new User("Kaan","Akoz",palantir, Role.MANAGER));
+        userRepository.save(new User("Can", "Guler", palantir));
+        userRepository.save(new User("Kaan", "Akoz", palantir, Role.MANAGER));
         init = true;
     }
 
@@ -43,11 +42,11 @@ public class SimplifiedUserTest {
     public void fromUser() {
         User user = userRepository.findOne(1);
         SimplifiedUser simplified = SimplifiedUser.fromUser(user);
-        isEqualUserSimplifiedUser(user,simplified);
+        isEqualUserSimplifiedUser(user, simplified);
     }
 
     @Test
-    public void fromUserList(){
+    public void fromUserList() {
         List<User> userList = userRepository.findByOrganizationId(1);
         List<SimplifiedUser> simplifiedList = SimplifiedUser.fromUserList(userList);
 
@@ -58,7 +57,7 @@ public class SimplifiedUserTest {
     }
 
 
-    private void isEqualUserSimplifiedUser(User user, SimplifiedUser simplified){
+    private void isEqualUserSimplifiedUser(User user, SimplifiedUser simplified) {
         Assert.assertEquals(user.getId(), simplified.getId());
         Assert.assertEquals(user.getRole(), simplified.getRole());
         Assert.assertEquals(user.getName(), simplified.getName());

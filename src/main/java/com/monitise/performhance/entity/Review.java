@@ -1,11 +1,11 @@
 package com.monitise.performhance.entity;
 
+import java.util.Map;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.util.Map;
 
 @Entity
 public class Review {
