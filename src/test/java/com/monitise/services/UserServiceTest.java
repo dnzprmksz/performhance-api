@@ -32,7 +32,7 @@ public class UserServiceTest {
     private OrganizationService organizationService;
     @Autowired
     private OrganizationRepository organizationRepository;
-    private static boolean init = false;
+
     @Before
     public void setup() throws BaseException {
         organizationService.add(new Organization("Monitise"));

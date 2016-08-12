@@ -81,7 +81,7 @@ public class UserController {
                 userRequest.getName()+"."+userRequest.getSurname(),"password");
         employee.setJobTitle(title);
         User addedEmployee = userService.addEmployee(employee);
-        organizationService.addEmployee(organization,employee);
+        organizationService.addEmployee(organization,addedEmployee);
 
         SimplifiedUser responseEmployee = SimplifiedUser.fromUser(addedEmployee);
         Response<SimplifiedUser> response = new Response<>();

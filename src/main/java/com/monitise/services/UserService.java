@@ -64,7 +64,7 @@ public class UserService {
     }
 
     @Secured("ROLE_MANAGER")
-    public List<User> searchUsers(int organizationId, String teamId, String titleId){
+    public List<User> searchUsers(int organizationId, String teamId, String titleId) {
 
         Specification<User> predicate = User.organizationIdIs(organizationId);
 
@@ -85,6 +85,7 @@ public class UserService {
 
         return userList;
     }
+
     @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public void remove(int id) throws BaseException {
         get(id);
