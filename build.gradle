@@ -16,7 +16,7 @@ apply plugin: 'application'
 apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
 
-mainClassName = "com.monitise.Application"
+mainClassName = "com.monitise.performhance.Application"
 
 repositories {
     mavenCentral()
