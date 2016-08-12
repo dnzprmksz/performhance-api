@@ -82,7 +82,7 @@ public class ReviewServiceTest {
             int value = (int)(Math.random() * 30) + 70;
             evaluation.put(criteria, value);
         }
-        Review review = new Review(reviewedUser, reviewer, evaluation);
+        Review review = new Review(reviewedUser, reviewer, evaluation, "");
         Review reviewFromService = reviewService.add(review);
 
         Assert.assertNotNull(reviewFromService);

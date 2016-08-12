@@ -5,7 +5,6 @@ import com.monitise.entity.Criteria;
 import com.monitise.api.model.ResponseCode;
 import com.monitise.entity.User;
 import com.monitise.repositories.CriteriaRepository;
-import com.sun.tools.javac.jvm.CRTFlags;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
