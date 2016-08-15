@@ -26,7 +26,7 @@ public class ReviewService {
     }
 
     public List<Review> getAllFilterByTeamId(int teamId) {
-        List<Review> list = reviewRepository.findByOrganizationId(teamId);
+        List<Review> list = reviewRepository.findByTeamId(teamId);
         return list;
     }
 
