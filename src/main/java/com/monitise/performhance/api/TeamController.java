@@ -54,8 +54,8 @@ public class TeamController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/teams/search", method = RequestMethod.GET)
     public Response<List<SimplifiedUser>> searchUsers(
-            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId,
-            @RequestParam(value = "teamName", required = false, defaultValue = UserService.UNDEFINED) String teamName)
+            @RequestParam(value = "teamId", required = false, defaultValue = TeamService.UNDEFINED) String teamId,
+            @RequestParam(value = "teamName", required = false, defaultValue = TeamService.UNDEFINED) String teamName)
             throws BaseException {
 
         if (teamName.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
@@ -135,7 +135,7 @@ public class TeamController {
         validateAssignmentRequest(organizationId, teamId, userId);
         Team team = teamService.get(teamId);
         User employee = userService.get(userId);
-        Team updatedTeam = teamService.assingEmployeeToTeam(employee,team);
+        Team updatedTeam = teamService.assignEmployeeToTeam(employee,team);
 
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();

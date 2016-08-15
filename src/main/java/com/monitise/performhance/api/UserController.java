@@ -117,7 +117,8 @@ public class UserController {
             @RequestParam(value = "surname", required = false, defaultValue = UserService.UNDEFINED) String surname)
             throws BaseException {
 
-        if (titleId.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
+        if (UserService.UNDEFINED.equals(titleId) && UserService.UNDEFINED.equals(teamId)
+                && UserService.UNDEFINED.equals(name) && UserService.UNDEFINED.equals(surname)) {
             throw new BaseException(ResponseCode.SEARCH_MISSING_PARAMETERS,
                     "At least one of titleId, teamId, name or surname parameters must be specified.");
         }

@@ -80,13 +80,13 @@ public class User {
 
     public static Specification<User> nameContains(String input) {
         return (root, query, cb) -> {
-            return cb.like(root.get("name"),input);
+            return cb.like(root.<String>get("name"), "%" + input + "%");
         };
     }
 
     public static Specification<User> surnameContains(String input) {
         return (root, query, cb) -> {
-            return cb.like(root.get("surname"),input);
+            return cb.like(root.<String>get("surname"), "%" + input + "%");
         };
     }
 

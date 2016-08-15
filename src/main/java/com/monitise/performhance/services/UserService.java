@@ -65,21 +65,25 @@ public class UserService {
 
         Specification<User> filter = User.organizationIdIs(organizationId);
 
-        if (!teamId.equals(UNDEFINED)) {
+        if (!UNDEFINED.equals(teamId)) {
+            System.out.println("TEAMID");
             int intTeamId = Integer.parseInt(teamId);
             filter = Specifications.where(filter).and(User.teamIdIs(intTeamId));
         }
 
-        if (!titleId.equals(UNDEFINED)) {
+        if (!UNDEFINED.equals(titleId)) {
+            System.out.println("TITLEID");
             int intTitleId = Integer.parseInt(titleId);
             filter = Specifications.where(filter).and(User.titleIdIs(intTitleId));
         }
 
-        if (!name.equals(UNDEFINED)) {
+        if (!UNDEFINED.equals(name)) {
+            System.out.println("NAME");
             filter = Specifications.where(filter).and(User.nameContains(name));
         }
 
-        if (!surname.equals(UNDEFINED)) {
+        if (!UNDEFINED.equals(surname)) {
+            System.out.println("SURNAME");
             filter = Specifications.where(filter).and(User.surnameContains(surname));
         }
 

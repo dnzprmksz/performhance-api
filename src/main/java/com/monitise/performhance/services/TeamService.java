@@ -6,6 +6,7 @@ import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.repositories.TeamRepository;
+import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
@@ -24,6 +25,8 @@ public class TeamService {
     private TeamRepository teamRepository;
     @Autowired
     private SecurityHelper securityHelper;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Team> getAll() {
         List<Team> list = (List<Team>) teamRepository.findAll();
@@ -75,7 +78,7 @@ public class TeamService {
     }
 
     @Secured("ROLE_MANAGER")
-    public Team assingEmployeeToTeam(User user, Team team) throws BaseException {
+    public Team assignEmployeeToTeam(User user, Team team) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(team.getOrganization().getId());
         securityHelper.checkUserOrganizationAuthorization(user.getOrganization().getId());
         Team teamFromRepo = teamRepository.findOne(team.getId());
@@ -87,7 +90,10 @@ public class TeamService {
 
         List<User> members = teamFromRepo.getMembers();
         members.add(user);
+        user.setTeam(teamFromRepo);
+        userRepository.save(user);
         teamFromRepo.setMembers(members);
+
         Team updatedTeam = teamRepository.save(teamFromRepo);
         return updatedTeam;
     }
