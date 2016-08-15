@@ -22,6 +22,9 @@ public class TeamUserResponse {
     }
 
     public static List<TeamUserResponse> fromUserList(List<User> users) {
+        if (users == null) {
+            return null;
+        }
         List<TeamUserResponse> responseList = new ArrayList<>();
         for (User user : users) {
             responseList.add(new TeamUserResponse(user));
