@@ -48,7 +48,7 @@ public class Team {
 
     public static Specification<Team> teamNameContains(String name) {
         return (root, query, cb) -> {
-            return cb.like(root.get("name"), name);
+            return cb.like(root.<String>get("name"), "%" + name + "%");
         };
     }
 
