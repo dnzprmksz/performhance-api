@@ -1,8 +1,8 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.api.model.BaseException;
-import com.monitise.performhance.entity.Criteria;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.CriteriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,8 @@ public class CriteriaService {
     public List<Criteria> getAllFilterByOrganizationId(int organizationId) throws BaseException {
         List<Criteria> list = criteriaRepository.findByOrganizationId(organizationId);
         if (list == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED, "Could not get the criteria list for given organization ID.");
+            throw new BaseException(ResponseCode.UNEXPECTED,
+                    "Could not get the criteria list for given organization ID.");
         }
         return list;
     }
@@ -34,7 +35,8 @@ public class CriteriaService {
     public Criteria get(int id) throws BaseException {
         Criteria criteria = criteriaRepository.findOne(id);
         if (criteria == null) {
-            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST, "A criteria with given ID does not exist.");
+            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST,
+                    "A criteria with given ID does not exist.");
         }
         return criteria;
     }
@@ -52,7 +54,8 @@ public class CriteriaService {
     public void remove(int criteriaId) throws BaseException {
         Criteria criteria = criteriaRepository.findOne(criteriaId);
         if (criteria == null) {
-            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST, "A criteria with given ID does not exist.");
+            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST,
+                    "A criteria with given ID does not exist.");
         }
         criteriaRepository.delete(criteriaId);
     }
@@ -74,11 +77,12 @@ public class CriteriaService {
         return userFromRepo;
     }
 
-    public void removeCriteriaFromUserByID(Criteria criteria, int userId) throws BaseException {
+    public void removeCriteriaFromUserById(Criteria criteria, int userId) throws BaseException {
         User user = userService.get(userId);
         List<Criteria> criteriaList = user.getCriteriaList();
         if (!criteriaList.contains(criteria)) {
-            throw new BaseException(ResponseCode.CRITERIA_DOES_NOT_EXIST_IN_USER, "Given user does not have this criteria.");
+            throw new BaseException(ResponseCode.CRITERIA_DOES_NOT_EXIST_IN_USER,
+                    "Given user does not have this criteria.");
         }
         criteriaList.remove(criteria);
         user.setCriteriaList(criteriaList);
@@ -94,15 +98,18 @@ public class CriteriaService {
     private void ensureExistence(Criteria criteria) throws BaseException {
         Criteria criteriaFromRepo = criteriaRepository.findOne(criteria.getId());
         if (criteriaFromRepo == null) {
-            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST, "A criteria with given ID does not exist.");
+            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST,
+                    "A criteria with given ID does not exist.");
         }
     }
 
     // Throws exception if the criteria DOES EXIST.
     private void checkExistenceInOrganization(Criteria criteria) throws BaseException {
-        Criteria criteriaFromRepo = criteriaRepository.findByOrganizationAndCriteria(criteria.getOrganization(), criteria.getCriteria());
+        Criteria criteriaFromRepo = criteriaRepository.findByOrganizationAndCriteria(criteria.getOrganization(),
+                criteria.getCriteria());
         if (criteriaFromRepo != null) {
-            throw new BaseException(ResponseCode.CRITERIA_EXISTS_IN_ORGANIZATION, "Given criteria exists in the given organization.");
+            throw new BaseException(ResponseCode.CRITERIA_EXISTS_IN_ORGANIZATION,
+                    "Given criteria exists in the given organization.");
         }
     }
 
@@ -110,7 +117,8 @@ public class CriteriaService {
         if (criteria.getCriteria() == null || criteria.getCriteria().trim() == "") {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY, "Empty criteria is not allowed.");
         } else if (criteria.getOrganization() == null) {
-            throw new BaseException(ResponseCode.CRITERIA_EMPTY_ORGANIZATION, "Criteria must belong to an organization.");
+            throw new BaseException(ResponseCode.CRITERIA_EMPTY_ORGANIZATION,
+                    "Criteria must belong to an organization.");
         }
     }
 

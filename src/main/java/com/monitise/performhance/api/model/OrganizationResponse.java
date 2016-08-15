@@ -13,7 +13,7 @@ public class OrganizationResponse {
     private int numberOfEmployees;
     private List<SimplifiedUser> users;
     private List<JobTitle> jobTitles;
-    private List<TeamResponse>  teams;
+    private List<TeamResponse> teams;
 
     public OrganizationResponse(Organization organization) {
         id = organization.getId();
@@ -31,12 +31,12 @@ public class OrganizationResponse {
         return new OrganizationResponse(organization);
     }
 
-    public static List<OrganizationResponse> fromOrganizationList(List<Organization> organizations){
+    public static List<OrganizationResponse> fromOrganizationList(List<Organization> organizations) {
         if (organizations == null) {
             return null;
         }
         List<OrganizationResponse> responses = new ArrayList<>();
-        for(Organization organization : organizations){
+        for (Organization organization : organizations) {
             OrganizationResponse current = fromOrganization(organization);
             responses.add(current);
         }
@@ -49,48 +49,48 @@ public class OrganizationResponse {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getNumberOfEmployees() {
-        return numberOfEmployees;
-    }
-
-    public List<SimplifiedUser> getUsers() {
-        return users;
-    }
-
-    public List<JobTitle> getJobTitles() {
-        return jobTitles;
-    }
-
-    public List<TeamResponse> getTeams() {
-        return teams;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public int getNumberOfEmployees() {
+        return numberOfEmployees;
+    }
+
     public void setNumberOfEmployees(int numberOfEmployees) {
         this.numberOfEmployees = numberOfEmployees;
+    }
+
+    // endregion
+
+    // region Setters
+
+    public List<SimplifiedUser> getUsers() {
+        return users;
     }
 
     public void setUsers(List<SimplifiedUser> users) {
         this.users = users;
     }
 
+    public List<JobTitle> getJobTitles() {
+        return jobTitles;
+    }
+
     public void setJobTitles(List<JobTitle> jobTitles) {
         this.jobTitles = jobTitles;
+    }
+
+    public List<TeamResponse> getTeams() {
+        return teams;
     }
 
     public void setTeams(List<TeamResponse> teams) {

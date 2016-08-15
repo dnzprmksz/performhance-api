@@ -9,7 +9,8 @@ public class AddReviewRequest {
     private Map<Integer, Integer> evaluationIdMap;
     private String comment;
 
-    public AddReviewRequest() { }
+    public AddReviewRequest() {
+    }
 
     // region Getters
 
@@ -17,32 +18,32 @@ public class AddReviewRequest {
         return reviewedEmployeeId;
     }
 
-    public int getReviewerId() {
-        return reviewerId;
-    }
-
-    public Map<Integer, Integer> getEvaluationIdMap() {
-        return evaluationIdMap;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setReviewedEmployeeId(int reviewedEmployeeId) {
         this.reviewedEmployeeId = reviewedEmployeeId;
+    }
+
+    public int getReviewerId() {
+        return reviewerId;
     }
 
     public void setReviewerId(int reviewerId) {
         this.reviewerId = reviewerId;
     }
 
+    // endregion
+
+    // region Setters
+
+    public Map<Integer, Integer> getEvaluationIdMap() {
+        return evaluationIdMap;
+    }
+
     public void setEvaluationIdMap(Map<Integer, Integer> evaluationIdMap) {
         this.evaluationIdMap = evaluationIdMap;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public void setComment(String comment) {

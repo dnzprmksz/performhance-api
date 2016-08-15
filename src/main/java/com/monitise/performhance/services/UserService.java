@@ -1,9 +1,9 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.User;
-import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,10 +16,9 @@ import java.util.List;
 @Service
 public class UserService {
 
+    public static final String UNDEFINED = "C8E7279CD035B23BB9C0F1F954DFF5B3";
     @Autowired
     private UserRepository userRepository;
-
-    public static final String UNDEFINED = "C8E7279CD035B23BB9C0F1F954DFF5B3";
 
     public List<User> getAll() {
         List<User> list = (List<User>) userRepository.findAll();
@@ -126,8 +125,9 @@ public class UserService {
 
     private void checkUserNameExistence(String userName) throws BaseException {
         User user = userRepository.findByUsername(userName);
-        if (user != null)
+        if (user != null) {
             throw new BaseException(ResponseCode.USER_USERNAME_ALREADY_TAKEN, "That username is taken.");
+        }
     }
 
     // Throws exception if the criteria DOES NOT EXIST.

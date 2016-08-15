@@ -1,11 +1,11 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.helpers.SecurityHelper;
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.repositories.JobTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -50,7 +50,8 @@ public class JobTitleService {
         JobTitle jobTitle = jobTitleRepository.findOne(id);
 
         if (jobTitle == null) {
-            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST, "An job title with given ID does not exist.");
+            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
+                    "An job title with given ID does not exist.");
         }
 
         return jobTitle;

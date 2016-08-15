@@ -12,7 +12,8 @@ public class JobTitle {
     private int id;
     private String title;
 
-    protected JobTitle() {}
+    protected JobTitle() {
+    }
 
     public JobTitle(String title) {
         this.title = title;
@@ -24,16 +25,16 @@ public class JobTitle {
         return title;
     }
 
-    public int getId() {
-        return id;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     // endregion
 
     // region Setters
 
-    public void setTitle(String title) {
-        this.title = title;
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {

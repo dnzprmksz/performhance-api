@@ -1,10 +1,10 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.helpers.SecurityHelper;
-import com.monitise.performhance.api.model.BaseException;
-import com.monitise.performhance.entity.User;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Team;
+import com.monitise.performhance.entity.User;
+import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -62,7 +62,8 @@ public class TeamService {
         Team teamFromRepo = teamRepository.findOne(team.getId());
 
         if (teamFromRepo == null) {
-            throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST, "Could not add given user to team, since the team does not exist.");
+            throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST,
+                    "Could not add given user to team, since the team does not exist.");
         }
 
         List<User> members = teamFromRepo.getMembers();

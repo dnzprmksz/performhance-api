@@ -1,6 +1,6 @@
 package com.monitise.performhance.helpers;
 
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.Error;
 import com.monitise.performhance.api.model.Response;
 import org.omg.CORBA.Object;

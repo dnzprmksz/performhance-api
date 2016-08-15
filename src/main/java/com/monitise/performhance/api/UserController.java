@@ -1,16 +1,16 @@
 package com.monitise.performhance.api;
 
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.AddUserRequest;
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.TeamUserResponse;
-import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.api.model.Response;
-import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.UserService;
@@ -96,7 +96,9 @@ public class UserController {
         checkAuthentication(organizationId);
         User soonToBeDeleted = userService.get(userId);
         if (soonToBeDeleted.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized to perform this action.");
+
+            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
+                    "You are not authorized to perform this action.");
         }
         userService.remove(userId);
         SimplifiedUser responseUser = SimplifiedUser.fromUser(soonToBeDeleted);
@@ -110,7 +112,8 @@ public class UserController {
     @RequestMapping(value = "/users/search", method = RequestMethod.GET)
     public Response<List<SimplifiedUser>> searchUsers(
             @RequestParam(value = "titleId", required = false, defaultValue = UserService.UNDEFINED) String titleId,
-            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId) throws BaseException {
+            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId)
+            throws BaseException {
 
         if (titleId.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
             throw new BaseException(ResponseCode.SEARCH_MISSING_PARAMETERS,
@@ -144,7 +147,8 @@ public class UserController {
 
         int titleId = employee.getJobTitleId();
         if (!organizationService.isJobTitleDefined(organization, titleId)) {
-            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST, "A job title with given ID does not exist in this organization.");
+            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
+                    "A job title with given ID does not exist in this organization.");
         }
     }
 

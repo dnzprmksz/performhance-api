@@ -1,7 +1,12 @@
 package com.monitise.performhance.services;
 
+<<<<<<< HEAD
 import com.monitise.performhance.AppConfig;
 import com.monitise.performhance.api.model.BaseException;
+=======
+import com.monitise.AppConfig;
+import com.monitise.performhance.BaseException;
+>>>>>>> 80662b83980dcff59969104c04174713cc408bfd
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Review;
@@ -28,6 +33,7 @@ import java.util.Map;
 @SpringApplicationConfiguration(classes = AppConfig.class)
 public class ReviewServiceTest {
 
+    private static User reviewedUser;
     @Autowired
     private CriteriaService criteriaService;
     @Autowired
@@ -44,8 +50,6 @@ public class ReviewServiceTest {
     private UserRepository userRepository;
     @Autowired
     private ReviewService reviewService;
-
-    private static User reviewedUser;
 
     @Before
     @WithMockUser(roles = {"MANAGER"})
@@ -78,7 +82,7 @@ public class ReviewServiceTest {
         Map<Criteria, Integer> evaluation = new HashMap<>();
 
         for (Criteria criteria : reviewedUser.getCriteriaList()) {
-            int value = (int)(Math.random() * 30) + 70;
+            int value = (int) (Math.random() * 30) + 70;
             evaluation.put(criteria, value);
         }
         Review review = new Review(reviewedUser, reviewer, evaluation, "");

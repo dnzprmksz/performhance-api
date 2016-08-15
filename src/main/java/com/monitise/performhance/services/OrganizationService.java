@@ -1,9 +1,9 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.OrganizationRepository;
@@ -26,7 +26,8 @@ public class OrganizationService {
     public Organization get(int id) throws BaseException {
         Organization organization = organizationRepository.findOne(id);
         if (organization == null) {
-            throw new BaseException(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST, "An organization with given ID does not exist.");
+            throw new BaseException(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST,
+                    "An organization with given ID does not exist.");
         }
         return organization;
     }
@@ -34,7 +35,8 @@ public class OrganizationService {
     public Organization getByName(String name) throws BaseException {
         Organization organization = organizationRepository.findByName(name);
         if (organization == null) {
-            throw new BaseException(ResponseCode.ORGANIZATION_NAME_DOES_NOT_EXIST, "An organization with given name does not exist.");
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_DOES_NOT_EXIST,
+                    "An organization with given name does not exist.");
         }
         return organization;
     }
@@ -63,7 +65,7 @@ public class OrganizationService {
 
     public boolean isJobTitleDefined(Organization organization, int titleId) {
         List<JobTitle> titleList = organization.getJobTitles();
-        for(JobTitle jobTitle : titleList) {
+        for (JobTitle jobTitle : titleList) {
             if (jobTitle.getId() == titleId) {
                 return true;
             }
@@ -72,8 +74,8 @@ public class OrganizationService {
     }
 
     public boolean isTeamIdDefined(Organization organization, int teamId) {
-        List<Team>  teams = organization.getTeams();
-        for(Team team : teams) {
+        List<Team> teams = organization.getTeams();
+        for (Team team : teams) {
             if (team.getId() == teamId) {
                 return true;
             }
@@ -88,7 +90,7 @@ public class OrganizationService {
         // Add the employee & increment numberOfEmployees field.
         userList.add(employee);
         organization.setUsers(userList);
-        organization.setNumberOfEmployees(organization.getNumberOfEmployees()+1) ;
+        organization.setNumberOfEmployees(organization.getNumberOfEmployees() + 1);
         Organization updatedOrganization = organizationRepository.save(organization);
         if (updatedOrganization == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add employee");
@@ -110,9 +112,6 @@ public class OrganizationService {
     public Organization addTeam(Organization organization, Team team) throws BaseException {
         List<Team> teamList = organization.getTeams();
 
-        // TODO Sil
-        if (teamList == null) System.out.println("addTeam--> takim listesi null dondu");
-
         teamList.add(team);
         organization.setTeams(teamList);
         Organization updatedOrganization = organizationRepository.save(organization);
@@ -121,7 +120,6 @@ public class OrganizationService {
         }
         return updatedOrganization;
     }
-
 
 
 }

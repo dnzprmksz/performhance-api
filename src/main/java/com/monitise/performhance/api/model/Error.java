@@ -16,16 +16,16 @@ public class Error {
         return code;
     }
 
-    public String getMessage() {
-        return message;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     // endregion
 
     // region Setters
 
-    public void setCode(int code) {
-        this.code = code;
+    public String getMessage() {
+        return message;
     }
 
     public void setMessage(String message) {

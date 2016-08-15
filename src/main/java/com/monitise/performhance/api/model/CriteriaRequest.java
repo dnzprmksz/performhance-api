@@ -4,7 +4,8 @@ public class CriteriaRequest {
 
     private String criteria;
 
-    public CriteriaRequest() {}
+    public CriteriaRequest() {
+    }
 
     public String getCriteria() {
         return criteria;

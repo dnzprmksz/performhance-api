@@ -1,9 +1,10 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.helpers.SecurityHelper;
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.entity.JobTitle;
-import com.monitise.performhance.api.model.Response;import com.monitise.performhance.services.JobTitleService;
+import com.monitise.performhance.helpers.SecurityHelper;
+import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -59,7 +60,8 @@ public class JobTitleController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/jobTitles/{jobTitleId}", method = RequestMethod.GET)
-    public Response<JobTitle> getJobTitle(@PathVariable int organizationId, @PathVariable int jobTitleId) throws BaseException {
+    public Response<JobTitle> getJobTitle(@PathVariable int organizationId,
+                                          @PathVariable int jobTitleId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         JobTitle jobTitle = jobTitleService.get(jobTitleId);
 
@@ -71,7 +73,8 @@ public class JobTitleController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/organizations/{organizationId}/jobTitles/", method = RequestMethod.POST)
-    public Response<JobTitle> addJobTitle(@RequestBody JobTitle jobTitle, @PathVariable int organizationId) throws BaseException {
+    public Response<JobTitle> addJobTitle(@RequestBody JobTitle jobTitle,
+                                          @PathVariable int organizationId) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(organizationId);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
 

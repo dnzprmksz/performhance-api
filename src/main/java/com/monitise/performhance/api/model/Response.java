@@ -12,24 +12,24 @@ public class Response<T> {
         return success;
     }
 
-    public T getData() {
-        return data;
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
-    public Error getError() {
-        return error;
+    public T getData() {
+        return data;
     }
 
     // endregion
 
     // region Setters
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
     public void setData(T data) {
         this.data = data;
+    }
+
+    public Error getError() {
+        return error;
     }
 
     public void setError(Error error) {

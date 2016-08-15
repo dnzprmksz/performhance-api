@@ -2,13 +2,13 @@ package com.monitise.performhance.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import java.util.List;
 
 @Entity
 public class Team {
@@ -25,7 +25,8 @@ public class Team {
     @OneToOne
     private User leader;
 
-    protected Team() {}
+    protected Team() {
+    }
 
     public Team(String name, Organization organization) {
         this.name = name;
@@ -38,40 +39,40 @@ public class Team {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public List<User> getMembers() {
-        return members;
-    }
-
-    public User getLeader() {
-        return leader;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    // endregion
-
-    // region Setters
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public List<User> getMembers() {
+        return members;
+    }
+
+    // endregion
+
+    // region Setters
+
     public void setMembers(List<User> members) {
         this.members = members;
     }
 
+    public User getLeader() {
+        return leader;
+    }
+
     public void setLeader(User leader) {
         this.leader = leader;
+    }
+
+    public Organization getOrganization() {
+        return organization;
     }
 
     public void setOrganization(Organization organization) {

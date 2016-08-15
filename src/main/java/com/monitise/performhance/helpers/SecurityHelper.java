@@ -1,7 +1,8 @@
 package com.monitise.performhance.helpers;
 
-import com.monitise.performhance.api.model.BaseException;
+import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,25 @@ public class SecurityHelper {
     public void checkUserOrganizationAuthorization(int organizationId) throws BaseException {
         User authenticatedUser = getAuthenticatedUser();
         if (authenticatedUser.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized for this organization.");
+            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
+                    "You are not authorized for this organization.");
         }
+    }
+
+    public boolean isAuthenticatedUserManager() throws BaseException {
+        return getAuthenticatedUser().getRole().equals(Role.MANAGER);
+    }
+
+    public boolean isAuthenticatedUserTeamLeader() throws BaseException {
+        return getAuthenticatedUser().getRole().equals(Role.TEAM_LEADER);
+    }
+
+    public boolean isAuthenticatedUserEmployee() throws BaseException {
+        return getAuthenticatedUser().getRole().equals(Role.EMPLOYEE);
+    }
+
+    public boolean isAuthenticatedUserAdmin() throws BaseException {
+        return getAuthenticatedUser().getRole().equals(Role.ADMIN);
     }
 
 }
