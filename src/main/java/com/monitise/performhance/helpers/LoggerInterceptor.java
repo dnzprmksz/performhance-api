@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 
-public class LoggerInterceptor extends HandlerInterceptorAdapter{
+public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
     static Logger logger = LoggerFactory.getLogger(LoggerInterceptor.class);
     // TODO: find a way to log bodies.
@@ -36,7 +36,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter{
         List<String> requestParamNames = Collections.list(request.getParameterNames());
         logger.info("Parameter number: " + requestParamNames.size());
 
-        for (String paramName : requestParamNames){
+        for (String paramName : requestParamNames) {
             logger.info("Parameter name: " + paramName + " - Parameter value: " + request.getParameter(paramName));
         }
         HttpServletRequest requestToCache = new ContentCachingRequestWrapper(request);
@@ -49,18 +49,19 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter{
 
 
     @Override
-    public void postHandle(	HttpServletRequest request, HttpServletResponse response,
-                               Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response,
+                           Object handler, ModelAndView modelAndView) throws Exception {
+
 
     }
 
 
-    private String getRequestBody (final HttpServletRequest request)
+    private String getRequestBody(final HttpServletRequest request)
             throws Exception {
 
         HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
         StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader ;
+        BufferedReader bufferedReader;
 
         InputStream inputStream = requestWrapper.getInputStream();
         if (inputStream != null) {
@@ -86,7 +87,6 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter{
         }
         return payload;
     }
-
 
 
 }

@@ -112,12 +112,14 @@ public class UserController {
     @RequestMapping(value = "/users/search", method = RequestMethod.GET)
     public Response<List<SimplifiedUser>> searchUsers(
             @RequestParam(value = "titleId", required = false, defaultValue = UserService.UNDEFINED) String titleId,
-            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId)
+            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId,
+            @RequestParam(value = "name", required = false, defaultValue = UserService.UNDEFINED) String name,
+            @RequestParam(value = "surname", required = false, defaultValue = UserService.UNDEFINED) String surname)
             throws BaseException {
 
         if (titleId.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
             throw new BaseException(ResponseCode.SEARCH_MISSING_PARAMETERS,
-                    "At least one of titleId and teamId must be specified.");
+                    "At least one of titleId, teamId, name or surname parameters must be specified.");
         }
 
         User manager = securityHelper.getAuthenticatedUser();
@@ -125,7 +127,7 @@ public class UserController {
         int organizationId = organization.getId();
         formatValidateSearchRequest(titleId, teamId);
         semanticallyValidate(organization, titleId, teamId);
-        List<User> userList = userService.searchUsers(organizationId, teamId, titleId);
+        List<User> userList = userService.searchUsers(organizationId, teamId, titleId, name, surname);
 
         List<SimplifiedUser> simpleList = SimplifiedUser.fromUserList(userList);
         Response response = new Response();

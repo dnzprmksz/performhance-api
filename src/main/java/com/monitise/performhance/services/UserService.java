@@ -61,7 +61,7 @@ public class UserService {
     }
 
     @Secured("ROLE_MANAGER")
-    public List<User> searchUsers(int organizationId, String teamId, String titleId) {
+    public List<User> searchUsers(int organizationId, String teamId, String titleId, String name, String surname) {
 
         Specification<User> filter = User.organizationIdIs(organizationId);
 
@@ -73,6 +73,14 @@ public class UserService {
         if (!titleId.equals(UNDEFINED)) {
             int intTitleId = Integer.parseInt(titleId);
             filter = Specifications.where(filter).and(User.titleIdIs(intTitleId));
+        }
+
+        if (!name.equals(UNDEFINED)) {
+            filter = Specifications.where(filter).and(User.nameContains(name));
+        }
+
+        if (!surname.equals(UNDEFINED)) {
+            filter = Specifications.where(filter).and(User.surnameContains(surname));
         }
 
         List<User> userList = userRepository.findAll(filter);
