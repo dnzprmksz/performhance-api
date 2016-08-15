@@ -29,20 +29,13 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
             throws Exception {
 
         long start = System.currentTimeMillis();
-        logger.info("## -SHOTS FIRED- ##");
 
         logger.info("Request URL: " + request.getRequestURL().toString());
 
         List<String> requestParamNames = Collections.list(request.getParameterNames());
-        logger.info("Parameter number: " + requestParamNames.size());
-
         for (String paramName : requestParamNames) {
             logger.info("Parameter name: " + paramName + " - Parameter value: " + request.getParameter(paramName));
         }
-        HttpServletRequest requestToCache = new ContentCachingRequestWrapper(request);
-        String requestData = getRequestData(requestToCache);
-        System.out.println(requestData);
-
 
         return true;
     }

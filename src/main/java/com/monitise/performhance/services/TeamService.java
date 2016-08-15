@@ -7,6 +7,8 @@ import com.monitise.performhance.entity.User;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import java.util.List;
 
 @Service
 public class TeamService {
+
+    public static final String UNDEFINED = "c8e7279cd035b23bb9c0f1f954dff5b3";
 
     @Autowired
     private TeamRepository teamRepository;
@@ -32,6 +36,21 @@ public class TeamService {
             throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST, "A team with given ID does not exist.");
         }
         return team;
+    }
+
+    public List<Team> searchTeams(int organizationId, String teamId, String teamName) {
+        Specification<Team> filter = Team.organizationIdIs(organizationId);
+        if (!UNDEFINED.equals(teamId)) {
+            int intTeamId = Integer.parseInt(teamId);
+            filter = Specifications.where(filter).and(Team.teamIdIs(intTeamId));
+        }
+        if (!UNDEFINED.equals(teamName)) {
+            filter = Specifications.where(filter).and(Team.teamNameContains(teamName));
+        }
+
+        List<Team> teamList = teamRepository.findAll(filter);
+
+        return teamList;
     }
 
     @Secured("ROLE_MANAGER")
@@ -56,7 +75,7 @@ public class TeamService {
     }
 
     @Secured("ROLE_MANAGER")
-    public void assingEmployeeToTeam(User user, Team team) throws BaseException {
+    public Team assingEmployeeToTeam(User user, Team team) throws BaseException {
         securityHelper.checkUserOrganizationAuthorization(team.getOrganization().getId());
         securityHelper.checkUserOrganizationAuthorization(user.getOrganization().getId());
         Team teamFromRepo = teamRepository.findOne(team.getId());
@@ -69,7 +88,8 @@ public class TeamService {
         List<User> members = teamFromRepo.getMembers();
         members.add(user);
         teamFromRepo.setMembers(members);
-        teamRepository.save(teamFromRepo);
+        Team updatedTeam = teamRepository.save(teamFromRepo);
+        return updatedTeam;
     }
 
 }

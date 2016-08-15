@@ -1,6 +1,7 @@
 package com.monitise.performhance.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import javax.persistence.Entity;
@@ -31,6 +32,24 @@ public class Team {
     public Team(String name, Organization organization) {
         this.name = name;
         this.organization = organization;
+    }
+
+    public static Specification<Team> organizationIdIs(int organizationId) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("organization"), organizationId);
+        };
+    }
+
+    public static Specification<Team> teamIdIs(int teamId) {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("id"), teamId);
+        };
+    }
+
+    public static Specification<Team> teamNameContains(String name) {
+        return (root, query, cb) -> {
+            return cb.like(root.get("name"), name);
+        };
     }
 
     // region Getters
