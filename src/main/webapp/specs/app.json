@@ -203,6 +203,126 @@
         }
       }
     },
+    "/organizations/{organizationId}/users/{userId}/criteria/": {
+      "get": {
+        "operationId": "getUserCriteriaList",
+        "description": "Gets all `Criteria`s of `User` with given ID.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Organization` that `Criteria` belongs to."
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `User`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationId}/users/{userId}/criteria/{criteriaId}": {
+      "post": {
+        "operationId": "assignCriteriaToUser",
+        "description": "Assigns `Criteria` to a `User` with given ID.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Organization` that `Criteria` belongs to."
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `User`."
+          },
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Criteria` that will be assigned to `User`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeCriteriaFromUser",
+        "description": "Removes `Criteria` from a `User` with given ID.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Organization` that `Criteria` belongs to."
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `User`."
+          },
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Criteria` that will be removed from `User`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
     "/organizations/{organizationId}/teams/": {
       "get": {
         "operationId": "getOrganizationTeams",
@@ -297,6 +417,49 @@
           },
           "404": {
             "description": "A team with given ID does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationId}/teams/{teamId}/criteria/{criteriaId}": {
+      "post": {
+        "operationId": "assignCriteriaToTeamUsers",
+        "description": "Assigns `Criteria` to the `User`s of a `Team` with given ID.",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Organization` that `Criteria` belongs to."
+          },
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Team`."
+          },
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of the `Criteria` that will be assigned to `User`s."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
             "schema": {
               "$ref": "#/definitions/Response"
             }
@@ -510,169 +673,6 @@
             "type": "integer",
             "required": true,
             "description": "ID of the `Criteria` that will be deleted."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/users/{userId}/criteria/": {
-      "get": {
-        "operationId": "getUserCriteriaList",
-        "description": "Gets all `Criteria`s of `User` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `User`."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/users/{userId}/criteria/{criteriaId}": {
-      "post": {
-        "operationId": "assignCriteriaToUser",
-        "description": "Assigns `Criteria` to a `User` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `User`."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be assigned to `User`."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      },
-      "delete": {
-        "operationId": "removeCriteriaFromUser",
-        "description": "Removes `Criteria` from a `User` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `User`."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be removed from `User`."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/teams/{teamId}/criteria/{criteriaId}": {
-      "post": {
-        "operationId": "assignCriteriaToTeamUsers",
-        "description": "Assigns `Criteria` to the `User`s of a `Team` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "teamId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Team`."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be assigned to `User`s."
           }
         ],
         "responses": {
