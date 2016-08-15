@@ -71,6 +71,13 @@ public class ResponseCode {
     public static final int RELATIONSHIP_MANAGER_REVIEW_UNSATISFIED = 1701;
     public static final int RELATIONSHIP_TEAM_LEADER_REVIEW_UNSATISFIED = 1702;
 
+    /**
+     *  SEARCH RELATED RESPONSE CODES
+     */
+    public static final int SEARCH_INVALID_ID = 1801;
+    public static final int SEARCH_INVALID_ID_FORMAT = 1802;
+    public static final int SEARCH_MISSING_PARAMETERS = 1803;
+
     protected ResponseCode() {
     }
 }

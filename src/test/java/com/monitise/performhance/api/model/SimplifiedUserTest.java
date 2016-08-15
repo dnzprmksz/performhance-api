@@ -1,6 +1,6 @@
 package com.monitise.performhance.api.model;
 
-import com.monitise.AppConfig;
+import com.monitise.performhance.AppConfig;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.OrganizationRepository;

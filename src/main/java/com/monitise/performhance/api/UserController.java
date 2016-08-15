@@ -79,7 +79,7 @@ public class UserController {
                 userRequest.getName() + "." + userRequest.getSurname(), "password");
         employee.setJobTitle(title);
         User addedEmployee = userService.addEmployee(employee);
-        organizationService.addEmployee(organization, employee);
+        organizationService.addEmployee(organization, addedEmployee);
 
         SimplifiedUser responseEmployee = SimplifiedUser.fromUser(addedEmployee);
         Response<SimplifiedUser> response = new Response<>();
@@ -96,6 +96,7 @@ public class UserController {
         checkAuthentication(organizationId);
         User soonToBeDeleted = userService.get(userId);
         if (soonToBeDeleted.getOrganization().getId() != organizationId) {
+
             throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
                     "You are not authorized to perform this action.");
         }
@@ -111,12 +112,14 @@ public class UserController {
     @RequestMapping(value = "/users/search", method = RequestMethod.GET)
     public Response<List<SimplifiedUser>> searchUsers(
             @RequestParam(value = "titleId", required = false, defaultValue = UserService.UNDEFINED) String titleId,
-            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId)
+            @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId,
+            @RequestParam(value = "name", required = false, defaultValue = UserService.UNDEFINED) String name,
+            @RequestParam(value = "surname", required = false, defaultValue = UserService.UNDEFINED) String surname)
             throws BaseException {
 
         if (titleId.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
-            throw new BaseException(ResponseCode.UNEXPECTED,
-                    "At least one of titleId and teamId must be specified.");
+            throw new BaseException(ResponseCode.SEARCH_MISSING_PARAMETERS,
+                    "At least one of titleId, teamId, name or surname parameters must be specified.");
         }
 
         User manager = securityHelper.getAuthenticatedUser();
@@ -124,7 +127,7 @@ public class UserController {
         int organizationId = organization.getId();
         formatValidateSearchRequest(titleId, teamId);
         semanticallyValidate(organization, titleId, teamId);
-        List<User> userList = userService.searchUsers(organizationId, teamId, titleId);
+        List<User> userList = userService.searchUsers(organizationId, teamId, titleId, name, surname);
 
         List<SimplifiedUser> simpleList = SimplifiedUser.fromUserList(userList);
         Response response = new Response();
@@ -141,7 +144,7 @@ public class UserController {
         String name = employee.getName();
         String surname = employee.getSurname();
         if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
-            throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty user name is not allowed.");
+            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "Empty user name is not allowed.");
         }
 
         int titleId = employee.getJobTitleId();
@@ -161,12 +164,12 @@ public class UserController {
 
     private void formatValidateSearchRequest(String titleId, String teamId) throws BaseException {
         if ((!titleId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(titleId))) {
-            throw new BaseException(ResponseCode.UNEXPECTED,
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID,
                     "titleId must be positive integers");
         }
 
         if ((!teamId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(teamId))) {
-            throw new BaseException(ResponseCode.UNEXPECTED,
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID,
                     "teamId must be positive integers");
         }
 
@@ -192,15 +195,16 @@ public class UserController {
         }
     }
 
-    private boolean isNonNegativeInteger(String str) {
-        int len = str.length();
-        for (int i = 0; i < len; ++i) {
-            char cur = str.charAt(i);
-            if (!('0' <= cur && cur <= '9')) {
-                return false;
-            }
+    private boolean isNonNegativeInteger(String k) throws BaseException {
+        int candidate;
+        try {
+            candidate = Integer.parseInt(k);
+        } catch (NumberFormatException e) {
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID_FORMAT, "id's must be positive integers");
+        } catch (NullPointerException e) {
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID_FORMAT, "id's must be positive integers");
         }
-        return true;
+        return candidate > 0;
     }
 
     // endregion

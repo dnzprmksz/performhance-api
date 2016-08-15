@@ -1,7 +1,12 @@
 package com.monitise.performhance.services;
 
+<<<<<<< HEAD
+import com.monitise.performhance.AppConfig;
+import com.monitise.performhance.api.model.BaseException;
+=======
 import com.monitise.AppConfig;
 import com.monitise.performhance.BaseException;
+>>>>>>> 80662b83980dcff59969104c04174713cc408bfd
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.OrganizationRepository;
