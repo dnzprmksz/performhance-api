@@ -65,5 +65,12 @@ public class ResponseCode {
     public static final int REVIEW_USER_IN_DIFFERENT_TEAM = 1605;
     public static final int REVIEW_SAME_USER = 1606;
 
+
+    /**
+     *  SEARCH RELATED RESPONSE CODES
+     */
+    public static final int SEARCH_INVALID_ID = 1701;
+    public static final int SEARCH_INVALID_ID_FORMAT = 1702;
+    public static final int SEARCH_MISSING_PARAMETERS = 1703;
     protected ResponseCode() {}
 }

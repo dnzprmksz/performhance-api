@@ -77,6 +77,19 @@ public class User {
         };
     }
 
+    public static Specification<User> nameContains(String input) {
+        return (root, query, cb) -> {
+            return cb.like(root.get("name"),input);
+        };
+    }
+
+    public static Specification<User> surnameContains(String input) {
+        return (root, query, cb) -> {
+            return cb.like(root.get("surname"),input);
+        };
+    }
+
+
     public static Specification<User> idMoreThan(int id) {
         return (root, query, cb) -> {
             return cb.greaterThan(root.get("id"),id);

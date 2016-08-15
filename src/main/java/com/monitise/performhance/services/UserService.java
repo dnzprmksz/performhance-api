@@ -64,22 +64,19 @@ public class UserService {
     @Secured("ROLE_MANAGER")
     public List<User> searchUsers(int organizationId, String teamId, String titleId) {
 
-        Specification<User> predicate = User.organizationIdIs(organizationId);
+        Specification<User> filter = User.organizationIdIs(organizationId);
 
         if (!teamId.equals(UNDEFINED)) {
-            System.out.println("TEAMID");
             int intTeamId = Integer.parseInt(teamId);
-            predicate = Specifications.where(predicate).and(User.teamIdIs(intTeamId));
+            filter = Specifications.where(filter).and(User.teamIdIs(intTeamId));
         }
 
         if (!titleId.equals(UNDEFINED)) {
-            System.out.println("TITLEID");
             int intTitleId = Integer.parseInt(titleId);
-            predicate = Specifications.where(predicate).and(User.titleIdIs(intTitleId));
+            filter = Specifications.where(filter).and(User.titleIdIs(intTitleId));
         }
-        predicate = Specifications.where(predicate).and(User.idMoreThan(5));
 
-        List<User> userList = userRepository.findAll(predicate);
+        List<User> userList = userRepository.findAll(filter);
 
         return userList;
     }

@@ -1,6 +1,6 @@
 package com.monitise.performhance.services;
 
-import com.monitise.AppConfig;
+import com.monitise.performhance.AppConfig;
 import com.monitise.performhance.api.model.BaseException;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;

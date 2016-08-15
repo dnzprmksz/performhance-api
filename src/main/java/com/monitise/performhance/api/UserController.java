@@ -40,7 +40,7 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.GET)
-    public Response<List<TeamUserResponse>> getUsers(@PathVariable int organizationId ) throws BaseException {
+    public Response<List<TeamUserResponse>> getUsers(@PathVariable int organizationId) throws BaseException {
         checkAuthentication(organizationId);
         List<User> users = userService.getByOrganizationId(organizationId);
 
@@ -54,7 +54,7 @@ public class UserController {
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users/{userId}", method = RequestMethod.GET)
     public Response<SimplifiedUser> getSingleUser(@PathVariable int organizationId,
-                                        @PathVariable int userId )throws BaseException {
+                                                  @PathVariable int userId) throws BaseException {
         checkAuthentication(organizationId);
         User user = userService.get(userId);
         SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
@@ -75,11 +75,11 @@ public class UserController {
         validateUserRequest(organization, userRequest);
         JobTitle title = jobTitleService.get(userRequest.getJobTitleId());
         // TODO: change the way username & password are set.
-        User employee = new User(userRequest,organization,
-                userRequest.getName()+"."+userRequest.getSurname(),"password");
+        User employee = new User(userRequest, organization,
+                userRequest.getName() + "." + userRequest.getSurname(), "password");
         employee.setJobTitle(title);
         User addedEmployee = userService.addEmployee(employee);
-        organizationService.addEmployee(organization,addedEmployee);
+        organizationService.addEmployee(organization, addedEmployee);
 
         SimplifiedUser responseEmployee = SimplifiedUser.fromUser(addedEmployee);
         Response<SimplifiedUser> response = new Response<>();
@@ -92,10 +92,10 @@ public class UserController {
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/organizations/{organizationId}/users/", method = RequestMethod.DELETE)
     public Response<SimplifiedUser> deleteUser(@PathVariable int organizationId,
-                                     @PathVariable int userId) throws BaseException {
+                                               @PathVariable int userId) throws BaseException {
         checkAuthentication(organizationId);
         User soonToBeDeleted = userService.get(userId);
-        if(soonToBeDeleted.getOrganization().getId() != organizationId) {
+        if (soonToBeDeleted.getOrganization().getId() != organizationId) {
             throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION, "You are not authorized to perform this action.");
         }
         userService.remove(userId);
@@ -108,12 +108,12 @@ public class UserController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/users/search", method = RequestMethod.GET)
-    public Response< List<SimplifiedUser> > searchUsers(
+    public Response<List<SimplifiedUser>> searchUsers(
             @RequestParam(value = "titleId", required = false, defaultValue = UserService.UNDEFINED) String titleId,
             @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId) throws BaseException {
 
         if (titleId.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
-            throw new BaseException(ResponseCode.UNEXPECTED,
+            throw new BaseException(ResponseCode.SEARCH_MISSING_PARAMETERS,
                     "At least one of titleId and teamId must be specified.");
         }
 
@@ -123,7 +123,7 @@ public class UserController {
         formatValidateSearchRequest(titleId, teamId);
         semanticallyValidate(organization, titleId, teamId);
         List<User> userList = userService.searchUsers(organizationId, teamId, titleId);
-        
+
         List<SimplifiedUser> simpleList = SimplifiedUser.fromUserList(userList);
         Response response = new Response();
         response.setData(simpleList);
@@ -133,18 +133,17 @@ public class UserController {
     }
 
 
-
     // region Helper Methods
 
-    private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException{
+    private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException {
         String name = employee.getName();
         String surname = employee.getSurname();
         if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
-            throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty user name is not allowed.");
+            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "Empty user name is not allowed.");
         }
 
         int titleId = employee.getJobTitleId();
-        if(!organizationService.isJobTitleDefined(organization, titleId)) {
+        if (!organizationService.isJobTitleDefined(organization, titleId)) {
             throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST, "A job title with given ID does not exist in this organization.");
         }
     }
@@ -158,13 +157,13 @@ public class UserController {
     }
 
     private void formatValidateSearchRequest(String titleId, String teamId) throws BaseException {
-        if( ( !titleId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(titleId)) ) {
-            throw new BaseException(ResponseCode.UNEXPECTED,
+        if ((!titleId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(titleId))) {
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID,
                     "titleId must be positive integers");
         }
 
-        if( ( !teamId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(teamId)) ) {
-            throw new BaseException(ResponseCode.UNEXPECTED,
+        if ((!teamId.equals(UserService.UNDEFINED) && !isNonNegativeInteger(teamId))) {
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID,
                     "teamId must be positive integers");
         }
 
@@ -174,31 +173,32 @@ public class UserController {
         // Check if the title is defined in the organization.
         if (!titleId.equals(UserService.UNDEFINED)) {
             int intTitleId = Integer.parseInt(titleId);
-            if (!organizationService.isJobTitleDefined(organization,intTitleId)) {
-               throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
-                       "Given job title id is not existent in the organization");
+            if (!organizationService.isJobTitleDefined(organization, intTitleId)) {
+                throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
+                        "Given job title id is not existent in the organization");
             }
         }
 
         // Check if the team is defined in the organization.
         if (!teamId.equals(UserService.UNDEFINED)) {
             int intTeamId = Integer.parseInt(teamId);
-            if (!organizationService.isTeamIdDefined(organization,intTeamId)) {
+            if (!organizationService.isTeamIdDefined(organization, intTeamId)) {
                 throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST,
                         "Given team's id is not existent in the organization");
             }
         }
     }
 
-    private boolean isNonNegativeInteger(String K) {
-        int len = K.length();
-        for(int i=0 ; i<len ; ++i){
-            char cur = K.charAt(i);
-            if( !('0'<=cur && cur<='9') ){
-                return false;
-            }
+    private boolean isNonNegativeInteger(String k) throws BaseException {
+        int candidate;
+        try {
+            candidate = Integer.parseInt(k);
+        } catch (NumberFormatException e) {
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID_FORMAT, "id's must be positive integers");
+        } catch (NullPointerException e) {
+            throw new BaseException(ResponseCode.SEARCH_INVALID_ID_FORMAT, "id's must be positive integers");
         }
-        return true;
+        return candidate > 0;
     }
 
     // endregion
