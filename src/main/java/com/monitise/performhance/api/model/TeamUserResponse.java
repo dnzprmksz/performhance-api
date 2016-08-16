@@ -32,7 +32,7 @@ public class TeamUserResponse {
         return responseList;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -49,10 +49,6 @@ public class TeamUserResponse {
     public void setName(String name) {
         this.name = name;
     }
-
-    // endregion
-
-    // region Setters
 
     public String getSurname() {
         return surname;

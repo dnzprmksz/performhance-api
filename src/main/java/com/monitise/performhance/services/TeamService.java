@@ -58,7 +58,7 @@ public class TeamService {
 
     @Secured("ROLE_MANAGER")
     public List<Team> getListFilterByOrganizationId(int organizationId) throws BaseException {
-        securityHelper.checkUserOrganizationAuthorization(organizationId);
+        securityHelper.checkAuthentication(organizationId);
         List<Team> list = teamRepository.findByOrganizationId(organizationId);
         if (list == null) {
             return new ArrayList<>();
@@ -68,7 +68,8 @@ public class TeamService {
 
     @Secured("ROLE_MANAGER")
     public Team add(Team team) throws BaseException {
-        securityHelper.checkUserOrganizationAuthorization(team.getOrganization().getId());
+        int organizationId = team.getOrganization().getId();
+        securityHelper.checkAuthentication(organizationId);
         Team teamFromRepo = teamRepository.save(team);
 
         if (teamFromRepo == null) {
@@ -79,8 +80,8 @@ public class TeamService {
 
     @Secured("ROLE_MANAGER")
     public Team assignEmployeeToTeam(User user, Team team) throws BaseException {
-        securityHelper.checkUserOrganizationAuthorization(team.getOrganization().getId());
-        securityHelper.checkUserOrganizationAuthorization(user.getOrganization().getId());
+        securityHelper.checkAuthentication(team.getOrganization().getId());
+        securityHelper.checkAuthentication(user.getOrganization().getId());
         Team teamFromRepo = teamRepository.findOne(team.getId());
 
         if (teamFromRepo == null) {

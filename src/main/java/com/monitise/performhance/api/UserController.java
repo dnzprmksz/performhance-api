@@ -2,18 +2,22 @@ package com.monitise.performhance.api;
 
 import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.AddUserRequest;
+import com.monitise.performhance.api.model.CriteriaResponse;
+import com.monitise.performhance.api.model.CriteriaUserResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
-import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.SimplifiedUser;
-import com.monitise.performhance.api.model.TeamUserResponse;
+import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
+import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.UserService;
+import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,51 +30,31 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    SecurityHelper securityHelper;
-    @Autowired
-    UserService userService;
-    @Autowired
-    OrganizationService organizationService;
-    @Autowired
-    JobTitleService jobTitleService;
+    // region Dependencies
 
+    @Autowired
+    private SecurityHelper securityHelper;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private OrganizationService organizationService;
+    @Autowired
+    private JobTitleService jobTitleService;
+    @Autowired
+    private RelationshipHelper relationshipHelper;
+    @Autowired
+    private CriteriaService criteriaService;
+
+    // endregion
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
-    @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.GET)
-    public Response<List<TeamUserResponse>> getUsers(@PathVariable int organizationId) throws BaseException {
-        checkAuthentication(organizationId);
-        List<User> users = userService.getByOrganizationId(organizationId);
-
-        List<TeamUserResponse> responseList = TeamUserResponse.fromUserList(users);
-        Response response = new Response();
-        response.setSuccess(true);
-        response.setData(responseList);
-        return response;
-    }
-
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
-    @RequestMapping(value = "/organizations/{organizationId}/users/{userId}", method = RequestMethod.GET)
-    public Response<SimplifiedUser> getSingleUser(@PathVariable int organizationId,
-                                                  @PathVariable int userId) throws BaseException {
-        checkAuthentication(organizationId);
-        User user = userService.get(userId);
-        SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
-
-        Response response = new Response();
-        response.setSuccess(true);
-        response.setData(responseUser);
-        return response;
-    }
-
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
-    @RequestMapping(value = "/organizations/{organizationId}/users", method = RequestMethod.POST)
-
-    public Response<SimplifiedUser> addUser(@PathVariable int organizationId,
-                                            @RequestBody AddUserRequest userRequest) throws BaseException {
-        checkAuthentication(organizationId);
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    public Response<SimplifiedUser> addUser(@RequestBody AddUserRequest userRequest) throws BaseException {
+        int organizationId = userRequest.getOrganizationId();
+        securityHelper.checkAuthentication(organizationId);
         Organization organization = organizationService.get(organizationId);
         validateUserRequest(organization, userRequest);
         JobTitle title = jobTitleService.get(userRequest.getJobTitleId());
@@ -88,28 +72,85 @@ public class UserController {
         return response;
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    public Response<SimplifiedUser> getSingleUser(@PathVariable int userId) throws BaseException {
+        User user = userService.get(userId);
+        int organizationId = user.getOrganization().getId();
+        securityHelper.checkAuthentication(organizationId);
+        SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
+
+        Response response = new Response();
+        response.setSuccess(true);
+        response.setData(responseUser);
+        return response;
+    }
+
     // TODO: remove user from org. as well
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
-    @RequestMapping(value = "/organizations/{organizationId}/users/", method = RequestMethod.DELETE)
-    public Response<SimplifiedUser> deleteUser(@PathVariable int organizationId,
-                                               @PathVariable int userId) throws BaseException {
-        checkAuthentication(organizationId);
-        User soonToBeDeleted = userService.get(userId);
-        if (soonToBeDeleted.getOrganization().getId() != organizationId) {
+    @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
+    public Response<Object> deleteUser(@PathVariable int userId) throws BaseException {
+        User user = userService.get(userId);
+        securityHelper.checkAuthentication(user.getOrganization().getId());
 
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
-                    "You are not authorized to perform this action.");
-        }
         userService.remove(userId);
-        SimplifiedUser responseUser = SimplifiedUser.fromUser(soonToBeDeleted);
         Response response = new Response<>();
-        response.setData(responseUser);
         response.setSuccess(true);
         return response;
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/users/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userId}/criteria", method = RequestMethod.GET)
+    public Response<List<CriteriaResponse>> getUserCriteriaList(@PathVariable int userId) throws BaseException {
+        User user = userService.get(userId);
+        int organizationId = user.getOrganization().getId();
+        securityHelper.checkAuthentication(organizationId);
+        List<Criteria> criteriaList = user.getCriteriaList();
+        List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(criteriaList);
+
+        Response<List<CriteriaResponse>> response = new Response<>();
+        response.setData(criteriaResponseList);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{userId}/criteria/{criteriaId}",
+            method = RequestMethod.POST)
+    public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int userId,
+                                                               @PathVariable int criteriaId) throws BaseException {
+        int organizationId = userService.get(userId).getOrganization().getId();
+        securityHelper.checkAuthentication(organizationId);
+        relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
+
+        Criteria criteria = criteriaService.get(criteriaId);
+        User userFromService = criteriaService.assignCriteriaToUserById(criteria, userId);
+        CriteriaUserResponse criteriaUserResponse = new CriteriaUserResponse(userFromService);
+
+        Response<CriteriaUserResponse> response = new Response<>();
+        response.setData(criteriaUserResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{userId}/criteria/{criteriaId}",
+            method = RequestMethod.DELETE)
+    public Response<Object> removeCriteriaFromUser(@PathVariable int userId,
+                                                   @PathVariable int criteriaId) throws BaseException {
+        int organizationId = userService.get(userId).getOrganization().getId();
+        securityHelper.checkAuthentication(organizationId);
+        relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
+
+        Criteria criteria = criteriaService.get(criteriaId);
+        criteriaService.removeCriteriaFromUserById(criteria, userId);
+        Response<Object> response = new Response<>();
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
     public Response<List<SimplifiedUser>> searchUsers(
             @RequestParam(value = "titleId", required = false, defaultValue = UserService.UNDEFINED) String titleId,
             @RequestParam(value = "teamId", required = false, defaultValue = UserService.UNDEFINED) String teamId,
@@ -138,7 +179,6 @@ public class UserController {
         return response;
     }
 
-
     // region Helper Methods
 
     private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException {
@@ -152,14 +192,6 @@ public class UserController {
         if (!organizationService.isJobTitleDefined(organization, titleId)) {
             throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
                     "A job title with given ID does not exist in this organization.");
-        }
-    }
-
-    private void checkAuthentication(int organizationId) throws BaseException {
-        // Throws an exception if the user performing this op. is unauthorized.
-        User currentUser = securityHelper.getAuthenticatedUser();
-        if (currentUser.getRole().equals(Role.MANAGER)) {
-            securityHelper.checkUserOrganizationAuthorization(organizationId);
         }
     }
 
@@ -196,13 +228,11 @@ public class UserController {
         }
     }
 
-    private boolean isNonNegativeInteger(String k) throws BaseException {
+    private boolean isNonNegativeInteger(String str) throws BaseException {
         int candidate;
         try {
-            candidate = Integer.parseInt(k);
-        } catch (NumberFormatException e) {
-            throw new BaseException(ResponseCode.SEARCH_INVALID_ID_FORMAT, "id's must be positive integers");
-        } catch (NullPointerException e) {
+            candidate = Integer.parseInt(str);
+        } catch (NumberFormatException exception) {
             throw new BaseException(ResponseCode.SEARCH_INVALID_ID_FORMAT, "id's must be positive integers");
         }
         return candidate > 0;

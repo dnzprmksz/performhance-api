@@ -23,11 +23,9 @@ public class SecurityHelper {
         return authenticatedUser;
     }
 
-    public void checkUserOrganizationAuthorization(int organizationId) throws BaseException {
-        User authenticatedUser = getAuthenticatedUser();
-        if (authenticatedUser.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
-                    "You are not authorized for this organization.");
+    public void checkAuthentication(int organizationId) throws BaseException {
+        if (isAuthenticatedUserManager() || isAuthenticatedUserEmployee() || isAuthenticatedUserTeamLeader()) {
+            checkUserOrganizationAuthorization(organizationId);
         }
     }
 
@@ -45,6 +43,14 @@ public class SecurityHelper {
 
     public boolean isAuthenticatedUserAdmin() throws BaseException {
         return getAuthenticatedUser().getRole().equals(Role.ADMIN);
+    }
+
+    private void checkUserOrganizationAuthorization(int organizationId) throws BaseException {
+        User authenticatedUser = getAuthenticatedUser();
+        if (authenticatedUser.getOrganization().getId() != organizationId) {
+            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
+                    "You are not authorized for this organization.");
+        }
     }
 
 }

@@ -2,10 +2,7 @@ package com.monitise.performhance.api.model;
 
 import com.monitise.performhance.entity.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class SimplifiedUser {
+public class UserResponse {
     private int id;
     private int organizationId;
     private String name;
@@ -15,7 +12,7 @@ public class SimplifiedUser {
     private String teamName;
     private Role role;
 
-    public SimplifiedUser(User user) {
+    public UserResponse(User user) {
         id = user.getId();
         organizationName = user.getOrganization().getName();
         organizationId = user.getOrganization().getId();
@@ -28,25 +25,6 @@ public class SimplifiedUser {
         if (user.getJobTitle() != null) {
             jobTitle = user.getJobTitle().getTitle();
         }
-    }
-
-    public static SimplifiedUser fromUser(User user) {
-        if (user == null) {
-            return null;
-        }
-        return new SimplifiedUser(user);
-    }
-
-    public static List<SimplifiedUser> fromUserList(List<User> users) {
-        if (users == null) {
-            return null;
-        }
-        List<SimplifiedUser> responses = new ArrayList<>();
-        for (User user : users) {
-            SimplifiedUser current = fromUser(user);
-            responses.add(current);
-        }
-        return responses;
     }
 
     // region Getters & Setters
@@ -114,7 +92,6 @@ public class SimplifiedUser {
     public void setRole(Role role) {
         this.role = role;
     }
-
 
     // endregion
 }

@@ -1,19 +1,21 @@
 package com.monitise.performhance.api.model;
 
-public class CriteriaRequest {
+public class AddTeamRequest {
 
-    private String criteria;
+    private String name;
     private int organizationId;
 
-    public CriteriaRequest() {
+    public AddTeamRequest() {
     }
 
-    public String getCriteria() {
-        return criteria;
+    // region Getters & Setters
+
+    public String getName() {
+        return name;
     }
 
-    public void setCriteria(String criteria) {
-        this.criteria = criteria;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getOrganizationId() {
@@ -23,4 +25,7 @@ public class CriteriaRequest {
     public void setOrganizationId(int organizationId) {
         this.organizationId = organizationId;
     }
+
+    // endregion
+
 }

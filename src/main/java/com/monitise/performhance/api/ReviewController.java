@@ -31,6 +31,8 @@ import java.util.Map;
 @RequestMapping("/reviews")
 public class ReviewController {
 
+    // region Dependencies
+
     @Autowired
     private ReviewService reviewService;
     @Autowired
@@ -41,6 +43,8 @@ public class ReviewController {
     private SecurityHelper securityHelper;
     @Autowired
     private RelationshipHelper relationshipHelper;
+
+    // endregion
 
     @Secured({"ROLE_MANAGER", "ROLE_TEAM_LEADER"})
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -60,22 +64,6 @@ public class ReviewController {
         return response;
     }
 
-    @Secured({"ROLE_MANAGER", "ROLE_TEAM_LEADER"})
-    @RequestMapping(value = "/{reviewId}", method = RequestMethod.GET)
-    public Response<ReviewResponse> get(@PathVariable int reviewId) throws BaseException {
-        Review review = reviewService.get(reviewId);
-        if (securityHelper.isAuthenticatedUserManager()) {
-            relationshipHelper.checkManagerReviewRelationship(review);
-        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
-            relationshipHelper.checkTeamLeaderReviewRelationship(review);
-        }
-        ReviewResponse reviewResponse = new ReviewResponse(review);
-        Response<ReviewResponse> response = new Response<>();
-        response.setData(reviewResponse);
-        response.setSuccess(true);
-        return response;
-    }
-
     @Secured({"ROLE_EMPLOYEE", "ROLE_TEAM_LEADER"})
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<ReviewResponse> add(@RequestBody AddReviewRequest reviewRequest) throws BaseException {
@@ -88,6 +76,22 @@ public class ReviewController {
         Review reviewFromService = reviewService.add(review);
         ReviewResponse reviewResponse = new ReviewResponse(reviewFromService);
 
+        Response<ReviewResponse> response = new Response<>();
+        response.setData(reviewResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured({"ROLE_MANAGER", "ROLE_TEAM_LEADER"})
+    @RequestMapping(value = "/{reviewId}", method = RequestMethod.GET)
+    public Response<ReviewResponse> get(@PathVariable int reviewId) throws BaseException {
+        Review review = reviewService.get(reviewId);
+        if (securityHelper.isAuthenticatedUserManager()) {
+            relationshipHelper.checkManagerReviewRelationship(review);
+        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
+            relationshipHelper.checkTeamLeaderReviewRelationship(review);
+        }
+        ReviewResponse reviewResponse = new ReviewResponse(review);
         Response<ReviewResponse> response = new Response<>();
         response.setData(reviewResponse);
         response.setSuccess(true);

@@ -4,7 +4,6 @@ import com.monitise.performhance.api.model.AddUserRequest;
 import com.monitise.performhance.api.model.Role;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import java.util.List;
 
 @Entity
 public class User {
@@ -60,6 +60,8 @@ public class User {
         role = Role.EMPLOYEE;
     }
 
+    // region Filter Specifications
+
     public static Specification<User> alwaysTrue() {
         return (root, query, cb) -> {
             return cb.greaterThanOrEqualTo(root.get("id"), -1);
@@ -103,8 +105,9 @@ public class User {
         };
     }
 
+    // endregion
 
-    // region Getters
+    // region Getters & Setters
 
     public String getName() {
         return name;
@@ -145,10 +148,6 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-
-    // endregion
-
-    // region Setters
 
     public Organization getOrganization() {
         return organization;

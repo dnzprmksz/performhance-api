@@ -6,11 +6,12 @@ public class AddUserRequest implements Serializable {
     private String name;
     private String surname;
     private int jobTitleId;
+    private int organizationId;
 
     public AddUserRequest() {
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public String getName() {
         return name;
@@ -24,10 +25,6 @@ public class AddUserRequest implements Serializable {
         return surname;
     }
 
-    // endregion
-
-    // region Setters
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -39,6 +36,15 @@ public class AddUserRequest implements Serializable {
     public void setJobTitleId(int jobTitleId) {
         this.jobTitleId = jobTitleId;
     }
+
+    public int getOrganizationId() {
+        return organizationId;
+    }
+
+    public void setOrganizationId(int organizationId) {
+        this.organizationId = organizationId;
+    }
+
 
     // endregion
 }
