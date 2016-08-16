@@ -37,6 +37,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
             logger.info("Parameter name: " + paramName + " - Parameter value: " + request.getParameter(paramName));
         }
 
+        System.out.println("Body: " + getRequestBody(request));
         return true;
     }
 
@@ -44,7 +45,6 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response,
                            Object handler, ModelAndView modelAndView) throws Exception {
-
 
     }
 
@@ -63,6 +63,7 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
             int bytesRead = -1;
             while ((bytesRead = bufferedReader.read(charBuffer)) != -1) {
                 stringBuilder.append(charBuffer, 0, bytesRead);
+                System.out.println("?");
             }
         }
 
