@@ -63,7 +63,6 @@ public class JobTitleController {
             throws BaseException {
         int organizationId = addJobTitleRequest.getOrganizationId();
         securityHelper.checkAuthentication(organizationId);
-
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitle = new JobTitle(addJobTitleRequest.getTitle(), organization);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);

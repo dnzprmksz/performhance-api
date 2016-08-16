@@ -19,6 +19,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = AppConfig.class)
 @WebAppConfiguration
@@ -34,21 +36,16 @@ public class UserServiceTest {
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    @Before
-    public void setup() throws BaseException {
-        organizationService.add(new Organization("Monitise"));
-        organizationService.add(new Organization("Palantir"));
-    }
-
-    @After
-    public void cleanup() {
-        userRepository.deleteAll();
-        organizationRepository.deleteAll();
+    @Test
+    public void reallyjusttesting() throws BaseException {
+        Organization organization = organizationService.get(1);
+        Assert.assertEquals(organization.getName(), "Google");
+        Assert.assertEquals(organization.getNumberOfEmployees(), 0);
     }
 
     @Test(expected = AuthenticationCredentialsNotFoundException.class)
     public void add_EmployeeWithoutAuthentication() throws BaseException {
-        Organization organization = organizationService.getByName("Monitise");
+        Organization organization = organizationService.getByName("Google");
         userService.addEmployee(new User("Employee", "Shouldn't add this", organization));
     }
 
@@ -70,7 +67,9 @@ public class UserServiceTest {
     public void add_NonExistingEmployee_shouldAdd() throws BaseException {
 
         Organization organization = organizationService.getByName("Monitise");
-        User user = new User("Deniz", "Parmaksiz", organization);
+        User user = new User("Yamac", "Egemen", organization);
+        genUserNamePassword(user);
+
         User userFromService = userService.addEmployee(user);
 
         Assert.assertNotNull(userFromService);
@@ -107,22 +106,22 @@ public class UserServiceTest {
     @Test
     @WithMockUser(roles = {"MANAGER"})
     public void get_existingUserName() throws BaseException {
-        final String username = "G-ZUS";
+        final String username = "FooFighter";
         Organization organization = organizationService.getByName("Monitise");
 
         User user = new User("Mustafa", "Peksen", organization);
         user.setUsername(username);
 
         User addedUser = userService.addEmployee(user);
-        User getUser = userService.getByUsername(username);
+        User fetchedUser = userService.getByUsername(username);
 
         Assert.assertNotNull(addedUser);
         Assert.assertEquals(user.getName(), addedUser.getName());
         Assert.assertEquals(user.getSurname(), addedUser.getSurname());
 
-        Assert.assertNotNull(getUser);
-        Assert.assertEquals(getUser.getName(), addedUser.getName());
-        Assert.assertEquals(getUser.getSurname(), addedUser.getSurname());
+        Assert.assertNotNull(fetchedUser);
+        Assert.assertEquals(fetchedUser.getName(), addedUser.getName());
+        Assert.assertEquals(fetchedUser.getSurname(), addedUser.getSurname());
 
     }
 
@@ -130,7 +129,7 @@ public class UserServiceTest {
     @WithMockUser(roles = {"MANAGER"})
     public void get_nonExistingUserName() throws BaseException {
         final String username = "G-ZUS";
-        final String nonExistenceUsername = "JESUS";
+        final String nonExistentUsername = "JESUS";
 
         Organization organization = organizationService.getByName("Monitise");
 
@@ -138,7 +137,7 @@ public class UserServiceTest {
         user.setUsername(username);
 
         User addedUser = userService.addEmployee(user);
-        User getUser = userService.getByUsername(nonExistenceUsername);
+        User getUser = userService.getByUsername(nonExistentUsername);
 
         Assert.assertNotNull(addedUser);
         Assert.assertEquals(user.getName(), addedUser.getName());
@@ -172,5 +171,19 @@ public class UserServiceTest {
         userService.remove(34663);
 
     }
+
+    private void genUserNamePassword(User u) {
+        String name = u.getName();
+        String surname = u.getSurname();
+        u.setUsername(name + "." + surname);
+        u.setPassword(surname);
+    }
+
+    private void setUserNamePassword(User u, String userName, String password) {
+        u.setUsername(userName);
+        u.setPassword(password);
+    }
+
+
 
 }

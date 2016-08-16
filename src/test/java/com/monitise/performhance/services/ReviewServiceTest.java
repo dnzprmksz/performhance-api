@@ -20,15 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = AppConfig.class)
+@WebAppConfiguration
 public class ReviewServiceTest {
 
-    private static User reviewedUser;
+    private User reviewedUser;
     @Autowired
     private CriteriaService criteriaService;
     @Autowired
@@ -54,6 +56,7 @@ public class ReviewServiceTest {
         reviewedUser = new User("Deniz", "Parmaksız", organization);
         User user = userRepository.save(reviewedUser);
         teamService.assignEmployeeToTeam(user, team);
+
         Criteria criteria1 = criteriaRepository.save(new Criteria("Code coverage", organization));
         Criteria criteria2 = criteriaRepository.save(new Criteria("8 hours of daily work", organization));
         Criteria criteria3 = criteriaRepository.save(new Criteria("Teamwork", organization));
