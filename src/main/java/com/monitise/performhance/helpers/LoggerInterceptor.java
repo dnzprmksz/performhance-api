@@ -23,6 +23,17 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
     static Logger logger = LoggerFactory.getLogger(LoggerInterceptor.class);
     // TODO: find a way to log bodies.
 
+    public static String getRequestData(final HttpServletRequest request) throws UnsupportedEncodingException {
+        String payload = null;
+        ContentCachingRequestWrapper wrapper = WebUtils.getNativeRequest(request, ContentCachingRequestWrapper.class);
+        if (wrapper != null) {
+            byte[] buf = wrapper.getContentAsByteArray();
+            if (buf.length > 0) {
+                payload = new String(buf, 0, buf.length, wrapper.getCharacterEncoding());
+            }
+        }
+        return payload;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -40,14 +51,12 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
-
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response,
                            Object handler, ModelAndView modelAndView) throws Exception {
 
 
     }
-
 
     private String getRequestBody(final HttpServletRequest request)
             throws Exception {
@@ -67,18 +76,6 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
         }
 
         return stringBuilder.toString();
-    }
-
-    public static String getRequestData(final HttpServletRequest request) throws UnsupportedEncodingException {
-        String payload = null;
-        ContentCachingRequestWrapper wrapper = WebUtils.getNativeRequest(request, ContentCachingRequestWrapper.class);
-        if (wrapper != null) {
-            byte[] buf = wrapper.getContentAsByteArray();
-            if (buf.length > 0) {
-                payload = new String(buf, 0, buf.length, wrapper.getCharacterEncoding());
-            }
-        }
-        return payload;
     }
 
 

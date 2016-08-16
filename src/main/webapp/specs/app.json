@@ -5,11 +5,12 @@
     "description": "RESTful API for corporate peer review and performance tracking application.",
     "title": "Performhance API"
   },
+  "host": "localhost:8080",
   "paths": {
     "/organizations": {
       "get": {
         "operationId": "getOrganizations",
-        "description": "Gets all `Organization` objects.",
+        "description": "Gets all `Organization` objects",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -27,12 +28,12 @@
       },
       "post": {
         "operationId": "postOrganization",
-        "description": "Adds a new `Organization` object to the repository.",
+        "description": "Adds a new `Organization` object to the repository",
         "parameters": [
           {
             "name": "organization",
             "in": "body",
-            "description": "Organization object which will be added to repository.",
+            "description": "Organization object which will be added to repository",
             "required": true,
             "schema": {
               "$ref": "#/definitions/Organization"
@@ -58,14 +59,14 @@
     "/organizations/{organizationId}": {
       "get": {
         "operationId": "getOrganization",
-        "description": "Gets the `Organization` object with given ID.",
+        "description": "Gets the `Organization` object with given id",
         "parameters": [
           {
             "name": "organizationId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "ID of the `Organization` that is going to be returned."
+            "description": "Id of the `Organization` that is going to be returned"
           }
         ],
         "responses": {
@@ -76,7 +77,7 @@
             }
           },
           "404": {
-            "description": "An organization with given ID does not exist",
+            "description": "An organization with given id does not exist",
             "schema": {
               "$ref": "#/definitions/Response"
             }
@@ -87,235 +88,19 @@
     "/organizations/{organizationId}/users": {
       "get": {
         "operationId": "getOrganizationUsers",
-        "description": "Returns all the employees of an organization.",
+        "description": "Returns all the employees of an organization",
         "parameters": [
           {
             "name": "organizationId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Organization` object."
+            "description": "Id of the `Organization` object"
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a response that contains a List of `User` objects.",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Inserts an employee to an organization.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `Organization` object."
-          },
-          {
-            "name": "user",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/User"
-            },
-            "required": true,
-            "description": "Id of the `Organization` object."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a response that contains a `User` object."
-          },
-          "404": {
-            "description": "Empty username is not allowed / You  are not authorized for this organization /",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/users/{userId}": {
-      "get": {
-        "operationId": "getOrganizationUser",
-        "description": "Returns the employee of given id of an organization.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `Organization` object."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `User` object."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a response that contains a `User` object."
-          },
-          "404": {
-            "description": "A user with given ID does not exists / You  are not authorized for this organization",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      },
-      "delete": {
-        "operationId": "deleteUser",
-        "description": "Deletes an employee of the given id from an organization.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `Organization` object."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `User` object."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a response that contains the deleted `User` object."
-          },
-          "404": {
-            "description": "A user with given ID does not exists / You  are not authorized for this organization",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/users/{userId}/criteria/": {
-      "get": {
-        "operationId": "getUserCriteriaList",
-        "description": "Gets all `Criteria`s of `User` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `User`."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/users/{userId}/criteria/{criteriaId}": {
-      "post": {
-        "operationId": "assignCriteriaToUser",
-        "description": "Assigns `Criteria` to a `User` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `User`."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be assigned to `User`."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      },
-      "delete": {
-        "operationId": "removeCriteriaFromUser",
-        "description": "Removes `Criteria` from a `User` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `User`."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be removed from `User`."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
+            "description": "Returns a response that contains a List of `User` objects",
             "schema": {
               "$ref": "#/definitions/Response"
             }
@@ -326,129 +111,14 @@
     "/organizations/{organizationId}/teams/": {
       "get": {
         "operationId": "getOrganizationTeams",
-        "description": "Gets the `Team` objects in the given `Organization`.",
+        "description": "Gets the `Team` objects in the given `Organization`",
         "parameters": [
           {
             "name": "organizationId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "ID of the `Organization` to filter the `Team` objects by."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      },
-      "post": {
-        "operationId": "postOrganizationTeam",
-        "description": "Adds a new `Team` object to the repository.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Team` object belongs."
-          },
-          {
-            "name": "team",
-            "in": "body",
-            "description": "Team object which will be added to repository.",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Team"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/teams/{teamId}": {
-      "get": {
-        "operationId": "getOrganizationTeam",
-        "description": "Gets the `Team` object with given ID in the given `Organization`.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Team` belongs to."
-          },
-          {
-            "name": "teamId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Team` that will be returned."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "A team with given ID does not exist",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/teams/{teamId}/criteria/{criteriaId}": {
-      "post": {
-        "operationId": "assignCriteriaToTeamUsers",
-        "description": "Assigns `Criteria` to the `User`s of a `Team` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "teamId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Team`."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be assigned to `User`s."
+            "description": "Id of the `Organization` to filter the `Team` objects by"
           }
         ],
         "responses": {
@@ -470,50 +140,14 @@
     "/organizations/{organizationId}/criteria/": {
       "get": {
         "operationId": "getOrganizationCriterias",
-        "description": "Get all `Criteria` objects of an Organization with given ID.",
+        "description": "Get all `Criteria` objects of an Organization with given id",
         "parameters": [
           {
             "name": "organizationId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "ID of the `Organization` that `Criteria`s belongs to."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      },
-      "post": {
-        "operationId": "postOrganizationCriteria",
-        "description": "Adds given `Criteria` object to an Organization with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "description": "ID of the `Organization` that `Criteria`s belongs to.",
-            "type": "integer",
-            "required": true
-          },
-          {
-            "name": "criteria",
-            "description": "Criteria object which will be added to repository.",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Criteria"
-            }
+            "description": "Id of the `Organization` that `Criteria`s belongs to"
           }
         ],
         "responses": {
@@ -533,63 +167,29 @@
       }
     },
     "/organizations/{organizationId}/criteria/{criteriaId}": {
-      "get": {
-        "operationId": "getOrganizationCriteria",
-        "description": "Get `Criteria` object of an Organization with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be returned."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      },
       "post": {
         "operationId": "assignCriteriaToGroup",
-        "description": "Assigns `Criteria` with given ID to the users with given ID list.",
+        "description": "Assigns `Criteria` with given id to the users with given id list",
         "parameters": [
           {
             "name": "organizationId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
+            "description": "Id of the `Organization` that `Criteria` belongs to"
           },
           {
             "name": "criteriaId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "ID of the `Criteria` that will be assigned to `User`s."
+            "description": "Id of the `Criteria` that will be assigned to `User`s"
           },
           {
             "name": "userIdList",
             "in": "body",
             "required": true,
-            "description": "ID list of `User`s that `Criteria` will be assigned.",
+            "description": "Id list of `User`s that `Criteria` will be assigned",
             "schema": {
               "type": "array",
               "items": {
@@ -612,30 +212,505 @@
             }
           }
         }
-      },
-      "put": {
-        "operationId": "updateCriteria",
-        "description": "Updates `Criteria` with given ID.",
+      }
+    },
+    "/users": {
+      "post": {
+        "description": "Adds a new `User`",
         "parameters": [
           {
-            "name": "organizationId",
+            "name": "user",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/User"
+            },
+            "required": true,
+            "description": "The `User` object to be added"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns successfully added `User` object",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Empty username is not allowed / You  are not authorized for this organization /",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "operationId": "getUser",
+        "description": "Returns the `User` with given id",
+        "parameters": [
+          {
+            "name": "userId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
+            "description": "Id of the `User` object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a response that contains a `User` object"
+          },
+          "404": {
+            "description": "A `User` with given id does not exist OR you are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteUser",
+        "description": "Deletes an employee of the given id from an organization",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User` object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a response that contains the deleted `User` object"
+          },
+          "404": {
+            "description": "A user with given id does not exists / You  are not authorized for this organization",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/criteria/": {
+      "get": {
+        "operationId": "getUserCriteriaList",
+        "description": "Gets all `Criteria`s of `User` with given id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/criteria/{criteriaId}": {
+      "post": {
+        "operationId": "assignCriteriaToUser",
+        "description": "Assigns `Criteria` to a `User` with given id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
           },
           {
             "name": "criteriaId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "ID of the `Criteria` that will be updated."
+            "description": "Id of the `Criteria` that will be assigned to `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeCriteriaFromUser",
+        "description": "Removes `Criteria` from a `User` with given id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
+          },
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Criteria` that will be removed from `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/teams": {
+      "get": {
+        "operationId": "getTeams",
+        "description": "Gets all `Team` objects",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postTeam",
+        "description": "Adds a new `Team` object to the repository",
+        "parameters": [
+          {
+            "name": "team",
+            "in": "body",
+            "description": "Team object which will be added to repository",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Team"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/teams/{teamId}": {
+      "get": {
+        "operationId": "getOrganizationTeam",
+        "description": "Gets the `Team` object with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team` that will be returned"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A `Team` with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/teams/{teamId}/criteria/{criteriaId}": {
+      "post": {
+        "operationId": "assignCriteriaToTeamUsers",
+        "description": "Assigns `Criteria` to the `User`s of a `Team` with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team`"
+          },
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Criteria` that will be assigned to `User`s"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/jobTitles": {
+      "get": {
+        "operationId": "getJobTitles",
+        "description": "Gets all `JobTitle` objects\n",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "addJobTitles",
+        "description": "Adds given `JobTitles` object",
+        "parameters": [
+          {
+            "name": "jobTitle",
+            "in": "body",
+            "description": "The `JobTitle` object which will be added to repository",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JobTitle"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/jobTitles/{jobTitleId}": {
+      "get": {
+        "operationId": "getJobtitle",
+        "description": "Returns the `JobTitle` object of the given id",
+        "parameters": [
+          {
+            "name": "jobTitleId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `JobTitle` object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a response that contains a `JobTitle` object",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A job title with given id does not exist"
+          }
+        }
+      }
+    },
+    "/jobTitles/{jobTitleId}/criteria/{criteriaId}": {
+      "post": {
+        "operationId": "assignCriteriaToJobTitleUsers",
+        "description": "Assigns `Criteria` to the `User`s of a `JobTitle` with given id",
+        "parameters": [
+          {
+            "name": "jobTitleId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `JobTitle`"
+          },
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Criteria` that will be assigned to `User`s"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/criteria": {
+      "get": {
+        "operationId": "getCriterias",
+        "description": "Gets all `Criteria` objects for admin user",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postCriteria",
+        "description": "Adds given `Criteria` object",
+        "parameters": [
+          {
+            "name": "criteria",
+            "description": "The `Criteria` object which will be added to repository",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Criteria"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/criteria/{criteriaId}": {
+      "get": {
+        "operationId": "getCriteria",
+        "description": "Get `Criteria` object of an Organization with given Id",
+        "parameters": [
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Criteria` that will be returned"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateCriteria",
+        "description": "Updates `Criteria` with given id",
+        "parameters": [
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Criteria` that will be updated"
           },
           {
             "name": "criteriaRequest",
             "in": "body",
             "required": true,
-            "description": "ID list of `User`s that `Criteria` will be assigned.",
+            "description": "Id list of `User`s that `Criteria` will be assigned",
             "schema": {
               "$ref": "#/definitions/Criteria"
             }
@@ -658,179 +733,14 @@
       },
       "delete": {
         "operationId": "deleteCriteria",
-        "description": "Deletes `Criteria` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be deleted."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/organizations/{organizationId}/jobTitles/{jobTitleId}/criteria/{criteriaId}": {
-      "post": {
-        "operationId": "assignCriteriaToJobTitleUsers",
-        "description": "Assigns `Criteria` to the `User`s of a `JobTitle` with given ID.",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Organization` that `Criteria` belongs to."
-          },
-          {
-            "name": "jobTitleId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `JobTitle`."
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "ID of the `Criteria` that will be assigned to `User`s."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/teams": {
-      "get": {
-        "operationId": "getTeams",
-        "description": "Gets all `Team` objects.",
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/jobTitles": {
-      "get": {
-        "operationId": "getJobTitles",
-        "description": "Gets all `JobTitle` objects.\n",
-        "responses": {
-          "200": {
-            "description": "Successful response.",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/jobTitles/{jobTitleId}": {
-      "get": {
-        "operationId": "getJobtitle",
-        "description": "Returns the `JobTitle` object of the given id",
-        "parameters": [
-          {
-            "name": "jobTitleId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `JobTitle` object."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a response that contains a `JobTitle` object.",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "A job title with given ID does not exist."
-          }
-        }
-      }
-    },
-    "/criterias": {
-      "get": {
-        "operationId": "getCriterias",
-        "description": "Gets all `Criteria` objects for admin user.",
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/criterias/{criteriaId}": {
-      "get": {
-        "operationId": "getCriteria",
-        "description": "Get the `Criteria` object with given ID for admin user.",
+        "description": "Deletes `Criteria` with given id",
         "parameters": [
           {
             "name": "criteriaId",
             "in": "path",
-            "description": "Id of the `Criteria` object.",
+            "type": "integer",
             "required": true,
-            "type": "integer"
+            "description": "Id of the `Criteria` that will be deleted"
           }
         ],
         "responses": {
@@ -852,7 +762,7 @@
     "/reviews": {
       "get": {
         "operationId": "getReviews",
-        "description": "Gets all `Review` objects that authorized user can access.",
+        "description": "Gets all `Review` objects that authorized user can access",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -870,12 +780,12 @@
       },
       "post": {
         "operationId": "addReview",
-        "description": "Adds given `Review` object.",
+        "description": "Adds given `Review` object",
         "parameters": [
           {
             "name": "review",
             "in": "body",
-            "description": "Review object which will be added to repository.",
+            "description": "Review object which will be added to repository",
             "required": true,
             "schema": {
               "$ref": "#/definitions/Review"
@@ -901,14 +811,14 @@
     "/reviews/{reviewId}": {
       "get": {
         "operationId": "getReview",
-        "description": "Gets `Review` object with given ID.",
+        "description": "Gets `Review` object with given id",
         "parameters": [
           {
             "name": "reviewId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Review` object."
+            "description": "Id of the `Review` object"
           }
         ],
         "responses": {
@@ -928,14 +838,14 @@
       },
       "delete": {
         "operationId": "deleteReview",
-        "description": "Deletes `Review` object with given ID.",
+        "description": "Deletes `Review` object with given id",
         "parameters": [
           {
             "name": "reviewId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Review` object."
+            "description": "Id of the `Review` object"
           }
         ],
         "responses": {
@@ -962,11 +872,11 @@
         "code": {
           "type": "integer",
           "format": "int32",
-          "description": "Unique identifier representing the type of error."
+          "description": "Unique identifier representing the type of error"
         },
         "message": {
           "type": "string",
-          "description": "Brief explanation about reasons why the error may have occured."
+          "description": "Brief explanation about reasons why the error may have occured"
         }
       }
     },
@@ -976,11 +886,11 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "description": "Unique identifier of a JobTitle."
+          "description": "Unique identifier of a JobTitle"
         },
         "title": {
           "type": "string",
-          "description": "Name of the job title."
+          "description": "Name of the job title"
         }
       }
     },
@@ -990,30 +900,30 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "description": "Unique identifier of a organization."
+          "description": "Unique identifier of a organization"
         },
         "name": {
           "type": "string",
-          "description": "Name of the organization."
+          "description": "Name of the organization"
         },
         "numberOfEmployees": {
           "type": "integer",
           "format": "int32",
-          "description": "Represents the number of employees who work for the organization."
+          "description": "Represents the number of employees who work for the organization"
         },
         "users": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/User"
           },
-          "description": "Represents the employees of the organization."
+          "description": "Represents the employees of the organization"
         },
         "jobTitles": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/JobTitle"
           },
-          "description": "Represents the defined job titles in an organization."
+          "description": "Represents the defined job titles in an organization"
         },
         "teams": {
           "type": "array",
@@ -1031,11 +941,11 @@
       "properties": {
         "success": {
           "type": "boolean",
-          "description": "A flag that represents the success of the request."
+          "description": "A flag that represents the success of the request"
         },
         "data": {
           "type": "object",
-          "description": "The data of type T that request asked for."
+          "description": "The data of type T that request asked for"
         },
         "error": {
           "$ref": "#/definitions/Error"
@@ -1048,18 +958,18 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "description": "Unique identifier of a team."
+          "description": "Unique identifier of a team"
         },
         "name": {
           "type": "string",
-          "description": "Name of the team."
+          "description": "Name of the team"
         },
         "members": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Response"
           },
-          "description": "List of the `User`s in team."
+          "description": "List of the `User`s in team"
         },
         "organization": {
           "$ref": "#/definitions/Organization"
@@ -1075,15 +985,15 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "description": "Unique identifier of a User."
+          "description": "Unique identifier of a User"
         },
         "name": {
           "type": "string",
-          "description": "Name of the user."
+          "description": "Name of the user"
         },
         "surname": {
           "type": "string",
-          "description": "Surname of the user."
+          "description": "Surname of the user"
         },
         "jobTitle": {
           "$ref": "#/definitions/JobTitle"
@@ -1096,18 +1006,18 @@
             "TEAM_LEADER",
             "EMPLOYEE"
           ],
-          "description": "Role of the user."
+          "description": "Role of the user"
         },
         "organization": {
           "$ref": "#/definitions/Organization"
         },
         "username": {
           "type": "string",
-          "description": "Username of user that is used for authentication."
+          "description": "Username of user that is used for authentication"
         },
         "password": {
           "type": "string",
-          "description": "Password of user that is used for authentication."
+          "description": "Password of user that is used for authentication"
         }
       }
     },
@@ -1117,11 +1027,11 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "description": "Unique identifier of a criteria."
+          "description": "Unique identifier of a criteria"
         },
         "criteria": {
           "type": "string",
-          "description": "Name of the criteria."
+          "description": "Name of the criteria"
         },
         "organization": {
           "$ref": "#/definitions/Organization"
@@ -1134,7 +1044,7 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "description": "Unique identifier of a review."
+          "description": "Unique identifier of a review"
         },
         "reviewedEmployee": {
           "$ref": "#/definitions/User"
@@ -1144,7 +1054,7 @@
         },
         "comment": {
           "type": "string",
-          "description": "An optional comment of reviewer."
+          "description": "An optional comment of reviewer"
         },
         "organization": {
           "$ref": "#/definitions/Organization"

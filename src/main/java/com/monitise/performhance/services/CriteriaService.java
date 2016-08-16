@@ -8,6 +8,7 @@ import com.monitise.performhance.repositories.CriteriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -77,6 +78,21 @@ public class CriteriaService {
         return userFromRepo;
     }
 
+    /**
+     * @return List of users who already has the criteria.
+     */
+    public ArrayList<Integer> assignCriteriaToUserList(int criteriaId, List<Integer> userIdList) throws BaseException {
+        ArrayList<Integer> existingUserList = new ArrayList<>();
+        // Add criteria to users. If user already has this criteria, add his/her ID to the list.
+        for (int userId : userIdList) {
+            boolean userAlreadyHasCriteria = checkUserExistenceAndAssignCriteriaById(userId, criteriaId);
+            if (userAlreadyHasCriteria) {
+                existingUserList.add(userId);
+            }
+        }
+        return existingUserList;
+    }
+
     public void removeCriteriaFromUserById(Criteria criteria, int userId) throws BaseException {
         User user = userService.get(userId);
         List<Criteria> criteriaList = user.getCriteriaList();
@@ -93,6 +109,23 @@ public class CriteriaService {
     }
 
     // region Helper Methods
+
+    /**
+     * @return The existence of the user.
+     */
+    private boolean checkUserExistenceAndAssignCriteriaById(int userId, int criteriaId) throws BaseException {
+        Criteria criteria = get(criteriaId);
+        try {
+            assignCriteriaToUserById(criteria, userId);
+        } catch (BaseException exception) {
+            if (exception.getCode() == ResponseCode.CRITERIA_EXISTS_IN_USER) {
+                return true;
+            } else {
+                throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given criteria to given user list.");
+            }
+        }
+        return false;
+    }
 
     // Throws exception if the criteria DOES NOT EXIST.
     private void ensureExistence(Criteria criteria) throws BaseException {

@@ -2,13 +2,13 @@ package com.monitise.performhance.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.util.List;
 
 @Entity
 public class Organization {

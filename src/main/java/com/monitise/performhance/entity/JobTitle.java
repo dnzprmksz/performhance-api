@@ -3,6 +3,7 @@ package com.monitise.performhance.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class JobTitle {
@@ -11,15 +12,26 @@ public class JobTitle {
     @GeneratedValue
     private int id;
     private String title;
+    @ManyToOne
+    private Organization organization;
 
     protected JobTitle() {
     }
 
-    public JobTitle(String title) {
+    public JobTitle(String title, Organization organization) {
         this.title = title;
+        this.organization = organization;
     }
 
-    // region Getters
+    // region Getters & Setters
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -29,16 +41,12 @@ public class JobTitle {
         this.title = title;
     }
 
-    // endregion
-
-    // region Setters
-
-    public int getId() {
-        return id;
+    public Organization getOrganization() {
+        return organization;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
 
     // endregion

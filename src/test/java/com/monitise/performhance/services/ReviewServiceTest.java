@@ -53,7 +53,7 @@ public class ReviewServiceTest {
         Team team = teamRepository.save(new Team("İşCep", organization));
         reviewedUser = new User("Deniz", "Parmaksız", organization);
         User user = userRepository.save(reviewedUser);
-        teamService.assingEmployeeToTeam(user, team);
+        teamService.assignEmployeeToTeam(user, team);
         Criteria criteria1 = criteriaRepository.save(new Criteria("Code coverage", organization));
         Criteria criteria2 = criteriaRepository.save(new Criteria("8 hours of daily work", organization));
         Criteria criteria3 = criteriaRepository.save(new Criteria("Teamwork", organization));
