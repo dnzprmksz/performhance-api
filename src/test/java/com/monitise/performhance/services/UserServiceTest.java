@@ -41,8 +41,8 @@ public class UserServiceTest {
         Organization organization = organizationService.get(1);
         Assert.assertEquals(organization.getName(), "Google");
         Assert.assertEquals(organization.getNumberOfEmployees(), 0);
-
     }
+
     @Test(expected = AuthenticationCredentialsNotFoundException.class)
     public void add_EmployeeWithoutAuthentication() throws BaseException {
         Organization organization = organizationService.getByName("Google");
