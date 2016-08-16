@@ -5,31 +5,34 @@ import com.monitise.performhance.entity.Organization;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimplifiedOrganizationResponse {
+public class SimplifiedOrganization {
 
     private int id;
     private String name;
     private int numberOfEmployees;
 
-    public SimplifiedOrganizationResponse(Organization organization) {
+    public SimplifiedOrganization(Organization organization) {
         id = organization.getId();
         name = organization.getName();
         numberOfEmployees = organization.getNumberOfEmployees();
     }
 
-    public static SimplifiedOrganizationResponse fromOrganization(Organization organization) {
-        return new SimplifiedOrganizationResponse(organization);
+    public static SimplifiedOrganization fromOrganization(Organization organization) {
+        if (organization == null) {
+            return null;
+        }
+        return new SimplifiedOrganization(organization);
     }
 
-    public static List<SimplifiedOrganizationResponse> fromOrganizationList(List<Organization> organizations) {
-        List<SimplifiedOrganizationResponse> responseList = new ArrayList<>();
+    public static List<SimplifiedOrganization> fromList(List<Organization> organizations) {
+        List<SimplifiedOrganization> responseList = new ArrayList<>();
         for (Organization organization : organizations) {
-            responseList.add(new SimplifiedOrganizationResponse(organization));
+            responseList.add(new SimplifiedOrganization(organization));
         }
         return responseList;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -42,10 +45,6 @@ public class SimplifiedOrganizationResponse {
     public String getName() {
         return name;
     }
-
-    // endregion
-
-    // region Setters
 
     public void setName(String name) {
         this.name = name;

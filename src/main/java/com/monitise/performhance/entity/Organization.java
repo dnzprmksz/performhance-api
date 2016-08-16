@@ -1,7 +1,5 @@
 package com.monitise.performhance.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,14 +18,12 @@ public class Organization {
     private String name;
     private int numberOfEmployees;
     @OneToMany
-    @JsonIgnore
     private List<User> users;
     @OneToMany
     private List<JobTitle> jobTitles;
     @OneToMany
     private List<Team> teams;
     @OneToOne
-    @JsonIgnore
     private User manager;
 
     protected Organization() {
@@ -41,7 +37,7 @@ public class Organization {
         this.id = id;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -70,9 +66,6 @@ public class Organization {
     public List<User> getUsers() {
         return users;
     }
-    // endregion
-
-    // region Setters
 
     public void setUsers(List<User> users) {
         this.users = users;

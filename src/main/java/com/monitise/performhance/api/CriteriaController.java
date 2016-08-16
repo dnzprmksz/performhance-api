@@ -3,6 +3,7 @@ package com.monitise.performhance.api;
 import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.CriteriaRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
+import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.helpers.RelationshipHelper;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -116,6 +118,29 @@ public class CriteriaController {
 
         Response<Object> response = new Response<>();
         response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{criteriaId}", method = RequestMethod.POST)
+    public Response<Object> assignCriteriaToGroup(@PathVariable int criteriaId,
+                                                  @RequestBody List<Integer> userIdList) throws BaseException {
+        int organizationId = criteriaService.get(criteriaId).getOrganization().getId();
+        securityHelper.checkAuthentication(organizationId);
+        relationshipHelper.checkOrganizationUserListRelationship(organizationId, userIdList);
+
+        ArrayList<Integer> existingUserList;
+        existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
+
+        ExtendedResponse<Object> response = new ExtendedResponse<>();
+        response.setSuccess(true);
+        if (!existingUserList.isEmpty()) {
+            String message = "Completed successfully, however, the criteria was already assigned for following users:";
+            for (int userId : existingUserList) {
+                message += " " + userId;
+            }
+            response.setMessage(message);
+        }
         return response;
     }
 

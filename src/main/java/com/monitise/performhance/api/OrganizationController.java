@@ -1,15 +1,17 @@
 package com.monitise.performhance.api;
 
 import com.monitise.performhance.BaseException;
+import com.monitise.performhance.api.model.AddOrganizationRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.ExtendedResponse;
+import com.monitise.performhance.api.model.OrganizationJobTitleResponse;
 import com.monitise.performhance.api.model.OrganizationResponse;
+import com.monitise.performhance.api.model.OrganizationUserResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
-import com.monitise.performhance.api.model.SimplifiedOrganizationResponse;
-import com.monitise.performhance.api.model.SimplifiedTeamResponse;
-import com.monitise.performhance.api.model.TeamUserResponse;
+import com.monitise.performhance.api.model.SimplifiedOrganization;
+import com.monitise.performhance.api.model.SimplifiedTeam;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
@@ -57,91 +59,91 @@ public class OrganizationController {
 
     // endregion
 
-    // TODO: Only available to admin
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<SimplifiedOrganizationResponse>> getAll() {
-        List<Organization> entityList = organizationService.getAll();
-        List<SimplifiedOrganizationResponse> responseList;
-        responseList = SimplifiedOrganizationResponse.fromOrganizationList(entityList);
+    public Response<List<SimplifiedOrganization>> getAll() {
+        List<Organization> list = organizationService.getAll();
+        List<SimplifiedOrganization> responseList = SimplifiedOrganization.fromList(list);
 
-        Response<List<SimplifiedOrganizationResponse>> response = new Response<>();
+        Response<List<SimplifiedOrganization>> response = new Response<>();
         response.setSuccess(true);
         response.setData(responseList);
         return response;
     }
 
-    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response<OrganizationResponse> add(@RequestBody Organization organization) throws BaseException {
-        validateName(organization.getName());
+    public Response<OrganizationResponse> add(@RequestBody AddOrganizationRequest addOrganizationRequest)
+            throws BaseException {
+        String organizationName = addOrganizationRequest.getOrganizationName();
+        validateName(organizationName);
+        Organization organization = new Organization(organizationName);
         Organization addedOrganization = organizationService.add(organization);
 
-        // Create management user for the organization.
-        User manager = new User(addedOrganization.getName(), "Manager", addedOrganization, Role.MANAGER);
-        // TODO: Change the way how manager account is created. It is fixed for now for test purposes.
-        manager.setUsername(addedOrganization.getName().toLowerCase());
-        manager.setPassword("admin");
+        User manager = new User(addOrganizationRequest.getManagerName(),
+                addOrganizationRequest.getManagerSurname(),
+                addedOrganization,
+                Role.MANAGER);
+        manager.setUsername(addOrganizationRequest.getUsername());
+        manager.setPassword(addOrganizationRequest.getPassword());
         userService.addManager(manager);
         addedOrganization.setManager(manager);
-        // TODO: Add set employee method.
-        // Update organization with manager ID.
         addedOrganization = organizationService.update(addedOrganization);
 
         OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(addedOrganization);
-
         Response<OrganizationResponse> response = new Response<>();
-        response.setSuccess(true);
         response.setData(responseOrganization);
+        response.setSuccess(true);
         return response;
     }
 
     @RequestMapping(value = "/{organizationId}", method = RequestMethod.GET)
     public Response<OrganizationResponse> get(@PathVariable int organizationId) throws BaseException {
-        Organization fetchedOrganization = organizationService.get(organizationId);
-        OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(fetchedOrganization);
+        Organization organizationFromService = organizationService.get(organizationId);
+        OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(organizationFromService);
 
         Response<OrganizationResponse> response = new Response<>();
-        response.setSuccess(true);
         response.setData(responseOrganization);
+        response.setSuccess(true);
         return response;
     }
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{organizationId}/jobTitles", method = RequestMethod.GET)
-    public Response<List<JobTitle>> getJobTitleByOrganization(@PathVariable int organizationId) throws BaseException {
+    public Response<List<OrganizationJobTitleResponse>> getJobTitleByOrganization(@PathVariable int organizationId)
+            throws BaseException {
         securityHelper.checkAuthentication(organizationId);
         List<JobTitle> list = jobTitleService.getListFilterByOrganizationId(organizationId);
 
-        Response<List<JobTitle>> response = new Response<>();
-        response.setData(list);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{organizationId}/teams", method = RequestMethod.GET)
-    public Response<List<SimplifiedTeamResponse>> getTeamListByOrganizationId(@PathVariable int organizationId)
-            throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
-        List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
-        List<SimplifiedTeamResponse> responseList = SimplifiedTeamResponse.fromTeamList(list);
-
-        Response<List<SimplifiedTeamResponse>> response = new Response<>();
-        response.setData(responseList);
+        List<OrganizationJobTitleResponse> jobTitleResponseList = OrganizationJobTitleResponse.fromList(list);
+        Response<List<OrganizationJobTitleResponse>> response = new Response<>();
+        response.setData(jobTitleResponseList);
         response.setSuccess(true);
         return response;
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/{organizationId}/users", method = RequestMethod.GET)
-    public Response<List<TeamUserResponse>> getUsers(@PathVariable int organizationId) throws BaseException {
+    public Response<List<OrganizationUserResponse>> getUsers(@PathVariable int organizationId) throws BaseException {
         securityHelper.checkAuthentication(organizationId);
         List<User> users = userService.getByOrganizationId(organizationId);
 
-        List<TeamUserResponse> responseList = TeamUserResponse.fromUserList(users);
+        List<OrganizationUserResponse> responseList = OrganizationUserResponse.fromList(users);
         Response response = new Response();
-        response.setSuccess(true);
         response.setData(responseList);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{organizationId}/teams", method = RequestMethod.GET)
+    public Response<List<SimplifiedTeam>> getTeamListByOrganizationId(@PathVariable int organizationId)
+            throws BaseException {
+        securityHelper.checkAuthentication(organizationId);
+        List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
+        List<SimplifiedTeam> responseList = SimplifiedTeam.fromList(list);
+
+        Response<List<SimplifiedTeam>> response = new Response<>();
+        response.setData(responseList);
+        response.setSuccess(true);
         return response;
     }
 
@@ -156,30 +158,6 @@ public class OrganizationController {
         Response<List<CriteriaResponse>> response = new Response<>();
         response.setData(criteriaResponseList);
         response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{organizationId}/criteria/{criteriaId}", method = RequestMethod.POST)
-    public Response<Object> assignCriteriaToGroup(@PathVariable int organizationId,
-                                                  @PathVariable int criteriaId,
-                                                  @RequestBody List<Integer> userIdList) throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
-        relationshipHelper.checkOrganizationUserListRelationship(organizationId, userIdList);
-
-        ArrayList<Integer> existingUserList;
-        existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
-
-        ExtendedResponse<Object> response = new ExtendedResponse<>();
-        response.setSuccess(true);
-        if (!existingUserList.isEmpty()) {
-            String message = "Completed successfully, however, the criteria was already assigned for following users:";
-            for (int userId : existingUserList) {
-                message += " " + userId;
-            }
-            response.setMessage(message);
-        }
         return response;
     }
 

@@ -12,7 +12,7 @@ public class OrganizationResponse {
     private String name;
     private int numberOfEmployees;
     private List<SimplifiedUser> users;
-    private List<JobTitle> jobTitles;
+    private List<JobTitleResponse> jobTitles;
     private List<TeamResponse> teams;
 
     public OrganizationResponse(Organization organization) {
@@ -20,7 +20,7 @@ public class OrganizationResponse {
         name = organization.getName();
         numberOfEmployees = organization.getNumberOfEmployees();
         users = SimplifiedUser.fromUserList(organization.getUsers());
-        jobTitles = organization.getJobTitles();
+        jobTitles = JobTitleResponse.fromList(organization.getJobTitles());
         teams = TeamResponse.fromTeamList(organization.getTeams());
     }
 
@@ -31,19 +31,18 @@ public class OrganizationResponse {
         return new OrganizationResponse(organization);
     }
 
-    public static List<OrganizationResponse> fromOrganizationList(List<Organization> organizations) {
-        if (organizations == null) {
+    public static List<OrganizationResponse> fromList(List<Organization> organizationList) {
+        if (organizationList == null) {
             return null;
         }
-        List<OrganizationResponse> responses = new ArrayList<>();
-        for (Organization organization : organizations) {
-            OrganizationResponse current = fromOrganization(organization);
-            responses.add(current);
+        List<OrganizationResponse> responseList = new ArrayList<>();
+        for (Organization organization : organizationList) {
+            responseList.add(fromOrganization(organization));
         }
-        return responses;
+        return responseList;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -69,10 +68,6 @@ public class OrganizationResponse {
         this.numberOfEmployees = numberOfEmployees;
     }
 
-    // endregion
-
-    // region Setters
-
     public List<SimplifiedUser> getUsers() {
         return users;
     }
@@ -81,11 +76,11 @@ public class OrganizationResponse {
         this.users = users;
     }
 
-    public List<JobTitle> getJobTitles() {
+    public List<JobTitleResponse> getJobTitles() {
         return jobTitles;
     }
 
-    public void setJobTitles(List<JobTitle> jobTitles) {
+    public void setJobTitles(List<JobTitleResponse> jobTitles) {
         this.jobTitles = jobTitles;
     }
 

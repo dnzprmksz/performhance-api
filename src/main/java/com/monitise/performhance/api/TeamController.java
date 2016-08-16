@@ -5,7 +5,7 @@ import com.monitise.performhance.api.model.AddTeamRequest;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
-import com.monitise.performhance.api.model.SimplifiedTeamResponse;
+import com.monitise.performhance.api.model.SimplifiedTeam;
 import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.TeamResponse;
 import com.monitise.performhance.entity.Organization;
@@ -53,11 +53,11 @@ public class TeamController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<SimplifiedTeamResponse>> getAll() {
+    public Response<List<SimplifiedTeam>> getAll() {
         List<Team> list = teamService.getAll();
-        List<SimplifiedTeamResponse> responseList = SimplifiedTeamResponse.fromTeamList(list);
+        List<SimplifiedTeam> responseList = SimplifiedTeam.fromList(list);
 
-        Response<List<SimplifiedTeamResponse>> response = new Response<>();
+        Response<List<SimplifiedTeam>> response = new Response<>();
         response.setData(responseList);
         response.setSuccess(true);
         return response;

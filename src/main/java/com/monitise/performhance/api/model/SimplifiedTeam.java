@@ -1,33 +1,38 @@
 package com.monitise.performhance.api.model;
 
 import com.monitise.performhance.entity.Team;
+import com.monitise.performhance.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimplifiedTeamResponse {
+public class SimplifiedTeam {
 
     private int id;
     private String name;
     private String leaderName;
 
-    public SimplifiedTeamResponse(Team team) {
+    public SimplifiedTeam(Team team) {
         id = team.getId();
         name = team.getName();
         if (team.getLeader() != null) {
-            leaderName = team.getLeader().getName();
+            User leader = team.getLeader();
+            leaderName = leader.getName() + " " + leader.getSurname();
         }
     }
 
-    public static List<SimplifiedTeamResponse> fromTeamList(List<Team> teamList) {
-        List<SimplifiedTeamResponse> responseList = new ArrayList<>();
+    public static List<SimplifiedTeam> fromList(List<Team> teamList) {
+        if (teamList == null) {
+            return null;
+        }
+        List<SimplifiedTeam> responseList = new ArrayList<>();
         for (Team team : teamList) {
-            responseList.add(new SimplifiedTeamResponse(team));
+            responseList.add(new SimplifiedTeam(team));
         }
         return responseList;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -40,10 +45,6 @@ public class SimplifiedTeamResponse {
     public String getName() {
         return name;
     }
-
-    // endregion
-
-    // region Setters
 
     public void setName(String name) {
         this.name = name;

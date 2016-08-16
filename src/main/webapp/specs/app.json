@@ -5,12 +5,11 @@
     "description": "RESTful API for corporate peer review and performance tracking application.",
     "title": "Performhance API"
   },
-  "host": "localhost:8080",
   "paths": {
-    "/organizations": {
+    "/organizations/": {
       "get": {
         "operationId": "getOrganizations",
-        "description": "Gets all `Organization` objects",
+        "description": "Gets all `Organization`s",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -28,15 +27,15 @@
       },
       "post": {
         "operationId": "postOrganization",
-        "description": "Adds a new `Organization` object to the repository",
+        "description": "Adds a new `Organization`",
         "parameters": [
           {
-            "name": "organization",
+            "name": "addOrganizationRequest",
             "in": "body",
-            "description": "Organization object which will be added to repository",
+            "description": "The `Organization` which will be added to repository",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Organization"
+              "$ref": "#/definitions/AddOrganizationRequest"
             }
           }
         ],
@@ -59,7 +58,7 @@
     "/organizations/{organizationId}": {
       "get": {
         "operationId": "getOrganization",
-        "description": "Gets the `Organization` object with given id",
+        "description": "Gets the `Organization` with given id",
         "parameters": [
           {
             "name": "organizationId",
@@ -78,6 +77,35 @@
           },
           "404": {
             "description": "An organization with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationId}/jobTitles": {
+      "get": {
+        "operationId": "getOrganizationJobTitles",
+        "description": "Returns all `JobTitle`s of given `Organization`",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Organization`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a response that contains a `List` of `User` objects",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Invalid `Organization` id",
             "schema": {
               "$ref": "#/definitions/Response"
             }
@@ -108,17 +136,17 @@
         }
       }
     },
-    "/organizations/{organizationId}/teams/": {
+    "/organizations/{organizationId}/teams": {
       "get": {
         "operationId": "getOrganizationTeams",
-        "description": "Gets the `Team` objects in the given `Organization`",
+        "description": "Gets all `Team`s in given `Organization`",
         "parameters": [
           {
             "name": "organizationId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Organization` to filter the `Team` objects by"
+            "description": "Id of the `Organization` to filter `Team`s by"
           }
         ],
         "responses": {
@@ -137,10 +165,10 @@
         }
       }
     },
-    "/organizations/{organizationId}/criteria/": {
+    "/organizations/{organizationId}/criteria": {
       "get": {
         "operationId": "getOrganizationCriterias",
-        "description": "Get all `Criteria` objects of an Organization with given id",
+        "description": "Get all `Criteria`s of an `Organization` with given id",
         "parameters": [
           {
             "name": "organizationId",
@@ -166,55 +194,7 @@
         }
       }
     },
-    "/organizations/{organizationId}/criteria/{criteriaId}": {
-      "post": {
-        "operationId": "assignCriteriaToGroup",
-        "description": "Assigns `Criteria` with given id to the users with given id list",
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `Organization` that `Criteria` belongs to"
-          },
-          {
-            "name": "criteriaId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "Id of the `Criteria` that will be assigned to `User`s"
-          },
-          {
-            "name": "userIdList",
-            "in": "body",
-            "required": true,
-            "description": "Id list of `User`s that `Criteria` will be assigned",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          },
-          "404": {
-            "description": "Unexpected error",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
-          }
-        }
-      }
-    },
-    "/users": {
+    "/users/": {
       "post": {
         "description": "Adds a new `User`",
         "parameters": [
@@ -294,7 +274,7 @@
         }
       }
     },
-    "/users/{userId}/criteria/": {
+    "/users/{userId}/criteria": {
       "get": {
         "operationId": "getUserCriteriaList",
         "description": "Gets all `Criteria`s of `User` with given id",
@@ -393,7 +373,7 @@
         }
       }
     },
-    "/teams": {
+    "/teams/": {
       "get": {
         "operationId": "getTeams",
         "description": "Gets all `Team` objects",
@@ -507,7 +487,7 @@
         }
       }
     },
-    "/jobTitles": {
+    "/jobTitles/": {
       "get": {
         "operationId": "getJobTitles",
         "description": "Gets all `JobTitle` objects\n",
@@ -618,7 +598,7 @@
         }
       }
     },
-    "/criteria": {
+    "/criteria/": {
       "get": {
         "operationId": "getCriterias",
         "description": "Gets all `Criteria` objects for admin user",
@@ -757,9 +737,48 @@
             }
           }
         }
+      },
+      "post": {
+        "operationId": "assignCriteriaToGroup",
+        "description": "Assigns `Criteria` with given id to the `User`s with given id list",
+        "parameters": [
+          {
+            "name": "criteriaId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Criteria` that will be assigned to `User`s"
+          },
+          {
+            "name": "userIdList",
+            "in": "body",
+            "required": true,
+            "description": "Id list of `User`s that `Criteria` will be assigned",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
       }
     },
-    "/reviews": {
+    "/reviews/": {
       "get": {
         "operationId": "getReviews",
         "description": "Gets all `Review` objects that authorized user can access",
@@ -1078,6 +1097,31 @@
       },
       "additionalProperties": {
         "type": "string"
+      }
+    },
+    "AddOrganizationRequest": {
+      "type": "object",
+      "properties": {
+        "organizationName": {
+          "type": "string",
+          "description": "Name of the organization"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username of the manager account"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password of the manager account"
+        },
+        "managerName": {
+          "type": "string",
+          "description": "Name of the manager"
+        },
+        "managerSurname": {
+          "type": "string",
+          "description": "Surname of the manager"
+        }
       }
     }
   }

@@ -16,23 +16,21 @@ public class CriteriaResponse {
     }
 
     public static CriteriaResponse fromCriteria(Criteria criteria) {
-        CriteriaResponse criteriaResponse = new CriteriaResponse(criteria.getId(), criteria.getCriteria());
-        return criteriaResponse;
+        return new CriteriaResponse(criteria.getId(), criteria.getCriteria());
     }
 
     public static List<CriteriaResponse> fromList(List<Criteria> criteriaList) {
-        List<CriteriaResponse> criteriaResponseList = new ArrayList<>();
-        CriteriaResponse criteriaResponse;
-
-        for (Criteria criteria : criteriaList) {
-            criteriaResponse = new CriteriaResponse(criteria.getId(), criteria.getCriteria());
-            criteriaResponseList.add(criteriaResponse);
+        if (criteriaList == null) {
+            return null;
         }
-
+        List<CriteriaResponse> criteriaResponseList = new ArrayList<>();
+        for (Criteria criteria : criteriaList) {
+            criteriaResponseList.add(new CriteriaResponse(criteria.getId(), criteria.getCriteria()));
+        }
         return criteriaResponseList;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -41,10 +39,6 @@ public class CriteriaResponse {
     public void setId(int id) {
         this.id = id;
     }
-
-    // endregion
-
-    // region Setters
 
     public String getCriteria() {
         return criteria;

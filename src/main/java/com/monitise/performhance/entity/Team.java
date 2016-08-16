@@ -1,6 +1,5 @@
 package com.monitise.performhance.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.Entity;
@@ -21,7 +20,6 @@ public class Team {
     @OneToMany
     private List<User> members;
     @ManyToOne
-    @JsonIgnore
     private Organization organization;
     @OneToOne
     private User leader;
@@ -33,6 +31,8 @@ public class Team {
         this.name = name;
         this.organization = organization;
     }
+
+    // region Filter Specifications
 
     public static Specification<Team> organizationIdIs(int organizationId) {
         return (root, query, cb) -> {
@@ -52,7 +52,9 @@ public class Team {
         };
     }
 
-    // region Getters
+    // endregion
+
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -73,10 +75,6 @@ public class Team {
     public List<User> getMembers() {
         return members;
     }
-
-    // endregion
-
-    // region Setters
 
     public void setMembers(List<User> members) {
         this.members = members;
