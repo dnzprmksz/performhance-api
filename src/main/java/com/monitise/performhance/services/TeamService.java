@@ -27,6 +27,8 @@ public class TeamService {
     private SecurityHelper securityHelper;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrganizationService organizationService;
 
     public List<Team> getAll() {
         List<Team> list = (List<Team>) teamRepository.findAll();
@@ -41,18 +43,12 @@ public class TeamService {
         return team;
     }
 
-    public List<Team> searchTeams(int organizationId, String teamId, String teamName) {
+    public List<Team> searchTeams(int organizationId, String teamName) {
         Specification<Team> filter = Team.organizationIdIs(organizationId);
-        if (!UNDEFINED.equals(teamId)) {
-            int intTeamId = Integer.parseInt(teamId);
-            filter = Specifications.where(filter).and(Team.teamIdIs(intTeamId));
-        }
         if (!UNDEFINED.equals(teamName)) {
             filter = Specifications.where(filter).and(Team.teamNameContains(teamName));
         }
-
         List<Team> teamList = teamRepository.findAll(filter);
-
         return teamList;
     }
 
@@ -75,27 +71,21 @@ public class TeamService {
         if (teamFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given team.");
         }
+        organizationService.addTeam(organizationId, teamFromRepo);
         return teamFromRepo;
     }
 
     @Secured("ROLE_MANAGER")
-    public Team assignEmployeeToTeam(User user, Team team) throws BaseException {
-        securityHelper.checkAuthentication(team.getOrganization().getId());
-        securityHelper.checkAuthentication(user.getOrganization().getId());
-        Team teamFromRepo = teamRepository.findOne(team.getId());
+    public Team assignEmployeeToTeam(int userId, int teamId) throws BaseException {
+        Team team = teamRepository.findOne(teamId);
+        User user = userRepository.findOne(userId);
 
-        if (teamFromRepo == null) {
-            throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST,
-                    "Could not add given user to team, since the team does not exist.");
-        }
-
-        List<User> members = teamFromRepo.getMembers();
+        List<User> members = team.getMembers();
         members.add(user);
-        user.setTeam(teamFromRepo);
+        team.setMembers(members);
+        Team updatedTeam = teamRepository.save(team);
+        user.setTeam(team);
         userRepository.save(user);
-        teamFromRepo.setMembers(members);
-
-        Team updatedTeam = teamRepository.save(teamFromRepo);
         return updatedTeam;
     }
 
