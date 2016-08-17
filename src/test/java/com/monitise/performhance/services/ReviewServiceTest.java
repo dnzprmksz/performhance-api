@@ -32,46 +32,9 @@ public class ReviewServiceTest {
 
     private User reviewedUser;
     @Autowired
-    private CriteriaService criteriaService;
-    @Autowired
-    private CriteriaRepository criteriaRepository;
-    @Autowired
     private OrganizationService organizationService;
     @Autowired
-    private OrganizationRepository organizationRepository;
-    @Autowired
-    private TeamService teamService;
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private ReviewService reviewService;
-
-    @Before
-    @WithMockUser(roles = {"MANAGER"})
-    public void setup() throws BaseException {
-        Organization organization = organizationRepository.save(new Organization("Monitise"));
-        Team team = teamRepository.save(new Team("İşCep", organization));
-        reviewedUser = new User("Deniz", "Parmaksız", organization);
-        User user = userRepository.save(reviewedUser);
-        teamService.assignEmployeeToTeam(user, team);
-
-        Criteria criteria1 = criteriaRepository.save(new Criteria("Code coverage", organization));
-        Criteria criteria2 = criteriaRepository.save(new Criteria("8 hours of daily work", organization));
-        Criteria criteria3 = criteriaRepository.save(new Criteria("Teamwork", organization));
-        criteriaService.assignCriteriaToUserById(criteria1, user.getId());
-        criteriaService.assignCriteriaToUserById(criteria2, user.getId());
-        criteriaService.assignCriteriaToUserById(criteria3, user.getId());
-    }
-
-    @After
-    public void cleanup() {
-        criteriaRepository.deleteAll();
-        userRepository.deleteAll();
-        teamRepository.deleteAll();
-        organizationRepository.deleteAll();
-    }
 
     @Test
     public void add_reviewerFirstTime_shouldAdd() throws BaseException {

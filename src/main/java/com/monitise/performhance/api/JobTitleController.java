@@ -74,6 +74,7 @@ public class JobTitleController {
         response.setData(jobTitleResponse);
         response.setSuccess(true);
         return response;
+
     }
 
     @Secured("ROLE_MANAGER")

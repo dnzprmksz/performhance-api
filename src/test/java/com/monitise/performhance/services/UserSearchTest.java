@@ -131,7 +131,6 @@ public class UserSearchTest {
     public void searchWithNonExistingPartialNames() {
         String undef = UserService.UNDEFINED;
         List<User> foundUsers = userService.searchUsers(1, undef, undef, "AASDFGHJ", undef);
-
         Assert.assertEquals(0, foundUsers.size());
     }
 

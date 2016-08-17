@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -119,6 +120,7 @@ public class OrganizationServiceTest {
     }
 
     @Test
+    @WithMockUser(roles = {"MANAGER"})
     public void addEmployee() throws BaseException {
         Organization google = organizationService.get(1);
         User googleEmployee = new User("Gilloume", "Pinto",google);

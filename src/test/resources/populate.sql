@@ -4,11 +4,11 @@ INSERT INTO `organization`(name, number_of_employees) VALUES ('Monitise', 0);
 
 
 --                       JOB TITLE INSERTIONS                      --
-INSERT INTO `job_title`(title) VALUES('android dev');
-INSERT INTO `job_title`(title) VALUES('ios dev');
-INSERT INTO `job_title`(title) VALUES('ios dev');
-INSERT INTO `job_title`(title) VALUES('janitor');
-INSERT INTO `job_title`(title) VALUES('back end');
+INSERT INTO `job_title`(title, organization_id) VALUES('android dev',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('janitor',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('back end',1);
 
 
 --                ORGANIZATION-JOB TITLE INSERTIONS                --

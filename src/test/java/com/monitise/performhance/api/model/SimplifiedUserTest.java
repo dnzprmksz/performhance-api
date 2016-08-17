@@ -26,17 +26,6 @@ public class SimplifiedUserTest {
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    @Before
-    public void initialize() {
-        if (init) {
-            return;
-        }
-        Organization palantir = new Organization("Palantir");
-        organizationRepository.save(palantir);
-        userRepository.save(new User("Can", "Guler", palantir));
-        userRepository.save(new User("Kaan", "Akoz", palantir, Role.MANAGER));
-        init = true;
-    }
 
     @Test
     public void fromUser() {
