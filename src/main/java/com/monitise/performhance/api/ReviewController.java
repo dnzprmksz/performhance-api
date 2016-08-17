@@ -57,7 +57,6 @@ public class ReviewController {
             list = reviewService.getAllFilterByTeamId(user.getTeam().getId());
         }
         List<SimplifiedReview> simplifiedReviews = SimplifiedReview.fromList(list);
-
         Response<List<SimplifiedReview>> response = new Response<>();
         response.setData(simplifiedReviews);
         response.setSuccess(true);
@@ -68,14 +67,14 @@ public class ReviewController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<ReviewResponse> add(@RequestBody AddReviewRequest reviewRequest) throws BaseException {
         validate(reviewRequest);
-        Review review = new Review(userService.get(reviewRequest.getReviewedEmployeeId()),
+        Review review = new Review(
+                userService.get(reviewRequest.getReviewedEmployeeId()),
                 userService.get(reviewRequest.getReviewerId()),
                 buildCriteriaMapFromIdMap(reviewRequest.getEvaluationIdMap()),
-                reviewRequest.getComment());
-
+                reviewRequest.getComment()
+        );
         Review reviewFromService = reviewService.add(review);
         ReviewResponse reviewResponse = new ReviewResponse(reviewFromService);
-
         Response<ReviewResponse> response = new Response<>();
         response.setData(reviewResponse);
         response.setSuccess(true);
@@ -102,7 +101,7 @@ public class ReviewController {
     @RequestMapping(value = "/{reviewId}", method = RequestMethod.DELETE)
     public Response<Object> remove(@PathVariable int reviewId) throws BaseException {
         Review review = reviewService.get(reviewId);
-        relationshipHelper.checkManagerReviewRelationship(review);
+        securityHelper.checkAuthentication(review.getOrganization().getId());
         reviewService.remove(reviewId);
 
         Response<Object> response = new Response<>();

@@ -12,7 +12,7 @@ public class AddReviewRequest {
     public AddReviewRequest() {
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getReviewedEmployeeId() {
         return reviewedEmployeeId;
@@ -29,10 +29,6 @@ public class AddReviewRequest {
     public void setReviewerId(int reviewerId) {
         this.reviewerId = reviewerId;
     }
-
-    // endregion
-
-    // region Setters
 
     public Map<Integer, Integer> getEvaluationIdMap() {
         return evaluationIdMap;

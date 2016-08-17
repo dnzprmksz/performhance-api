@@ -899,7 +899,7 @@
     "/reviews/": {
       "get": {
         "operationId": "getReviews",
-        "description": "Gets all `Review` objects that authorized user can access",
+        "description": "Gets all `Review`s that authorized user can access",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -917,15 +917,15 @@
       },
       "post": {
         "operationId": "addReview",
-        "description": "Adds given `Review` object",
+        "description": "Adds given `Review`",
         "parameters": [
           {
             "name": "review",
             "in": "body",
-            "description": "Review object which will be added to repository",
+            "description": "The `Review` to add",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Review"
+              "$ref": "#/definitions/AddReviewRequest"
             }
           }
         ],
@@ -948,14 +948,14 @@
     "/reviews/{reviewId}": {
       "get": {
         "operationId": "getReview",
-        "description": "Gets `Review` object with given id",
+        "description": "Gets the `Review` with given id",
         "parameters": [
           {
             "name": "reviewId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Review` object"
+            "description": "Id of `Review`"
           }
         ],
         "responses": {
@@ -975,14 +975,14 @@
       },
       "delete": {
         "operationId": "deleteReview",
-        "description": "Deletes `Review` object with given id",
+        "description": "Deletes the `Review` with given id",
         "parameters": [
           {
             "name": "reviewId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Review` object"
+            "description": "Id of the `Review` to delete"
           }
         ],
         "responses": {
@@ -1158,52 +1158,6 @@
         }
       }
     },
-    "Criteria": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Unique identifier of a criteria"
-        },
-        "criteria": {
-          "type": "string",
-          "description": "Name of the criteria"
-        },
-        "organization": {
-          "$ref": "#/definitions/Organization"
-        }
-      }
-    },
-    "Review": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Unique identifier of a review"
-        },
-        "reviewedEmployee": {
-          "$ref": "#/definitions/User"
-        },
-        "reviewer": {
-          "$ref": "#/definitions/User"
-        },
-        "comment": {
-          "type": "string",
-          "description": "An optional comment of reviewer"
-        },
-        "organization": {
-          "$ref": "#/definitions/Organization"
-        },
-        "team": {
-          "$ref": "#/definitions/Team"
-        },
-        "evalauation": {
-          "$ref": "#/definitions/evaluation"
-        }
-      }
-    },
     "evaluation": {
       "required": [
         "default"
@@ -1307,6 +1261,24 @@
         "organizationId": {
           "type": "integer",
           "description": "The organization that criteria will be added"
+        }
+      }
+    },
+    "AddReviewRequest": {
+      "type": "object",
+      "properties": {
+        "reviewedEmployeeId": {
+          "type": "integer"
+        },
+        "reviewerId": {
+          "type": "integer"
+        },
+        "comment": {
+          "type": "string",
+          "description": "An optional comment of reviewer"
+        },
+        "evalauation": {
+          "$ref": "#/definitions/evaluation"
         }
       }
     }
