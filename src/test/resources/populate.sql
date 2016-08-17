@@ -4,11 +4,11 @@ INSERT INTO `organization`(name, number_of_employees) VALUES ('Monitise', 0);
 
 
 --                       JOB TITLE INSERTIONS                      --
-INSERT INTO `job_title`(title) VALUES('android dev');
-INSERT INTO `job_title`(title) VALUES('ios dev');
-INSERT INTO `job_title`(title) VALUES('ios dev');
-INSERT INTO `job_title`(title) VALUES('janitor');
-INSERT INTO `job_title`(title) VALUES('back end');
+INSERT INTO `job_title`(title, organization_id) VALUES('android dev',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('janitor',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('back end',1);
 
 
 --                ORGANIZATION-JOB TITLE INSERTIONS                --
@@ -29,6 +29,11 @@ INSERT INTO `user`(name, password, role, surname, username, job_title_id, organi
     VALUES('Pelin', '123', 'EMPLOYEE', 'Sonmez', 'pelin.sonmez', 1, 1);
 INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
     VALUES('Faruk', '123', 'EMPLOYEE', 'Gulmez', 'faruk.gulmez', 2, 1);
+INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
+    VALUES('Pelya', '123', 'EMPLOYEE', 'Petroffski', 'pelya.petroffski', 2, 1);
+INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
+    VALUES('Fatih', '123', 'EMPLOYEE', 'Songul', 'fatih.songul', 1, 1);
+
 -- monitise users
 INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
     VALUES('Monitise', '123', 'MANAGER', 'Manager', 'monitise.manager', 3, 2);
@@ -42,9 +47,11 @@ INSERT INTO `user`(name, password, role, surname, username, job_title_id, organi
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 1);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 2);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 3);
-INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 4);
-INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 5);
+INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 4);
+INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 5);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 6);
+INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 7);
+INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 8);
 
 
 --                         TEAM INSERTIONS                         --
@@ -60,17 +67,19 @@ INSERT INTO `organization_teams`(organization_id, teams_id) VALUES(2,2);
 --                      TEAM-MEMBER INSERTIONS                     --
 INSERT INTO `team_members`(team_id, members_id) VALUES(1, 2);
 INSERT INTO `team_members`(team_id, members_id) VALUES(1, 3);
-INSERT INTO `team_members`(team_id, members_id) VALUES(2, 5);
-INSERT INTO `team_members`(team_id, members_id) VALUES(2, 6);
+INSERT INTO `team_members`(team_id, members_id) VALUES(1, 4);
+INSERT INTO `team_members`(team_id, members_id) VALUES(2, 7);
+INSERT INTO `team_members`(team_id, members_id) VALUES(2, 8);
 
 
 -- SETTING TEAMS
 UPDATE `user` SET team_id = 1 WHERE id = 2;
 UPDATE `user` SET team_id = 1 WHERE id = 3;
-UPDATE `user` SET team_id = 2 WHERE id = 5;
-UPDATE `user` SET team_id = 2 WHERE id = 6;
+UPDATE `user` SET team_id = 1 WHERE id = 4;
+UPDATE `user` SET team_id = 2 WHERE id = 7;
+UPDATE `user` SET team_id = 2 WHERE id = 8;
 
 
--- SETTING MANAGERS
-UPDATE `organization` SET manager_id = 1 WHERE id = 1;
-UPDATE `organization` SET manager_id = 4 WHERE id = 2;
+-- SETTING MANAGERS && NUMBER OF EMPLOYEES
+UPDATE `organization` SET manager_id = 1, number_of_employees = 5 WHERE id = 1;
+UPDATE `organization` SET manager_id = 6, number_of_employees = 3 WHERE id = 2;

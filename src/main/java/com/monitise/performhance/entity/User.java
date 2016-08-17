@@ -85,13 +85,13 @@ public class User {
 
     public static Specification<User> nameContains(String input) {
         return (root, query, cb) -> {
-            return cb.like(root.<String>get("name"), "%" + input + "%");
+            return cb.like(cb.upper(root.<String>get("name")), "%" + input.toUpperCase() + "%");
         };
     }
 
     public static Specification<User> surnameContains(String input) {
         return (root, query, cb) -> {
-            return cb.like(root.<String>get("surname"), "%" + input + "%");
+            return cb.like(cb.upper(root.<String>get("surname")), "%" + input.toUpperCase() + "%");
         };
     }
 

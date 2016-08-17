@@ -8,6 +8,7 @@ import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.OrganizationRepository;
+import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class OrganizationService {
 
     @Autowired
     private OrganizationRepository organizationRepository;
+    @Autowired
+    private UserService userService;
 
     public List<Organization> getAll() {
         List<Organization> list = (List<Organization>) organizationRepository.findAll();
@@ -85,7 +88,9 @@ public class OrganizationService {
     }
 
     // TODO: TEST THIS METHOD
-    public Organization addEmployee(Organization organization, User employee) throws BaseException {
+    public Organization addEmployee(int organizationId, int employeeId) throws BaseException {
+        Organization organization = organizationRepository.findOne(organizationId);
+        User employee = userService.get(employeeId);
         List<User> userList = organization.getUsers();
 
         // Add the employee & increment numberOfEmployees field.
@@ -100,7 +105,9 @@ public class OrganizationService {
     }
 
     // TODO: TEST THIS METHOD
-    public Organization setManager(Organization organization, User manager) throws BaseException {
+    public Organization setManager(int organizationId, int managerId) throws BaseException {
+        Organization organization = organizationRepository.findOne(organizationId);
+        User manager = userService.get(managerId);
         organization.setManager(manager);
         Organization updatedOrganization = organizationRepository.save(organization);
         if (updatedOrganization == null) {
@@ -133,6 +140,5 @@ public class OrganizationService {
         }
         return updatedOrganization;
     }
-
 
 }
