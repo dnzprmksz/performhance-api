@@ -10,7 +10,6 @@ import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.TeamResponse;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
-import com.monitise.performhance.entity.User;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.CriteriaService;
@@ -51,12 +50,13 @@ public class TeamController {
 
     // endregion
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<SimplifiedTeam>> getAll() {
-        List<Team> list = teamService.getAll();
-        List<SimplifiedTeam> responseList = SimplifiedTeam.fromList(list);
+    public Response<List<SimplifiedTeam>> getAll() throws BaseException {
+        int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
+        List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
 
+        List<SimplifiedTeam> responseList = SimplifiedTeam.fromList(list);
         Response<List<SimplifiedTeam>> response = new Response<>();
         response.setData(responseList);
         response.setSuccess(true);
@@ -65,15 +65,13 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response<TeamResponse> addTeam(@RequestBody AddTeamRequest addTeamRequest)
-            throws BaseException {
+    public Response<TeamResponse> addTeam(@RequestBody AddTeamRequest addTeamRequest) throws BaseException {
         int organizationId = addTeamRequest.getOrganizationId();
         securityHelper.checkAuthentication(organizationId);
 
         Organization organization = organizationService.get(organizationId);
         Team team = new Team(addTeamRequest.getName(), organization);
         Team addedTeam = teamService.add(team);
-        organizationService.addTeam(organization, addedTeam);
 
         TeamResponse responseTeam = TeamResponse.fromTeam(addedTeam);
         Response<TeamResponse> response = new Response<>();
@@ -86,8 +84,7 @@ public class TeamController {
     @RequestMapping(value = "/{teamId}", method = RequestMethod.GET)
     public Response<TeamResponse> getTeam(@PathVariable int teamId) throws BaseException {
         Team team = teamService.get(teamId);
-        int organizationId = team.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
+        securityHelper.checkAuthentication(team.getOrganization().getId());
         TeamResponse responseTeam = TeamResponse.fromTeam(team);
 
         Response<TeamResponse> response = new Response<>();
@@ -97,19 +94,13 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{teamId}", method = RequestMethod.POST)
-    public Response<TeamResponse> assignSingleEmployee(@PathVariable int teamId, @RequestBody int userId)
+    @RequestMapping(value = "/{teamId}/users/{userId}", method = RequestMethod.POST)
+    public Response<TeamResponse> assignEmployee(@PathVariable int teamId, @PathVariable int userId)
             throws BaseException {
-        User manager = securityHelper.getAuthenticatedUser();
-        Organization organization = manager.getOrganization();
-        int organizationId = organization.getId();
-        securityHelper.checkAuthentication(organizationId);
+        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+        securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
 
-        validateAssignmentRequest(organizationId, teamId, userId);
-        Team team = teamService.get(teamId);
-        User employee = userService.get(userId);
-        Team updatedTeam = teamService.assignEmployeeToTeam(employee, team);
-
+        Team updatedTeam = teamService.assignEmployeeToTeam(userId, teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
         response.setData(teamResponse);
@@ -118,8 +109,7 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{teamId}/criteria/{criteriaId}",
-            method = RequestMethod.POST)
+    @RequestMapping(value = "/{teamId}/criteria/{criteriaId}", method = RequestMethod.POST)
     public Response<Object> assignCriteriaToTeamUsers(@PathVariable int teamId,
                                                       @PathVariable int criteriaId) throws BaseException {
         int organizationId = teamService.get(teamId).getOrganization().getId();
@@ -128,38 +118,24 @@ public class TeamController {
         List<Integer> userIdList = userService.getIdListByTeamId(teamId);
         relationshipHelper.checkOrganizationUserListRelationship(organizationId, userIdList);
 
-        ArrayList<Integer> existingUserList = new ArrayList<>();
-        existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
-
+        ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
         ExtendedResponse<Object> response = new ExtendedResponse<>();
+        response.setMessage(generateExistingUsersMessage(existingUserList));
         response.setSuccess(true);
-        if (!existingUserList.isEmpty()) {
-            String message = "Completed successfully, however, the criteria was already assigned for following users:";
-            for (int userId : existingUserList) {
-                message += " " + userId;
-            }
-            response.setMessage(message);
-        }
         return response;
     }
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public Response<List<SimplifiedUser>> searchUsers(
-            @RequestParam(value = "teamId", required = false, defaultValue = TeamService.UNDEFINED) String teamId,
             @RequestParam(value = "teamName", required = false, defaultValue = TeamService.UNDEFINED) String teamName)
             throws BaseException {
-        User manager = securityHelper.getAuthenticatedUser();
-        Organization organization = manager.getOrganization();
-        int organizationId = organization.getId();
-        securityHelper.checkAuthentication(organizationId);
-
-        if (teamName.equals(UserService.UNDEFINED) && teamId.equals(UserService.UNDEFINED)) {
-            throw new BaseException(ResponseCode.SEARCH_MISSING_PARAMETERS,
-                    "At least one of teamId or teamName parameters must be specified.");
+        if (teamName.equals(UserService.UNDEFINED)) {
+            throw new BaseException(ResponseCode.SEARCH_MISSING_PARAMETERS, "teamName parameter must be specified.");
         }
+        int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
+        List<Team> teamList = teamService.searchTeams(organizationId, teamName);
 
-        List<Team> teamList = teamService.searchTeams(organizationId, teamId, teamName);
         List<TeamResponse> teamResponseList = TeamResponse.fromTeamList(teamList);
         Response response = new Response();
         response.setData(teamResponseList);
@@ -167,13 +143,14 @@ public class TeamController {
         return response;
     }
 
-    // region Helper Methods
-
-    private void validateAssignmentRequest(int organizationId, int teamId, int userId) throws BaseException {
-        relationshipHelper.checkOrganizationTeamRelationship(organizationId, teamId);
-        relationshipHelper.checkOrganizationUserRelationship(organizationId, userId);
+    private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
+        String message = null;
+        if (!existingUserList.isEmpty()) {
+            message = "Completed successfully, however, the criteria was already assigned for following users:";
+            for (int userId : existingUserList) {
+                message += " " + userId;
+            }
+        }
+        return message;
     }
-
-    // endregion
-
 }

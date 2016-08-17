@@ -52,23 +52,27 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response<SimplifiedUser> addUser(@RequestBody AddUserRequest userRequest) throws BaseException {
-        int organizationId = userRequest.getOrganizationId();
+    public Response<SimplifiedUser> addEmployee(@RequestBody AddUserRequest addUserRequest) throws BaseException {
+        int organizationId = addUserRequest.getOrganizationId();
         securityHelper.checkAuthentication(organizationId);
         Organization organization = organizationService.get(organizationId);
-        validateUserRequest(organization, userRequest);
-        JobTitle title = jobTitleService.get(userRequest.getJobTitleId());
-        // TODO: change the way username & password are set.
-        User employee = new User(userRequest, organization,
-                userRequest.getName() + "." + userRequest.getSurname(), "password");
-        employee.setJobTitle(title);
+        validateUserRequest(organization, addUserRequest);
+        JobTitle jobTitle = jobTitleService.get(addUserRequest.getJobTitleId());
+
+        User employee = new User(
+                addUserRequest.getName(),
+                addUserRequest.getSurname(),
+                organization,
+                jobTitle,
+                addUserRequest.getUsername(),
+                addUserRequest.getPassword()
+        );
         User addedEmployee = userService.addEmployee(employee);
-        organizationService.addEmployee(organization, addedEmployee);
 
         SimplifiedUser responseEmployee = SimplifiedUser.fromUser(addedEmployee);
         Response<SimplifiedUser> response = new Response<>();
-        response.setSuccess(true);
         response.setData(responseEmployee);
+        response.setSuccess(true);
         return response;
     }
 
@@ -76,24 +80,22 @@ public class UserController {
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public Response<SimplifiedUser> getSingleUser(@PathVariable int userId) throws BaseException {
         User user = userService.get(userId);
-        int organizationId = user.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
-        SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
+        securityHelper.checkAuthentication(user.getOrganization().getId());
 
+        SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
         Response response = new Response();
-        response.setSuccess(true);
         response.setData(responseUser);
+        response.setSuccess(true);
         return response;
     }
 
-    // TODO: remove user from org. as well
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
     public Response<Object> deleteUser(@PathVariable int userId) throws BaseException {
         User user = userService.get(userId);
         securityHelper.checkAuthentication(user.getOrganization().getId());
-
         userService.remove(userId);
+
         Response response = new Response<>();
         response.setSuccess(true);
         return response;
@@ -103,11 +105,10 @@ public class UserController {
     @RequestMapping(value = "/{userId}/criteria", method = RequestMethod.GET)
     public Response<List<CriteriaResponse>> getUserCriteriaList(@PathVariable int userId) throws BaseException {
         User user = userService.get(userId);
-        int organizationId = user.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
+        securityHelper.checkAuthentication(user.getOrganization().getId());
         List<Criteria> criteriaList = user.getCriteriaList();
-        List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(criteriaList);
 
+        List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(criteriaList);
         Response<List<CriteriaResponse>> response = new Response<>();
         response.setData(criteriaResponseList);
         response.setSuccess(true);
@@ -122,11 +123,9 @@ public class UserController {
         int organizationId = userService.get(userId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
         relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
+        User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
 
-        Criteria criteria = criteriaService.get(criteriaId);
-        User userFromService = criteriaService.assignCriteriaToUserById(criteria, userId);
-        CriteriaUserResponse criteriaUserResponse = new CriteriaUserResponse(userFromService);
-
+        CriteriaUserResponse criteriaUserResponse = CriteriaUserResponse.fromUser(userFromService);
         Response<CriteriaUserResponse> response = new Response<>();
         response.setData(criteriaUserResponse);
         response.setSuccess(true);
@@ -142,8 +141,7 @@ public class UserController {
         securityHelper.checkAuthentication(organizationId);
         relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
 
-        Criteria criteria = criteriaService.get(criteriaId);
-        criteriaService.removeCriteriaFromUserById(criteria, userId);
+        criteriaService.removeCriteriaFromUserById(criteriaId, userId);
         Response<Object> response = new Response<>();
         response.setSuccess(true);
         return response;
@@ -187,12 +185,7 @@ public class UserController {
         if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
             throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "Empty user name is not allowed.");
         }
-
-        int titleId = employee.getJobTitleId();
-        if (!organizationService.isJobTitleDefined(organization, titleId)) {
-            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
-                    "A job title with given ID does not exist in this organization.");
-        }
+        relationshipHelper.checkOrganizationJobTitleRelationship(organization.getId(), employee.getJobTitleId());
     }
 
     private void formatValidateSearchRequest(String titleId, String teamId) throws BaseException {
