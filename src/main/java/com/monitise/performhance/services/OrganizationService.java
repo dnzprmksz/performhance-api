@@ -129,11 +129,4 @@ public class OrganizationService {
         return updatedOrganization;
     }
 
-    public Organization addCriteria(int organizationId, Criteria criteria) throws BaseException {
-        Organization organization = get(organizationId);
-        List<Criteria> criteriaList = organization.getC
-    }
-
-
-
 }
