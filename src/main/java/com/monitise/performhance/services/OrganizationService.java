@@ -2,6 +2,7 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
@@ -116,9 +117,9 @@ public class OrganizationService {
     }
 
     // TODO: TEST THIS METHOD
-    public Organization addTeam(Organization organization, Team team) throws BaseException {
+    public Organization addTeam(int organizationId, Team team) throws BaseException {
+        Organization organization = get(organizationId);
         List<Team> teamList = organization.getTeams();
-
         teamList.add(team);
         organization.setTeams(teamList);
         Organization updatedOrganization = organizationRepository.save(organization);
@@ -126,6 +127,11 @@ public class OrganizationService {
             throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
         }
         return updatedOrganization;
+    }
+
+    public Organization addCriteria(int organizationId, Criteria criteria) throws BaseException {
+        Organization organization = get(organizationId);
+        List<Criteria> criteriaList = organization.getC
     }
 
 
