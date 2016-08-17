@@ -5,6 +5,9 @@ public class AddJobTitleRequest {
     private String title;
     private int organizationId;
 
+    public AddJobTitleRequest() {
+    }
+
     // region Getters & Setters
 
     public String getTitle() {

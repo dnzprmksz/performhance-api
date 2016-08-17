@@ -47,8 +47,9 @@ public class JobTitleController {
     // endregion
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<JobTitleResponse>> getAll() {
-        List<JobTitle> list = jobTitleService.getAll();
+    public Response<List<JobTitleResponse>> getAll() throws BaseException {
+        int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
+        List<JobTitle> list = jobTitleService.getListFilterByOrganizationId(organizationId);
         List<JobTitleResponse> responseList = JobTitleResponse.fromList(list);
 
         Response<List<JobTitleResponse>> response = new Response<>();
@@ -63,24 +64,23 @@ public class JobTitleController {
             throws BaseException {
         int organizationId = addJobTitleRequest.getOrganizationId();
         securityHelper.checkAuthentication(organizationId);
+
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitle = new JobTitle(addJobTitleRequest.getTitle(), organization);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
-        organization.getJobTitles().add(jobTitle);
-        JobTitleResponse jobTitleResponse = new JobTitleResponse(jobTitleFromService);
 
+        JobTitleResponse jobTitleResponse = new JobTitleResponse(jobTitleFromService);
         Response<JobTitleResponse> response = new Response<>();
         response.setData(jobTitleResponse);
         response.setSuccess(true);
         return response;
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{jobTitleId}", method = RequestMethod.GET)
     public Response<JobTitleResponse> get(@PathVariable int jobTitleId) throws BaseException {
         JobTitle jobTitle = jobTitleService.get(jobTitleId);
-        int organizationId = jobTitle.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
+        securityHelper.checkAuthentication(jobTitle.getOrganization().getId());
         JobTitleResponse jobTitleResponse = new JobTitleResponse(jobTitle);
 
         Response<JobTitleResponse> response = new Response<>();
@@ -95,24 +95,26 @@ public class JobTitleController {
                                                           @PathVariable int criteriaId) throws BaseException {
         int organizationId = jobTitleService.get(jobTitleId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.checkOrganizationJobTitleRelationship(organizationId, jobTitleId);
         relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
         List<Integer> userIdList = userService.getIdListByJobTitleId(jobTitleId);
         relationshipHelper.checkOrganizationUserListRelationship(organizationId, userIdList);
 
-        ArrayList<Integer> existingUserList = new ArrayList<>();
-        existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
-
+        ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
         ExtendedResponse<Object> response = new ExtendedResponse<>();
+        response.setMessage(generateExistingUsersMessage(existingUserList));
         response.setSuccess(true);
+        return response;
+    }
+
+    private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
+        String message = null;
         if (!existingUserList.isEmpty()) {
-            String message = "Completed successfully, however, the criteria was already assigned for following users:";
+            message = "Completed successfully, however, the criteria was already assigned for following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
-            response.setMessage(message);
         }
-        return response;
+        return message;
     }
 
 }
