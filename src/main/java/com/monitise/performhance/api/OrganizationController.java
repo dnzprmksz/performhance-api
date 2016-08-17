@@ -78,12 +78,14 @@ public class OrganizationController {
         Organization organization = new Organization(organizationName);
         Organization addedOrganization = organizationService.add(organization);
 
-        User manager = new User(addOrganizationRequest.getManagerName(),
+        User manager = new User(
+                addOrganizationRequest.getManagerName(),
                 addOrganizationRequest.getManagerSurname(),
                 addedOrganization,
-                Role.MANAGER);
-        manager.setUsername(addOrganizationRequest.getUsername());
-        manager.setPassword(addOrganizationRequest.getPassword());
+                Role.MANAGER,
+                addOrganizationRequest.getUsername(),
+                addOrganizationRequest.getPassword()
+        );
         userService.addManager(manager);
         addedOrganization.setManager(manager);
         addedOrganization = organizationService.update(addedOrganization);
@@ -153,8 +155,8 @@ public class OrganizationController {
             throws BaseException {
         securityHelper.checkAuthentication(organizationId);
         List<Criteria> list = criteriaService.getAllFilterByOrganizationId(organizationId);
-        List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(list);
 
+        List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(list);
         Response<List<CriteriaResponse>> response = new Response<>();
         response.setData(criteriaResponseList);
         response.setSuccess(true);

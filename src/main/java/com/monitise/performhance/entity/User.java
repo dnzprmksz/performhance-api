@@ -44,11 +44,13 @@ public class User {
         role = Role.EMPLOYEE;
     }
 
-    public User(String name, String surname, Organization organization, Role role) {
+    public User(String name, String surname, Organization organization, Role role, String username, String password) {
         this.name = name;
         this.surname = surname;
         this.organization = organization;
         this.role = role;
+        this.username = username;
+        this.password = password;
     }
 
     public User(String name, String surname, Organization organization, JobTitle jobTitle, String username, String password) {
@@ -56,8 +58,8 @@ public class User {
         this.surname = surname;
         this.organization = organization;
         this.jobTitle = jobTitle;
-        this.password = password;
         this.username = username;
+        this.password = password;
         role = Role.EMPLOYEE;
     }
 
