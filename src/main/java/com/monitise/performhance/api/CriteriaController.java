@@ -78,8 +78,7 @@ public class CriteriaController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{criteriaId}", method = RequestMethod.GET)
-    public Response<CriteriaResponse> get(@PathVariable int criteriaId)
-            throws BaseException {
+    public Response<CriteriaResponse> get(@PathVariable int criteriaId) throws BaseException {
         Criteria criteriaFromService = criteriaService.get(criteriaId);
         int organizationId = criteriaFromService.getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
@@ -97,8 +96,7 @@ public class CriteriaController {
     public Response<CriteriaResponse> update(@PathVariable int criteriaId,
                                              @RequestBody CriteriaRequest criteriaRequest) throws BaseException {
         Criteria criteriaFromService = criteriaService.get(criteriaId);
-        int organizationId = criteriaFromService.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
+        securityHelper.checkAuthentication(criteriaFromService.getOrganization().getId());
         criteriaFromService.setCriteria(criteriaRequest.getCriteria());
         criteriaFromService = criteriaService.update(criteriaFromService);
 
@@ -110,12 +108,9 @@ public class CriteriaController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{criteriaId}", method = RequestMethod.DELETE)
-    public Response<Object> remove(@PathVariable int criteriaId)
-            throws BaseException {
-        int organizationId = criteriaService.get(criteriaId).getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
+    public Response<Object> remove(@PathVariable int criteriaId) throws BaseException {
+        securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
         criteriaService.remove(criteriaId);
-
         Response<Object> response = new Response<>();
         response.setSuccess(true);
         return response;
@@ -129,19 +124,22 @@ public class CriteriaController {
         securityHelper.checkAuthentication(organizationId);
         relationshipHelper.checkOrganizationUserListRelationship(organizationId, userIdList);
 
-        ArrayList<Integer> existingUserList;
-        existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
-
+        ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
         ExtendedResponse<Object> response = new ExtendedResponse<>();
+        response.setMessage(generateExistingUsersMessage(existingUserList));
         response.setSuccess(true);
+        return response;
+    }
+
+    private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
+        String message = null;
         if (!existingUserList.isEmpty()) {
-            String message = "Completed successfully, however, the criteria was already assigned for following users:";
+            message = "Completed successfully, however, the criteria was already assigned for following users:";
             for (int userId : existingUserList) {
                 message += " " + userId;
             }
-            response.setMessage(message);
         }
-        return response;
+        return message;
     }
 
 }

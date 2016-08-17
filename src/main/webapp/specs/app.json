@@ -429,7 +429,7 @@
     "/teams/": {
       "get": {
         "operationId": "getTeams",
-        "description": "Gets all `Team` objects",
+        "description": "Gets all `Team`s in authenticated `User`'s `Organization`",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -447,15 +447,15 @@
       },
       "post": {
         "operationId": "postTeam",
-        "description": "Adds a new `Team` object to the repository",
+        "description": "Adds a new `Team`",
         "parameters": [
           {
-            "name": "team",
+            "name": "addTeamRequest",
             "in": "body",
-            "description": "Team object which will be added to repository",
+            "description": "The `Team` to add",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Team"
+              "$ref": "#/definitions/AddTeamRequest"
             }
           }
         ],
@@ -477,8 +477,8 @@
     },
     "/teams/{teamId}": {
       "get": {
-        "operationId": "getOrganizationTeam",
-        "description": "Gets the `Team` object with given id",
+        "operationId": "getTeam",
+        "description": "Gets the `Team` with given id",
         "parameters": [
           {
             "name": "teamId",
@@ -504,6 +504,42 @@
         }
       }
     },
+    "/teams/{teamId}/users/{userId}": {
+      "post": {
+        "operationId": "assignUserToTeam",
+        "description": "Assigns the given `User` to the `Team` with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team`"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
     "/teams/{teamId}/criteria/{criteriaId}": {
       "post": {
         "operationId": "assignCriteriaToTeamUsers",
@@ -521,7 +557,36 @@
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Criteria` that will be assigned to `User`s"
+            "description": "Id of the `Criteria`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/teams/search": {
+      "get": {
+        "operationId": "searchTeam",
+        "description": "Finds and returns a `List` of `Team`s filtered by the parameters set in the query",
+        "parameters": [
+          {
+            "name": "teamName",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Name of the `Team` to search `Team`s by"
           }
         ],
         "responses": {
@@ -543,7 +608,7 @@
     "/jobTitles/": {
       "get": {
         "operationId": "getJobTitles",
-        "description": "Gets all `JobTitle` objects\n",
+        "description": "Gets all `JobTitle`s that authenticated user can access",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -561,15 +626,15 @@
       },
       "post": {
         "operationId": "addJobTitles",
-        "description": "Adds given `JobTitles` object",
+        "description": "Adds given `JobTitle`",
         "parameters": [
           {
-            "name": "jobTitle",
+            "name": "addJobTitleRequest",
             "in": "body",
             "description": "The `JobTitle` object which will be added to repository",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/JobTitle"
+              "$ref": "#/definitions/AddJobTitleRequest"
             }
           }
         ],
@@ -592,19 +657,19 @@
     "/jobTitles/{jobTitleId}": {
       "get": {
         "operationId": "getJobtitle",
-        "description": "Returns the `JobTitle` object of the given id",
+        "description": "Returns the `JobTitle` with given id",
         "parameters": [
           {
             "name": "jobTitleId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `JobTitle` object"
+            "description": "Id of the `JobTitle`"
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a response that contains a `JobTitle` object",
+            "description": "Sucessful response",
             "schema": {
               "$ref": "#/definitions/Response"
             }
@@ -654,7 +719,7 @@
     "/criteria/": {
       "get": {
         "operationId": "getCriterias",
-        "description": "Gets all `Criteria` objects for admin user",
+        "description": "Gets all `Criteria`s that authenticated user has access",
         "responses": {
           "200": {
             "description": "Successful response",
@@ -676,11 +741,11 @@
         "parameters": [
           {
             "name": "criteria",
-            "description": "The `Criteria` object which will be added to repository",
+            "description": "The `Criteria` to add",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Criteria"
+              "$ref": "#/definitions/CriteriaRequest"
             }
           }
         ],
@@ -703,14 +768,14 @@
     "/criteria/{criteriaId}": {
       "get": {
         "operationId": "getCriteria",
-        "description": "Get `Criteria` object of an Organization with given Id",
+        "description": "Get `Criteria` with given Id",
         "parameters": [
           {
             "name": "criteriaId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Criteria` that will be returned"
+            "description": "Id of the `Criteria`"
           }
         ],
         "responses": {
@@ -737,15 +802,15 @@
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Criteria` that will be updated"
+            "description": "Id of the `Criteria`"
           },
           {
             "name": "criteriaRequest",
             "in": "body",
             "required": true,
-            "description": "Id list of `User`s that `Criteria` will be assigned",
+            "description": "The `Criteria` to be updated",
             "schema": {
-              "$ref": "#/definitions/Criteria"
+              "$ref": "#/definitions/CriteriaRequest"
             }
           }
         ],
@@ -766,14 +831,14 @@
       },
       "delete": {
         "operationId": "deleteCriteria",
-        "description": "Deletes `Criteria` with given id",
+        "description": "Deletes the `Criteria` with given id",
         "parameters": [
           {
             "name": "criteriaId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `Criteria` that will be deleted"
+            "description": "Id of the `Criteria` to delete"
           }
         ],
         "responses": {
@@ -1203,6 +1268,45 @@
         "password": {
           "type": "string",
           "description": "Password that employee will user to login"
+        }
+      }
+    },
+    "AddTeamRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the `Team` to be created"
+        },
+        "organizationId": {
+          "type": "integer",
+          "description": "Id of `Organization` that `Team` will be added into"
+        }
+      }
+    },
+    "AddJobTitleRequest": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Name of the `JobTitle`"
+        },
+        "organizationId": {
+          "type": "integer",
+          "description": "Id of `Organization` that `JobTitle` will be added into"
+        }
+      }
+    },
+    "CriteriaRequest": {
+      "type": "object",
+      "properties": {
+        "criteria": {
+          "type": "string",
+          "description": "The criteria description"
+        },
+        "organizationId": {
+          "type": "integer",
+          "description": "The organization that criteria will be added"
         }
       }
     }

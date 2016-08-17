@@ -23,6 +23,8 @@ public class Organization {
     private List<JobTitle> jobTitles;
     @OneToMany
     private List<Team> teams;
+    @OneToMany
+    private List<Criteria> criteriaList;
     @OneToOne
     private User manager;
 
@@ -79,6 +81,22 @@ public class Organization {
         this.jobTitles = jobTitles;
     }
 
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
+    }
+
+    public List<Criteria> getCriteriaList() {
+        return criteriaList;
+    }
+
+    public void setCriteriaList(List<Criteria> criteriaList) {
+        this.criteriaList = criteriaList;
+    }
+
     public User getManager() {
         return manager;
     }
@@ -87,13 +105,6 @@ public class Organization {
         this.manager = manager;
     }
 
-    public List<Team> getTeams() {
-        return teams;
-    }
-
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
-    }
     // endregion
 
 }

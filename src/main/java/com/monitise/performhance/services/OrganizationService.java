@@ -124,7 +124,14 @@ public class OrganizationService {
 
     public Organization addCriteria(int organizationId, Criteria criteria) throws BaseException {
         Organization organization = get(organizationId);
-        List<Criteria> criteriaList = organization.getC
+        List<Criteria> criteriaList = organization.getCriteriaList();
+        criteriaList.add(criteria);
+        organization.setCriteriaList(criteriaList);
+        Organization updatedOrganization = organizationRepository.save(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add given criteria to given organization.");
+        }
+        return updatedOrganization;
     }
 
 

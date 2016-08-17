@@ -18,6 +18,8 @@ public class CriteriaService {
     private CriteriaRepository criteriaRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrganizationService organizationService;
 
     public List<Criteria> getAll() {
         List<Criteria> criteriaList = (List<Criteria>) criteriaRepository.findAll();
@@ -49,14 +51,14 @@ public class CriteriaService {
         if (criteriaFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add the given criteria.");
         }
+        organizationService.addCriteria(criteriaFromRepo.getOrganization().getId(), criteria);
         return criteriaFromRepo;
     }
 
     public void remove(int criteriaId) throws BaseException {
         Criteria criteria = criteriaRepository.findOne(criteriaId);
         if (criteria == null) {
-            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST,
-                    "A criteria with given ID does not exist.");
+            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST, "A criteria with given ID does not exist.");
         }
         criteriaRepository.delete(criteriaId);
     }

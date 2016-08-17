@@ -23,4 +23,5 @@ public class CriteriaRequest {
     public void setOrganizationId(int organizationId) {
         this.organizationId = organizationId;
     }
+
 }
