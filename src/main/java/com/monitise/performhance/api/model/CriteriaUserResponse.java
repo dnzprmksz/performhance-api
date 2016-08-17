@@ -1,5 +1,6 @@
 package com.monitise.performhance.api.model;
 
+import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.User;
 
@@ -21,7 +22,14 @@ public class CriteriaUserResponse {
         criteriaList = CriteriaResponse.fromList(user.getCriteriaList());
     }
 
-    // region Getters
+    public static CriteriaUserResponse fromUser(User user) {
+        if (user == null) {
+            return null;
+        }
+        return new CriteriaUserResponse(user);
+    }
+
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -42,10 +50,6 @@ public class CriteriaUserResponse {
     public String getSurname() {
         return surname;
     }
-
-    // endregion
-
-    // region Setters
 
     public void setSurname(String surname) {
         this.surname = surname;

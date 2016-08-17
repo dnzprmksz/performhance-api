@@ -68,14 +68,14 @@ public class CriteriaService {
         return criteriaFromRepo;
     }
 
-    public User assignCriteriaToUserById(Criteria criteria, int userId) throws BaseException {
+    public User assignCriteriaToUserById(int criteriaId, int userId) throws BaseException {
         User user = userService.get(userId);
+        Criteria criteria = get(criteriaId);
         checkExistenceInUser(user, criteria);
         List<Criteria> criteriaList = user.getCriteriaList();
         criteriaList.add(criteria);
         user.setCriteriaList(criteriaList);
-        User userFromRepo = userService.update(user);
-        return userFromRepo;
+        return userService.update(user);
     }
 
     /**
@@ -93,8 +93,9 @@ public class CriteriaService {
         return existingUserList;
     }
 
-    public void removeCriteriaFromUserById(Criteria criteria, int userId) throws BaseException {
+    public void removeCriteriaFromUserById(int criteriaId, int userId) throws BaseException {
         User user = userService.get(userId);
+        Criteria criteria = get(criteriaId);
         List<Criteria> criteriaList = user.getCriteriaList();
         if (!criteriaList.contains(criteria)) {
             throw new BaseException(ResponseCode.CRITERIA_DOES_NOT_EXIST_IN_USER,
@@ -114,9 +115,8 @@ public class CriteriaService {
      * @return The existence of the user.
      */
     private boolean checkUserExistenceAndAssignCriteriaById(int userId, int criteriaId) throws BaseException {
-        Criteria criteria = get(criteriaId);
         try {
-            assignCriteriaToUserById(criteria, userId);
+            assignCriteriaToUserById(criteriaId, userId);
         } catch (BaseException exception) {
             if (exception.getCode() == ResponseCode.CRITERIA_EXISTS_IN_USER) {
                 return true;

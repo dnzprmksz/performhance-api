@@ -199,10 +199,10 @@
         "description": "Adds a new `User`",
         "parameters": [
           {
-            "name": "user",
+            "name": "addUserRequest",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/User"
+              "$ref": "#/definitions/AddUserRequest"
             },
             "required": true,
             "description": "The `User` object to be added"
@@ -251,19 +251,22 @@
       },
       "delete": {
         "operationId": "deleteUser",
-        "description": "Deletes an employee of the given id from an organization",
+        "description": "Deletes the `User` with given id",
         "parameters": [
           {
             "name": "userId",
             "in": "path",
             "type": "integer",
             "required": true,
-            "description": "Id of the `User` object"
+            "description": "Id of the `User` to delete"
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a response that contains the deleted `User` object"
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
           },
           "404": {
             "description": "A user with given id does not exists / You  are not authorized for this organization",
@@ -355,6 +358,56 @@
             "type": "integer",
             "required": true,
             "description": "Id of the `Criteria` that will be removed from `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/users/search": {
+      "get": {
+        "operationId": "searchUser",
+        "description": "Finds and returns a `List` of `User`s filtered by the parameters set in the query",
+        "parameters": [
+          {
+            "name": "titleId",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "The `JobTitle` to search `User`s by"
+          },
+          {
+            "name": "teamId",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "The `Team` id to search `User`s by"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Employee name to search `User`s by"
+          },
+          {
+            "name": "surname",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Employee surname to search `User`s by"
           }
         ],
         "responses": {
@@ -1121,6 +1174,35 @@
         "managerSurname": {
           "type": "string",
           "description": "Surname of the manager"
+        }
+      }
+    },
+    "AddUserRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the person"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the person"
+        },
+        "jobTitleId": {
+          "type": "integer",
+          "description": "The `JobTitle` id of the employee"
+        },
+        "organizationId": {
+          "type": "integer",
+          "description": "The `Organization` id that employee will be added"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username that employee will use to login"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password that employee will user to login"
         }
       }
     }

@@ -19,6 +19,8 @@ public class UserService {
     public static final String UNDEFINED = "C8E7279CD035B23BB9C0F1F954DFF5B3";
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrganizationService organizationService;
 
     public List<User> getAll() {
         List<User> list = (List<User>) userRepository.findAll();
@@ -88,6 +90,7 @@ public class UserService {
         return userList;
     }
 
+    // TODO: Remove user from organization as well
     @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public void remove(int id) throws BaseException {
         get(id);
@@ -108,7 +111,9 @@ public class UserService {
         if (user.getRole() != Role.EMPLOYEE && user.getRole() != Role.TEAM_LEADER) {
             throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-employee user.");
         }
-        return addUser(user);
+        User addedUser = addUser(user);
+        organizationService.addEmployee(user.getOrganization(), addedUser);
+        return addedUser;
     }
 
     @Secured("ROLE_ADMIN")

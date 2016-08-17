@@ -51,10 +51,11 @@ public class User {
         this.role = role;
     }
 
-    public User(AddUserRequest userRequest, Organization organization, String username, String password) {
-        name = userRequest.getName();
-        surname = userRequest.getSurname();
+    public User(String name, String surname, Organization organization, JobTitle jobTitle, String username, String password) {
+        this.name = name;
+        this.surname = surname;
         this.organization = organization;
+        this.jobTitle = jobTitle;
         this.password = password;
         this.username = username;
         role = Role.EMPLOYEE;
