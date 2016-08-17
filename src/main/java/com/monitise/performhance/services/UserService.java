@@ -112,7 +112,7 @@ public class UserService {
             throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-employee user.");
         }
         User addedUser = addUser(user);
-        organizationService.addEmployee(user.getOrganization(), addedUser);
+        organizationService.addEmployee(user.getOrganization().getId(), addedUser.getId());
         return addedUser;
     }
 
