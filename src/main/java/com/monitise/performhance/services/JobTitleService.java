@@ -1,12 +1,11 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.JobTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,8 +33,7 @@ public class JobTitleService {
     }
 
     public List<JobTitle> getAll() {
-        List<JobTitle> list = (List<JobTitle>) jobTitleRepository.findAll();
-        return list;
+        return jobTitleRepository.findAll();
     }
 
     public JobTitle get(int id) throws BaseException {

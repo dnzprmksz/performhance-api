@@ -1,8 +1,8 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Review;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,18 +16,15 @@ public class ReviewService {
     private ReviewRepository reviewRepository;
 
     public List<Review> getAll() {
-        List<Review> list = (List<Review>) reviewRepository.findAll();
-        return list;
+        return reviewRepository.findAll();
     }
 
     public List<Review> getAllFilterByOrganizationId(int organizationId) {
-        List<Review> list = reviewRepository.findByOrganizationId(organizationId);
-        return list;
+        return reviewRepository.findByOrganizationId(organizationId);
     }
 
     public List<Review> getAllFilterByTeamId(int teamId) {
-        List<Review> list = reviewRepository.findByTeamId(teamId);
-        return list;
+        return reviewRepository.findByTeamId(teamId);
     }
 
     public Review get(int reviewId) throws BaseException {
@@ -48,8 +45,7 @@ public class ReviewService {
 
     public Review update(Review review) throws BaseException {
         ensureExistence(review.getId());
-        Review reviewFromRepo = reviewRepository.save(review);
-        return reviewFromRepo;
+        return reviewRepository.save(review);
     }
 
     public void remove(int reviewId) throws BaseException {

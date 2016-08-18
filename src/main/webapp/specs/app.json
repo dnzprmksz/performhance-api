@@ -1400,6 +1400,10 @@
         "title": {
           "type": "string",
           "description": "Name of the `JobTitle`"
+        },
+        "organizationId": {
+          "type": "integer",
+          "description": "Id of `Organization` that `JobTitle` will be added into"
         }
       }
     },

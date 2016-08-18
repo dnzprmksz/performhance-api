@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface CriteriaRepository extends CrudRepository<Criteria, Integer> {
 
+    @Override
+    List<Criteria> findAll();
+
     List<Criteria> findByOrganizationId(int organizationId);
 
     Criteria findByOrganizationAndCriteria(Organization organization, String criteria);

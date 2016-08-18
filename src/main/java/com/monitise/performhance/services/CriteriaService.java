@@ -22,17 +22,11 @@ public class CriteriaService {
     private OrganizationService organizationService;
 
     public List<Criteria> getAll() {
-        List<Criteria> criteriaList = (List<Criteria>) criteriaRepository.findAll();
-        return criteriaList;
+        return criteriaRepository.findAll();
     }
 
     public List<Criteria> getAllFilterByOrganizationId(int organizationId) throws BaseException {
-        List<Criteria> list = criteriaRepository.findByOrganizationId(organizationId);
-        if (list == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED,
-                    "Could not get the criteria list for given organization ID.");
-        }
-        return list;
+        return criteriaRepository.findByOrganizationId(organizationId);
     }
 
     public Criteria get(int id) throws BaseException {
@@ -56,18 +50,14 @@ public class CriteriaService {
     }
 
     public void remove(int criteriaId) throws BaseException {
-        Criteria criteria = criteriaRepository.findOne(criteriaId);
-        if (criteria == null) {
-            throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST, "A criteria with given ID does not exist.");
-        }
+        ensureExistence(criteriaId);
         criteriaRepository.delete(criteriaId);
     }
 
     public Criteria update(Criteria criteria) throws BaseException {
         validate(criteria);
-        ensureExistence(criteria);
-        Criteria criteriaFromRepo = criteriaRepository.save(criteria);
-        return criteriaFromRepo;
+        ensureExistence(criteria.getId());
+        return criteriaRepository.save(criteria);
     }
 
     public User assignCriteriaToUserById(int criteriaId, int userId) throws BaseException {
@@ -80,9 +70,7 @@ public class CriteriaService {
         return userService.update(user);
     }
 
-    /**
-     * @return List of users who already has the criteria.
-     */
+    // return List of users who already has the criteria.
     public ArrayList<Integer> assignCriteriaToUserList(int criteriaId, List<Integer> userIdList) throws BaseException {
         ArrayList<Integer> existingUserList = new ArrayList<>();
         // Add criteria to users. If user already has this criteria, add his/her ID to the list.
@@ -130,8 +118,8 @@ public class CriteriaService {
     }
 
     // Throws exception if the criteria DOES NOT EXIST.
-    private void ensureExistence(Criteria criteria) throws BaseException {
-        Criteria criteriaFromRepo = criteriaRepository.findOne(criteria.getId());
+    private void ensureExistence(int criteriaId) throws BaseException {
+        Criteria criteriaFromRepo = criteriaRepository.findOne(criteriaId);
         if (criteriaFromRepo == null) {
             throw new BaseException(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST,
                     "A criteria with given ID does not exist.");
@@ -149,7 +137,8 @@ public class CriteriaService {
     }
 
     private void validate(Criteria criteria) throws BaseException {
-        if (criteria.getCriteria() == null || criteria.getCriteria().trim() == "") {
+        String criteriaName = criteria.getCriteria();
+        if (criteriaName == null || criteriaName.trim() == "") {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY, "Empty criteria is not allowed.");
         } else if (criteria.getOrganization() == null) {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY_ORGANIZATION,

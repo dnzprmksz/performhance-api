@@ -1,12 +1,11 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
-import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,13 @@ public class OrganizationService {
     private OrganizationRepository organizationRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private JobTitleService jobTitleService;
+    @Autowired
+    private TeamService teamService;
 
     public List<Organization> getAll() {
-        List<Organization> list = (List<Organization>) organizationRepository.findAll();
-        return list;
+        return organizationRepository.findAll();
     }
 
     public Organization get(int id) throws BaseException {
@@ -45,59 +47,60 @@ public class OrganizationService {
     }
 
     public Organization add(Organization organization) throws BaseException {
-        // Check if the organization name is unique.
-        Organization shouldBeNull = organizationRepository.findByName(organization.getName());
-        if (shouldBeNull != null) {
-            throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS,
-                    "An organization with given name already exists.");
-        }
+        ensureUniqueness(organization.getName());
         Organization organizationFromRepo = organizationRepository.save(organization);
-        // Check if the given organization is added correctly.
-        if (organizationFromRepo == null || !(organizationFromRepo.getName().equals(organization.getName()))) {
+        if (organizationFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add the given organization.");
         }
         return organizationFromRepo;
     }
 
     public Organization update(Organization organization) throws BaseException {
-        // Check if organization exists in repository. If DNE an exception will be thrown by getId().
-        get(organization.getId());
-        Organization organizationFromRepo = organizationRepository.save(organization);
-        return organizationFromRepo;
+        ensureExistence(organization.getId());
+        return organizationRepository.save(organization);
     }
 
-    public boolean isJobTitleDefined(Organization organization, int titleId) {
-        List<JobTitle> titleList = organization.getJobTitles();
-        for (JobTitle jobTitle : titleList) {
-            if (jobTitle.getId() == titleId) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isJobTitleDefined(int organizationId, int jobTitleId) throws BaseException {
+        int jobTitleOrganizationId = jobTitleService.get(jobTitleId).getOrganization().getId();
+        return organizationId == jobTitleOrganizationId;
     }
 
-    public boolean isTeamIdDefined(Organization organization, int teamId) {
-        List<Team> teams = organization.getTeams();
-        for (Team team : teams) {
-            if (team.getId() == teamId) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isTeamIdDefined(int organizationId, int teamId) throws BaseException {
+        int teamOrganizationId = teamService.get(teamId).getOrganization().getId();
+        return organizationId == teamOrganizationId;
     }
 
     // TODO: TEST THIS METHOD
     public Organization addEmployee(int organizationId, int employeeId) throws BaseException {
         Organization organization = organizationRepository.findOne(organizationId);
         User employee = userService.get(employeeId);
-        List<User> userList = organization.getUsers();
-        // Add the employee & increment numberOfEmployees field.
-        userList.add(employee);
-        organization.setUsers(userList);
+
+        organization.getUsers().add(employee);
         organization.setNumberOfEmployees(organization.getNumberOfEmployees() + 1);
         Organization updatedOrganization = organizationRepository.save(organization);
         if (updatedOrganization == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add employee");
+        }
+        return updatedOrganization;
+    }
+
+    // TODO: TEST THIS METHOD
+    public Organization addTeam(int organizationId, Team team) throws BaseException {
+        Organization organization = get(organizationId);
+        organization.getTeams().add(team);
+        Organization updatedOrganization = organizationRepository.save(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
+        }
+        return updatedOrganization;
+    }
+
+    public Organization addCriteria(int organizationId, Criteria criteria) throws BaseException {
+        Organization organization = get(organizationId);
+        organization.getCriteriaList().add(criteria);
+        Organization updatedOrganization = organizationRepository.save(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add given criteria to given organization.");
         }
         return updatedOrganization;
     }
@@ -114,29 +117,24 @@ public class OrganizationService {
         return updatedOrganization;
     }
 
-    // TODO: TEST THIS METHOD
-    public Organization addTeam(int organizationId, Team team) throws BaseException {
-        Organization organization = get(organizationId);
-        List<Team> teamList = organization.getTeams();
-        teamList.add(team);
-        organization.setTeams(teamList);
-        Organization updatedOrganization = organizationRepository.save(organization);
-        if (updatedOrganization == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
+    // region Helper Methods
+
+    private void ensureUniqueness(String name) throws BaseException {
+        Organization organization = organizationRepository.findByName(name);
+        if (organization != null) {
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS,
+                    "An organization with given name already exists.");
         }
-        return updatedOrganization;
     }
 
-    public Organization addCriteria(int organizationId, Criteria criteria) throws BaseException {
-        Organization organization = get(organizationId);
-        List<Criteria> criteriaList = organization.getCriteriaList();
-        criteriaList.add(criteria);
-        organization.setCriteriaList(criteriaList);
-        Organization updatedOrganization = organizationRepository.save(organization);
-        if (updatedOrganization == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add given criteria to given organization.");
+    private void ensureExistence(int organizationId) throws BaseException {
+        Organization organization = organizationRepository.findOne(organizationId);
+        if (organization == null) {
+            throw new BaseException(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST,
+                    "An organization with given ID does not exist.");
         }
-        return updatedOrganization;
     }
+
+    // endregion
 
 }

@@ -31,7 +31,7 @@ public class RelationshipHelper {
     private SecurityHelper securityHelper;
 
     public void ensureOrganizationJobTitleRelationship(int organizationId, int jobTitleId) throws BaseException {
-        if (!organizationService.isJobTitleDefined(organizationService.get(organizationId), jobTitleId)) {
+        if (!organizationService.isJobTitleDefined(organizationId, jobTitleId)) {
             throw new BaseException(ResponseCode.JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION,
                     "Given job title does not belong to this organization.");
         }
