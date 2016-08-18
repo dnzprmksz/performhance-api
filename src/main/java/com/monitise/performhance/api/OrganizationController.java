@@ -1,9 +1,8 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.AddOrganizationRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
-import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.OrganizationJobTitleResponse;
 import com.monitise.performhance.api.model.OrganizationResponse;
 import com.monitise.performhance.api.model.OrganizationUserResponse;
@@ -24,7 +23,6 @@ import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.TeamService;
 import com.monitise.performhance.services.UserService;
-import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

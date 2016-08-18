@@ -1,14 +1,12 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import com.monitise.performhance.repositories.UserRepository;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

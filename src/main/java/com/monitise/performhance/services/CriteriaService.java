@@ -1,9 +1,9 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.CriteriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

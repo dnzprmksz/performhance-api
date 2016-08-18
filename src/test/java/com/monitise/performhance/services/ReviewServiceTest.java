@@ -1,24 +1,16 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Review;
-import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
-import com.monitise.performhance.repositories.CriteriaRepository;
-import com.monitise.performhance.repositories.OrganizationRepository;
-import com.monitise.performhance.repositories.TeamRepository;
-import com.monitise.performhance.repositories.UserRepository;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 

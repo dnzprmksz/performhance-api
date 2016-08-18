@@ -1,6 +1,6 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.AddUserRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.CriteriaUserResponse;
