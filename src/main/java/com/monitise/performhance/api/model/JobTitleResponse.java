@@ -17,7 +17,17 @@ public class JobTitleResponse {
         organizationId = jobTitle.getOrganization().getId();
     }
 
+    public static JobTitleResponse fromJobTitle(JobTitle jobTitle) {
+        if (jobTitle == null) {
+            return null;
+        }
+        return new JobTitleResponse(jobTitle);
+    }
+
     public static List<JobTitleResponse> fromList(List<JobTitle> list) {
+        if ( list == null) {
+            return null;
+        }
         List<JobTitleResponse> responseList = new ArrayList<>();
         for (JobTitle jobTitle : list) {
             responseList.add(new JobTitleResponse(jobTitle));

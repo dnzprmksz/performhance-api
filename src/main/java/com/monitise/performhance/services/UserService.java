@@ -91,7 +91,6 @@ public class UserService {
     }
 
     // TODO: Remove user from organization as well
-    @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public void remove(int id) throws BaseException {
         get(id);
         userRepository.delete(id);
@@ -106,7 +105,6 @@ public class UserService {
         return userFromRepo;
     }
 
-    @Secured({"ROLE_MANAGER", "ROLE_ADMIN"})
     public User addEmployee(User user) throws BaseException {
         if (user.getRole() != Role.EMPLOYEE && user.getRole() != Role.TEAM_LEADER) {
             throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-employee user.");
@@ -116,7 +114,6 @@ public class UserService {
         return addedUser;
     }
 
-    @Secured("ROLE_ADMIN")
     public User addManager(User user) throws BaseException {
         if (user.getRole() != Role.MANAGER) {
             throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-manager user.");
