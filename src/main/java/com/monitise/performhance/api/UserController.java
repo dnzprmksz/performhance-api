@@ -122,7 +122,7 @@ public class UserController {
                                                                @PathVariable int criteriaId) throws BaseException {
         int organizationId = userService.get(userId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
+        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
         User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
 
         CriteriaUserResponse criteriaUserResponse = CriteriaUserResponse.fromUser(userFromService);
@@ -139,7 +139,7 @@ public class UserController {
                                                    @PathVariable int criteriaId) throws BaseException {
         int organizationId = userService.get(userId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
+        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
 
         criteriaService.removeCriteriaFromUserById(criteriaId, userId);
         Response<Object> response = new Response<>();
@@ -185,7 +185,7 @@ public class UserController {
         if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
             throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "Empty user name is not allowed.");
         }
-        relationshipHelper.checkOrganizationJobTitleRelationship(organization.getId(), employee.getJobTitleId());
+        relationshipHelper.ensureOrganizationJobTitleRelationship(organization.getId(), employee.getJobTitleId());
     }
 
     private void formatValidateSearchRequest(String titleId, String teamId) throws BaseException {

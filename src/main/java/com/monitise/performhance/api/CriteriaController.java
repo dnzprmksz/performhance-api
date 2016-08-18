@@ -122,7 +122,7 @@ public class CriteriaController {
                                                   @RequestBody List<Integer> userIdList) throws BaseException {
         int organizationId = criteriaService.get(criteriaId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.checkOrganizationUserListRelationship(organizationId, userIdList);
+        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
 
         ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
         ExtendedResponse<Object> response = new ExtendedResponse<>();

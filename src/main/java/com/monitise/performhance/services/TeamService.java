@@ -86,6 +86,19 @@ public class TeamService {
         return updatedTeam;
     }
 
+    public Team removeEmployeeFromTeam(int employeeId, int teamId) throws BaseException {
+        Team team = teamRepository.findOne(teamId);
+        User employee = userRepository.findOne(employeeId);
+
+        team.getMembers().remove(employee);
+        employee.setTeam(null);
+
+        Team updatedTeam = teamRepository.save(team);
+        userRepository.save(employee);
+
+        return updatedTeam;
+    }
+
     public Team assignLeaderToTeam(int leaderId, int teamId) throws BaseException {
         if(!isLeaderAMemberOfTheTeam(teamId, leaderId)) {
             assignEmployeeToTeam(leaderId, teamId);
@@ -93,6 +106,14 @@ public class TeamService {
         Team team = teamRepository.findOne(teamId);
         User leader = userRepository.findOne(leaderId);
         team.setLeader(leader);
+        Team updatedTeam = teamRepository.save(team);
+        return updatedTeam;
+    }
+
+    // Leader stays in the team, only his/her leadership is removed.
+    public Team removeLeadershipFromTeam(int teamId) throws BaseException {
+        Team team = teamRepository.findOne(teamId);
+        team.setLeader(null);
         Team updatedTeam = teamRepository.save(team);
         return updatedTeam;
     }
