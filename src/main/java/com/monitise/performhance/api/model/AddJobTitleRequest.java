@@ -2,11 +2,9 @@ package com.monitise.performhance.api.model;
 
 public class AddJobTitleRequest {
 
-    private String title;
-    private int organizationId;
+    private String title;;
 
-    public AddJobTitleRequest() {
-    }
+    public AddJobTitleRequest() {}
 
     // region Getters & Setters
 
@@ -16,14 +14,6 @@ public class AddJobTitleRequest {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(int organizationId) {
-        this.organizationId = organizationId;
     }
 
     // endregion

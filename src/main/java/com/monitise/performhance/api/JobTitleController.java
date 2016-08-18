@@ -7,6 +7,7 @@ import com.monitise.performhance.api.model.JobTitleResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.User;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.CriteriaService;
@@ -62,9 +63,8 @@ public class JobTitleController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<JobTitleResponse> addJobTitle(@RequestBody AddJobTitleRequest addJobTitleRequest)
             throws BaseException {
-        int organizationId = addJobTitleRequest.getOrganizationId();
-        securityHelper.checkAuthentication(organizationId);
-
+        User client = securityHelper.getAuthenticatedUser();
+        int organizationId = client.getId();
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitle = new JobTitle(addJobTitleRequest.getTitle(), organization);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
