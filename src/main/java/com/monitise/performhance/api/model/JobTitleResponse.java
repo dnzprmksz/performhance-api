@@ -25,7 +25,7 @@ public class JobTitleResponse {
     }
 
     public static List<JobTitleResponse> fromList(List<JobTitle> list) {
-        if ( list == null) {
+        if (list == null) {
             return null;
         }
         List<JobTitleResponse> responseList = new ArrayList<>();
