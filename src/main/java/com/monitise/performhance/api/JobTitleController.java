@@ -74,7 +74,6 @@ public class JobTitleController {
         response.setData(jobTitleResponse);
         response.setSuccess(true);
         return response;
-
     }
 
     @Secured("ROLE_MANAGER")
@@ -96,9 +95,9 @@ public class JobTitleController {
                                                           @PathVariable int criteriaId) throws BaseException {
         int organizationId = jobTitleService.get(jobTitleId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.checkOrganizationCriteriaRelationship(organizationId, criteriaId);
+        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
         List<Integer> userIdList = userService.getIdListByJobTitleId(jobTitleId);
-        relationshipHelper.checkOrganizationUserListRelationship(organizationId, userIdList);
+        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
 
         ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
         ExtendedResponse<Object> response = new ExtendedResponse<>();

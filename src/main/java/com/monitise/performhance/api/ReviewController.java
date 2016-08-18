@@ -86,9 +86,9 @@ public class ReviewController {
     public Response<ReviewResponse> get(@PathVariable int reviewId) throws BaseException {
         Review review = reviewService.get(reviewId);
         if (securityHelper.isAuthenticatedUserManager()) {
-            relationshipHelper.checkManagerReviewRelationship(review);
+            relationshipHelper.ensureManagerReviewRelationship(review);
         } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
-            relationshipHelper.checkTeamLeaderReviewRelationship(review);
+            relationshipHelper.ensureTeamLeaderReviewRelationship(review);
         }
         ReviewResponse reviewResponse = new ReviewResponse(review);
         Response<ReviewResponse> response = new Response<>();
@@ -114,7 +114,7 @@ public class ReviewController {
     private void validate(AddReviewRequest reviewRequest) throws BaseException {
         User reviewedUser = userService.get(reviewRequest.getReviewedEmployeeId());
         User reviewer = userService.get(reviewRequest.getReviewerId());
-        relationshipHelper.checkEmployeeRelationship(reviewedUser, reviewer);
+        relationshipHelper.ensureEmployeeRelationship(reviewedUser, reviewer);
 
         List<Criteria> criteriaList = reviewedUser.getCriteriaList();
         int userCriteriaCount = criteriaList.size();

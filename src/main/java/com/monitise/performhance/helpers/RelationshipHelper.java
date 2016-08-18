@@ -30,14 +30,14 @@ public class RelationshipHelper {
     @Autowired
     private SecurityHelper securityHelper;
 
-    public void checkOrganizationJobTitleRelationship(int organizationId, int jobTitleId) throws BaseException {
+    public void ensureOrganizationJobTitleRelationship(int organizationId, int jobTitleId) throws BaseException {
         if (!organizationService.isJobTitleDefined(organizationId, jobTitleId)) {
             throw new BaseException(ResponseCode.JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION,
                     "Given job title does not belong to this organization.");
         }
     }
 
-    public void checkOrganizationCriteriaRelationship(int organizationId, int criteriaId) throws BaseException {
+    public void ensureOrganizationCriteriaRelationship(int organizationId, int criteriaId) throws BaseException {
         Criteria criteria = criteriaService.get(criteriaId);
         int id = criteria.getOrganization().getId();
         if (id != organizationId) {
@@ -46,7 +46,7 @@ public class RelationshipHelper {
         }
     }
 
-    public void checkOrganizationTeamRelationship(int organizationId, int teamId) throws BaseException {
+    public void ensureOrganizationTeamRelationship(int organizationId, int teamId) throws BaseException {
         Team team = teamService.get(teamId);
         int id = team.getOrganization().getId();
         if (id != organizationId) {
@@ -55,7 +55,7 @@ public class RelationshipHelper {
         }
     }
 
-    public void checkOrganizationUserRelationship(int organizationId, int userId) throws BaseException {
+    public void ensureOrganizationUserRelationship(int organizationId, int userId) throws BaseException {
         User user = userService.get(userId);
         int id = user.getOrganization().getId();
         if (id != organizationId) {
@@ -64,15 +64,36 @@ public class RelationshipHelper {
         }
     }
 
-    public void checkOrganizationUserListRelationship(int organizationId, List<Integer> userIdList)
+    public void ensureOrganizationUserListRelationship(int organizationId, List<Integer> userIdList)
             throws BaseException {
         for (int userId : userIdList) {
-            checkOrganizationUserRelationship(organizationId, userId);
+            ensureOrganizationUserRelationship(organizationId, userId);
         }
     }
 
+    public void ensureTeamEmployeeRelationShip(int teamId, int employeeId) throws BaseException {
+        User employee = userService.get(employeeId);
+        Team team = teamService.get(teamId);
+        Team employeesTeam = employee.getTeam();
+        if (employeesTeam == null || employeesTeam.getId() != team.getId()) {
+            throw new BaseException(ResponseCode.USER_DOES_NOT_BELONG_TO_TEAM,
+                    "Given user is not a member of this team.");
+        }
+    }
+
+    public void ensureTeamEmployeeIndependence(int teamId, int employeeId) throws BaseException {
+        User employee = userService.get(employeeId);
+        Team team = teamService.get(teamId);
+        Team employeesTeam = employee.getTeam();
+        if (employeesTeam != null && employeesTeam.getId() == team.getId()) {
+            throw new BaseException(ResponseCode.USER_DOES_NOT_BELONG_TO_TEAM,
+                    "Given user is already a member of this team.");
+        }
+    }
+
+
     @Secured("ROLE_MANAGER")
-    public void checkManagerReviewRelationship(Review review) throws BaseException {
+    public void ensureManagerReviewRelationship(Review review) throws BaseException {
         User manager = securityHelper.getAuthenticatedUser();
         if (manager.getOrganization().getId() != review.getOrganization().getId()) {
             throw new BaseException(ResponseCode.RELATIONSHIP_MANAGER_REVIEW_UNSATISFIED,
@@ -81,7 +102,7 @@ public class RelationshipHelper {
     }
 
     @Secured("ROLE_TEAM_LEADER")
-    public void checkTeamLeaderReviewRelationship(Review review) throws BaseException {
+    public void ensureTeamLeaderReviewRelationship(Review review) throws BaseException {
         User leader = securityHelper.getAuthenticatedUser();
         if (leader.getTeam().getId() != review.getTeam().getId()) {
             throw new BaseException(ResponseCode.RELATIONSHIP_TEAM_LEADER_REVIEW_UNSATISFIED,
@@ -89,7 +110,8 @@ public class RelationshipHelper {
         }
     }
 
-    public void checkEmployeeRelationship(User first, User second) throws BaseException {
+
+    public void ensureEmployeeRelationship(User first, User second) throws BaseException {
         if (first.getTeam() != second.getTeam()) {
             throw new BaseException(ResponseCode.REVIEW_USER_IN_DIFFERENT_TEAM,
                     "Reviewed employee and reviewer are in different teams.");
