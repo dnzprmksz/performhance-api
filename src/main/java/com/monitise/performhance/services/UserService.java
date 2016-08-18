@@ -3,6 +3,7 @@ package com.monitise.performhance.services;
 import com.monitise.performhance.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
+import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,11 +115,17 @@ public class UserService {
         return addedUser;
     }
 
-    public User addManager(User user) throws BaseException {
-        if (user.getRole() != Role.MANAGER) {
+    public User addManager(User manager) throws BaseException {
+        if (manager.getRole() != Role.MANAGER) {
             throw new BaseException(ResponseCode.USER_ROLE_INCORRECT, "Cannot add non-manager user.");
         }
-        return addUser(user);
+        User addedManager = addUser(manager);
+        int organizationId = manager.getOrganization().getId();
+        int managerId = manager.getId();
+        organizationService.addEmployee(organizationId, managerId);
+        organizationService.setManager(organizationId, managerId);
+
+        return addedManager;
     }
 
     // region Helper Methods
