@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface TeamRepository extends CrudRepository<Team, Integer>, JpaSpecificationExecutor {
 
+    @Override
+    List<Team> findAll();
+
     List<Team> findByOrganizationId(int organizationId);
 
 }

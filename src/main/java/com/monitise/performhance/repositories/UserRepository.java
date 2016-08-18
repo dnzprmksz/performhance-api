@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer>, JpaSpecificationExecutor {
 
+    @Override
+    List<User> findAll();
+
     User findByUsername(String username);
 
     List<User> findByOrganizationId(int organizationId);

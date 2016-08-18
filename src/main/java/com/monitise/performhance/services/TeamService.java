@@ -1,9 +1,9 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.repositories.TeamRepository;
 import com.monitise.performhance.repositories.UserRepository;
@@ -31,8 +31,7 @@ public class TeamService {
     private OrganizationService organizationService;
 
     public List<Team> getAll() {
-        List<Team> list = (List<Team>) teamRepository.findAll();
-        return list;
+        return teamRepository.findAll();
     }
 
     public Team get(int id) throws BaseException {
@@ -48,21 +47,14 @@ public class TeamService {
         if (!UNDEFINED.equals(teamName)) {
             filter = Specifications.where(filter).and(Team.teamNameContains(teamName));
         }
-        List<Team> teamList = teamRepository.findAll(filter);
-        return teamList;
+        return teamRepository.findAll(filter);
     }
 
-    @Secured("ROLE_MANAGER")
     public List<Team> getListFilterByOrganizationId(int organizationId) throws BaseException {
         securityHelper.checkAuthentication(organizationId);
-        List<Team> list = teamRepository.findByOrganizationId(organizationId);
-        if (list == null) {
-            return new ArrayList<>();
-        }
-        return list;
+        return teamRepository.findByOrganizationId(organizationId);
     }
 
-    @Secured("ROLE_MANAGER")
     public Team add(Team team) throws BaseException {
         int organizationId = team.getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
@@ -75,14 +67,11 @@ public class TeamService {
         return teamFromRepo;
     }
 
-    @Secured("ROLE_MANAGER")
     public Team assignEmployeeToTeam(int userId, int teamId) throws BaseException {
         Team team = teamRepository.findOne(teamId);
         User user = userRepository.findOne(userId);
 
-        List<User> members = team.getMembers();
-        members.add(user);
-        team.setMembers(members);
+        team.getMembers().add(user);
         Team updatedTeam = teamRepository.save(team);
         user.setTeam(team);
         userRepository.save(user);

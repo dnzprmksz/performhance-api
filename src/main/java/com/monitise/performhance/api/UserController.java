@@ -202,10 +202,12 @@ public class UserController {
     }
 
     private void semanticallyValidate(Organization organization, String titleId, String teamId) throws BaseException {
+        int organizationId = organization.getId();
+
         // Check if the title is defined in the organization.
         if (!titleId.equals(UserService.UNDEFINED)) {
             int intTitleId = Integer.parseInt(titleId);
-            if (!organizationService.isJobTitleDefined(organization, intTitleId)) {
+            if (!organizationService.isJobTitleDefined(organizationId, intTitleId)) {
                 throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
                         "Given job title id is not existent in the organization");
             }
@@ -214,7 +216,7 @@ public class UserController {
         // Check if the team is defined in the organization.
         if (!teamId.equals(UserService.UNDEFINED)) {
             int intTeamId = Integer.parseInt(teamId);
-            if (!organizationService.isTeamIdDefined(organization, intTeamId)) {
+            if (!organizationService.isTeamIdDefined(organizationId, intTeamId)) {
                 throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST,
                         "Given team's id is not existent in the organization");
             }
