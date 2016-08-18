@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class User {
     private Team team;
     @ManyToMany
     private List<Criteria> criteriaList;
+    @OneToMany
+    private List<Review> reviews;
     private String username;
     private String password;
 
@@ -193,6 +196,15 @@ public class User {
     public void setTeam(Team team) {
         this.team = team;
     }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     // endregion
 
 }

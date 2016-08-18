@@ -163,7 +163,6 @@ public class OrganizationController {
     // region Helper Methods
 
     private void validateName(String name) throws BaseException {
-
         if (name == null || name.trim().equals("")) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty organization name is not allowed.");
         } else if (doesNameExists(name)) {

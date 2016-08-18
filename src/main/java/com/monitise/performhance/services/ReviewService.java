@@ -2,8 +2,10 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Review;
+import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.ReviewRepository;
+import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ public class ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Review> getAll() {
         return reviewRepository.findAll();
@@ -40,6 +44,9 @@ public class ReviewService {
         if (reviewFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add the given review.");
         }
+        User employee = review.getReviewedEmployee();
+        employee.getReviews().add(review);
+        userRepository.save(employee);
         return reviewFromRepo;
     }
 

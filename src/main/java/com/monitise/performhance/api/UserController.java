@@ -3,12 +3,14 @@ package com.monitise.performhance.api;
 import com.monitise.performhance.api.model.AddUserRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.CriteriaUserResponse;
+import com.monitise.performhance.api.model.EmployeeScoreResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
@@ -27,7 +29,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -116,8 +121,7 @@ public class UserController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{userId}/criteria/{criteriaId}",
-            method = RequestMethod.POST)
+    @RequestMapping(value = "/{userId}/criteria/{criteriaId}", method = RequestMethod.POST)
     public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int userId,
                                                                @PathVariable int criteriaId) throws BaseException {
         int organizationId = userService.get(userId).getOrganization().getId();
@@ -133,8 +137,7 @@ public class UserController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{userId}/criteria/{criteriaId}",
-            method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{userId}/criteria/{criteriaId}", method = RequestMethod.DELETE)
     public Response<Object> removeCriteriaFromUser(@PathVariable int userId,
                                                    @PathVariable int criteriaId) throws BaseException {
         int organizationId = userService.get(userId).getOrganization().getId();
@@ -143,6 +146,57 @@ public class UserController {
 
         criteriaService.removeCriteriaFromUserById(criteriaId, userId);
         Response<Object> response = new Response<>();
+        response.setSuccess(true);
+        return response;
+    }
+
+    @RequestMapping(value = "/{userId}/score", method = RequestMethod.GET)
+    public Response<EmployeeScoreResponse> getEmployeeReviewScore(@PathVariable int userId) throws BaseException {
+        User employee = userService.get(userId);
+        securityHelper.checkAuthentication(employee.getOrganization().getId());
+        List<Review> employeeReviews = employee.getReviews();
+        Map<String, Integer> criteriaScores = new HashMap<>();
+        int reviewCount = employeeReviews.size();
+
+        // The total score for each Criteria will be stored in an array.
+        List<Criteria> employeeCriteriaList = employee.getCriteriaList();
+        int employeeCriteriaCount = employeeCriteriaList.size();
+        int[] criteriaTotalScore = new int[employeeCriteriaCount];
+
+        for (Review review : employeeReviews) {
+            Map<Criteria, Integer> evaluation = review.getEvaluation();
+            // Add each criteria's score to corresponding array location.
+            int criteriaIndex = 0;
+            for (Map.Entry entry : evaluation.entrySet()) {
+                int score = (int)entry.getValue();
+                criteriaTotalScore[criteriaIndex] += score;
+                criteriaIndex++;
+            }
+        }
+
+        // Calculate average score for each criteria.
+        int[] criteriaAverageScore = new int[employeeCriteriaCount];
+        int index = 0;
+        for (int totalScore : criteriaTotalScore) {
+            criteriaAverageScore[index] = criteriaTotalScore[index] / reviewCount;
+            index++;
+        }
+
+        index = 0;
+        for (Criteria criteria : employeeCriteriaList) {
+            String criteriaName = criteria.getCriteria();
+            int criteriaAverageValue = criteriaAverageScore[index];
+            criteriaScores.put(criteriaName, criteriaAverageValue);
+            index++;
+        }
+
+        EmployeeScoreResponse employeeScoreResponse = new EmployeeScoreResponse(
+                employee.getName(),
+                reviewCount,
+                criteriaScores
+        );
+        Response<EmployeeScoreResponse> response = new Response<>();
+        response.setData(employeeScoreResponse);
         response.setSuccess(true);
         return response;
     }

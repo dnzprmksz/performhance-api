@@ -442,6 +442,41 @@
         }
       }
     },
+    "/users/{userId}/score": {
+      "get": {
+        "operationId": "getEmployeeReviewScore",
+        "description": "Computes and returns the average score of `User`'s all `Criteria`s",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
     "/users/search": {
       "get": {
         "operationId": "searchUser",
@@ -1433,7 +1468,7 @@
           "type": "string",
           "description": "An optional comment of reviewer"
         },
-        "evalauation": {
+        "evaluationIdMap": {
           "$ref": "#/definitions/evaluation"
         }
       }
