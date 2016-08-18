@@ -92,6 +92,20 @@ public class TeamController {
         response.setSuccess(true);
         return response;
     }
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{teamId}/leader/{userId}", method = RequestMethod.POST)
+    public Response<TeamResponse> assignTeamLeader(@PathVariable int teamId, @PathVariable int userId)
+            throws BaseException {
+        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+        securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
+
+        Team updatedTeam = teamService.assignLeaderToTeam(userId, teamId);
+        TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
+        Response<TeamResponse> response = new Response<>();
+        response.setData(teamResponse);
+        response.setSuccess(true);
+        return response;
+    }
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}/users/{userId}", method = RequestMethod.POST)

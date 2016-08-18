@@ -19,7 +19,6 @@ public class JobTitleService {
     @Autowired
     private OrganizationService organizationService;
 
-    @Secured("ROLE_MANAGER")
     public JobTitle add(JobTitle jobTitle) throws BaseException {
         JobTitle jobTitleFromRepo = jobTitleRepository.save(jobTitle);
         Organization organization = organizationService.get(jobTitleFromRepo.getOrganization().getId());

@@ -6,9 +6,9 @@ INSERT INTO `organization`(name, number_of_employees) VALUES ('Monitise', 0);
 --                       JOB TITLE INSERTIONS                      --
 INSERT INTO `job_title`(title, organization_id) VALUES('android dev',1);
 INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',1);
-INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',1);
-INSERT INTO `job_title`(title, organization_id) VALUES('janitor',1);
-INSERT INTO `job_title`(title, organization_id) VALUES('back end',1);
+INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',2);
+INSERT INTO `job_title`(title, organization_id) VALUES('janitor',2);
+INSERT INTO `job_title`(title, organization_id) VALUES('back end',2);
 
 
 --                ORGANIZATION-JOB TITLE INSERTIONS                --
@@ -23,8 +23,8 @@ INSERT INTO `organization_job_titles`(organization_id, job_titles_id) VALUES(2, 
 
 --                         USER INSERTIONS                         --
 -- google users
-INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
-    VALUES('Google', '123', 'MANAGER', 'Manager', 'google.manager', 1, 1);
+INSERT INTO `user`(name, password, role, surname, username, organization_id)
+    VALUES('Google', '123', 'MANAGER', 'Manager', 'google.manager', 1);
 INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
     VALUES('Pelin', '123', 'EMPLOYEE', 'Sonmez', 'pelin.sonmez', 1, 1);
 INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)

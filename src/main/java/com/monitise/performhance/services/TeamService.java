@@ -52,7 +52,6 @@ public class TeamService {
         return teamList;
     }
 
-    @Secured("ROLE_MANAGER")
     public List<Team> getListFilterByOrganizationId(int organizationId) throws BaseException {
         securityHelper.checkAuthentication(organizationId);
         List<Team> list = teamRepository.findByOrganizationId(organizationId);
@@ -62,7 +61,6 @@ public class TeamService {
         return list;
     }
 
-    @Secured("ROLE_MANAGER")
     public Team add(Team team) throws BaseException {
         int organizationId = team.getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
@@ -75,7 +73,6 @@ public class TeamService {
         return teamFromRepo;
     }
 
-    @Secured("ROLE_MANAGER")
     public Team assignEmployeeToTeam(int userId, int teamId) throws BaseException {
         Team team = teamRepository.findOne(teamId);
         User user = userRepository.findOne(userId);
@@ -87,6 +84,29 @@ public class TeamService {
         user.setTeam(team);
         userRepository.save(user);
         return updatedTeam;
+    }
+
+    public Team assignLeaderToTeam(int leaderId, int teamId) throws BaseException {
+        if(!isLeaderAMemberOfTheTeam(teamId, leaderId)) {
+            assignEmployeeToTeam(leaderId, teamId);
+        }
+        Team team = teamRepository.findOne(teamId);
+        User leader = userRepository.findOne(leaderId);
+        team.setLeader(leader);
+        Team updatedTeam = teamRepository.save(team);
+        return updatedTeam;
+    }
+
+    private boolean isLeaderAMemberOfTheTeam(int teamId, int leaderId) {
+        Team team = teamRepository.findOne(teamId);
+        User leader = userRepository.findOne(leaderId);
+        List<User> members = team.getMembers();
+        for(User member : members) {
+            if(member.getId() == leader.getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
