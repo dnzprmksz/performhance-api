@@ -5,16 +5,20 @@ import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import org.hibernate.Hibernate;
+import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -121,13 +125,14 @@ public class OrganizationServiceTest {
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
+    @Transactional
     public void addEmployee() throws BaseException {
         Organization google = organizationService.get(1);
         User googleEmployee = new User("Gilloume", "Pinto", google);
         JobTitle androidDev = jobTitleService.get(1);
         googleEmployee.setJobTitle(androidDev);
+
         User addedEmployee = userService.addEmployee(googleEmployee);
-        organizationService.addEmployee(1, 9);
         google = organizationService.get(1); // updated google
 
         Assert.assertNotNull(addedEmployee);
