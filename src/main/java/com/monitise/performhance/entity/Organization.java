@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,14 +30,14 @@ public class Organization {
     private User manager;
 
     protected Organization() {
+        users = new ArrayList();
+        jobTitles = new ArrayList();
+        teams = new ArrayList();
     }
 
     public Organization(String name) {
+        this();
         this.name = name;
-    }
-
-    public Organization(int id) {
-        this.id = id;
     }
 
     // region Getters & Setters

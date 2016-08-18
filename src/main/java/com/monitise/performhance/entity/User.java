@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,9 +36,11 @@ public class User {
     private String password;
 
     protected User() {
+        criteriaList = new ArrayList();
     }
 
     public User(String name, String surname, Organization organization) {
+        this();
         this.name = name;
         this.surname = surname;
         this.organization = organization;

@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,9 +26,11 @@ public class Team {
     private User leader;
 
     protected Team() {
+        members = new ArrayList();
     }
 
     public Team(String name, Organization organization) {
+        this();
         this.name = name;
         this.organization = organization;
     }

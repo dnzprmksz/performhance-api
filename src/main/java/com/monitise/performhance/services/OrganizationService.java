@@ -93,9 +93,6 @@ public class OrganizationService {
         Organization organization = organizationRepository.findOne(organizationId);
         User employee = userService.get(employeeId);
         List<User> userList = organization.getUsers();
-        if (userList == null) {
-            userList = new ArrayList();
-        }
         // Add the employee & increment numberOfEmployees field.
         userList.add(employee);
         organization.setUsers(userList);

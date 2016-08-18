@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -26,9 +27,11 @@ public class Review {
     private Team team;
 
     protected Review() {
+        evaluation = new HashMap();
     }
 
     public Review(User reviewedEmployee, User reviewer, Map<Criteria, Integer> evaluation, String comment) {
+        this();
         this.reviewedEmployee = reviewedEmployee;
         this.reviewer = reviewer;
         this.evaluation = evaluation;
