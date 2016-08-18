@@ -1,6 +1,6 @@
 package com.monitise.performhance.services;
 
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.repositories.ReviewRepository;

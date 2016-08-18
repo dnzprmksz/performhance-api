@@ -1,6 +1,7 @@
 package com.monitise.performhance.helpers;
 
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.exceptions.NotAuthorizedException;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.User;
@@ -48,7 +49,7 @@ public class SecurityHelper {
     private void checkUserOrganizationAuthorization(int organizationId) throws BaseException {
         User authenticatedUser = getAuthenticatedUser();
         if (authenticatedUser.getOrganization().getId() != organizationId) {
-            throw new BaseException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
+            throw new NotAuthorizedException(ResponseCode.USER_UNAUTHORIZED_ORGANIZATION,
                     "You are not authorized for this organization.");
         }
     }

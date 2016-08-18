@@ -1,6 +1,7 @@
 package com.monitise.performhance.helpers;
 
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.exceptions.NotAuthorizedException;
 import com.monitise.performhance.api.model.Error;
 import com.monitise.performhance.api.model.Response;
 import org.omg.CORBA.Object;
@@ -17,6 +18,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public Response<Object> handleBaseException(BaseException exception) {
+        Response<Object> response = new Response<>();
+        Error error = new Error(exception.getCode(), exception.getMessage());
+        response.setError(error);
+        return response;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public Response<Object> handleNotAuthorizedException(NotAuthorizedException exception) {
         Response<Object> response = new Response<>();
         Error error = new Error(exception.getCode(), exception.getMessage());
         response.setError(error);

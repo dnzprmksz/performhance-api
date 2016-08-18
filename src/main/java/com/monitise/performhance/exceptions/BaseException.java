@@ -1,9 +1,9 @@
-package com.monitise.performhance;
+package com.monitise.performhance.exceptions;
 
 public class BaseException extends Exception {
 
-    private int code;
-    private String message;
+    protected int code;
+    protected String message;
 
     public BaseException(int code, String message) {
         this.code = code;

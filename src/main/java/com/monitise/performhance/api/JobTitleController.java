@@ -1,6 +1,6 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.BaseException;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.AddJobTitleRequest;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.JobTitleResponse;
