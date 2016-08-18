@@ -1,9 +1,9 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import com.monitise.performhance.repositories.UserRepository;
 import org.junit.Assert;
@@ -11,12 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -24,7 +21,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @WebAppConfiguration
 public class UserServiceTest {
 
-    private static boolean init = false;
     @Autowired
     private UserService userService;
     @Autowired
@@ -41,24 +37,6 @@ public class UserServiceTest {
         Assert.assertEquals(organization.getNumberOfEmployees(), 0);
     }
 
-    @Test(expected = AuthenticationCredentialsNotFoundException.class)
-    public void add_EmployeeWithoutAuthentication() throws BaseException {
-        Organization organization = organizationService.getByName("Google");
-        userService.addEmployee(new User("Employee", "Shouldn't add this", organization));
-    }
-
-    @Test(expected = AuthenticationCredentialsNotFoundException.class)
-    public void add_ManagerWithoutAuthentication() throws BaseException {
-        Organization organization = organizationService.getByName("Monitise");
-        userService.addManager(new User("Employee", "Shouldn't add this", organization));
-    }
-
-    @Test(expected = AccessDeniedException.class)
-    @WithMockUser(roles = {"MANAGER"})
-    public void add_WithoutProperAuthorization() throws BaseException {
-        Organization organization = organizationService.getByName("Monitise");
-        userService.addManager(new User("Manager", "Shouldn't add this", organization));
-    }
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
@@ -181,7 +159,6 @@ public class UserServiceTest {
         u.setUsername(userName);
         u.setPassword(password);
     }
-
 
 
 }

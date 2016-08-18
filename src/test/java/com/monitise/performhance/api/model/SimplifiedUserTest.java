@@ -1,12 +1,10 @@
 package com.monitise.performhance.api.model;
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import com.monitise.performhance.repositories.UserRepository;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

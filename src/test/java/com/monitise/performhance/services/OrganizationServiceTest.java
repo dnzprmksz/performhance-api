@@ -1,10 +1,10 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.exceptions.BaseException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +23,8 @@ import java.util.List;
 @WebAppConfiguration
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SqlGroup({
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:populate.sql"),
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+        @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:populate.sql"),
+        @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
 })
 public class OrganizationServiceTest {
 
@@ -123,7 +123,7 @@ public class OrganizationServiceTest {
     @WithMockUser(roles = {"MANAGER"})
     public void addEmployee() throws BaseException {
         Organization google = organizationService.get(1);
-        User googleEmployee = new User("Gilloume", "Pinto",google);
+        User googleEmployee = new User("Gilloume", "Pinto", google);
         JobTitle androidDev = jobTitleService.get(1);
         googleEmployee.setJobTitle(androidDev);
         User addedEmployee = userService.addEmployee(googleEmployee);
@@ -137,15 +137,14 @@ public class OrganizationServiceTest {
         Assert.assertEquals("Google", google.getName());
         Assert.assertEquals(6, google.getNumberOfEmployees());
         Assert.assertEquals(6, google.getUsers().size());
-        Assert.assertTrue(listContainsUser(google.getUsers(),9,"Gilloume","Pinto"));
+        Assert.assertTrue(listContainsUser(google.getUsers(), 9, "Gilloume", "Pinto"));
     }
-
 
 
     private boolean listContainsOrganization(List<Organization> list, String organizationName,
                                              int numberOfEmployees, int id) {
-        for(Organization organization: list) {
-            if( organization.getName().equals(organizationName)
+        for (Organization organization : list) {
+            if (organization.getName().equals(organizationName)
                     && organization.getId() == id && organization.getNumberOfEmployees() == numberOfEmployees) {
                 return true;
             }
@@ -154,7 +153,7 @@ public class OrganizationServiceTest {
     }
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {
-        for (User user: list) {
+        for (User user : list) {
             if (user.getId() == id && user.getName().equals(name) && user.getSurname().equals(surname)) {
                 return true;
             }

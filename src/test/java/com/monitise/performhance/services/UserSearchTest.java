@@ -2,8 +2,8 @@ package com.monitise.performhance.services;
 
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import com.monitise.performhance.repositories.UserRepository;
 import org.junit.Assert;
@@ -23,8 +23,8 @@ import java.util.List;
 @SpringApplicationConfiguration(classes = AppConfig.class)
 @WebAppConfiguration
 @SqlGroup({
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:populate.sql"),
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+        @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:populate.sql"),
+        @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
 })
 public class UserSearchTest {
 
@@ -56,8 +56,7 @@ public class UserSearchTest {
         String undef = UserService.UNDEFINED;
         List<User> foundUsers = userService.searchUsers(1, undef, "1", undef, undef);
 
-        Assert.assertEquals(3, foundUsers.size());
-        Assert.assertTrue(listContainsUser(foundUsers, 1, "Google", "Manager"));
+        Assert.assertEquals(2, foundUsers.size());
         Assert.assertTrue(listContainsUser(foundUsers, 2, "Pelin", "Sonmez"));
         Assert.assertTrue(listContainsUser(foundUsers, 5, "Fatih", "Songul"));
     }
@@ -74,7 +73,7 @@ public class UserSearchTest {
     }
 
     @Test
-    @WithMockUser(roles ={"MANAGER"})
+    @WithMockUser(roles = {"MANAGER"})
     public void searchWithPartialSurname() throws BaseException {
         String undef = UserService.UNDEFINED;
         List<User> foundUsers = userService.searchUsers(1, undef, undef, undef, "mez");
@@ -85,7 +84,7 @@ public class UserSearchTest {
     }
 
     @Test
-    @WithMockUser(roles ={"MANAGER"})
+    @WithMockUser(roles = {"MANAGER"})
     public void searchWithPartialNameAndSurname() throws BaseException {
         String undef = UserService.UNDEFINED;
         List<User> foundUsers = userService.searchUsers(1, undef, undef, "fA", "gul");
@@ -162,7 +161,7 @@ public class UserSearchTest {
     }
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {
-        for (User user: list) {
+        for (User user : list) {
             if (user.getId() == id && user.getName().equals(name) && user.getSurname().equals(surname)) {
                 return true;
             }

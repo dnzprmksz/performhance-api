@@ -1,10 +1,9 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.exceptions.BaseException;
-
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.CriteriaRepository;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.junit.After;
