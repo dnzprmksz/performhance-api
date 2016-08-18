@@ -1,6 +1,5 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.AddTeamRequest;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
@@ -10,6 +9,7 @@ import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.TeamResponse;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.CriteriaService;

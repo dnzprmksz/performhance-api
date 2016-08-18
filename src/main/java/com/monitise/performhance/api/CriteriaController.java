@@ -1,11 +1,11 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.CriteriaRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.entity.Criteria;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.CriteriaService;

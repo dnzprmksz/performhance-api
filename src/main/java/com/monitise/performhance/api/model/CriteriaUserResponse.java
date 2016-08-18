@@ -1,6 +1,5 @@
 package com.monitise.performhance.api.model;
 
-import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.User;
 

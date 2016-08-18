@@ -1,6 +1,5 @@
 package com.monitise.performhance.entity;
 
-import com.monitise.performhance.api.model.AddUserRequest;
 import com.monitise.performhance.api.model.Role;
 import org.springframework.data.jpa.domain.Specification;
 

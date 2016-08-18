@@ -10,10 +10,8 @@ import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -92,7 +90,7 @@ public class TeamService {
     }
 
     public Team assignLeaderToTeam(int leaderId, int teamId) throws BaseException {
-        if(!isLeaderAMemberOfTheTeam(teamId, leaderId)) {
+        if (!isLeaderAMemberOfTheTeam(teamId, leaderId)) {
             assignEmployeeToTeam(leaderId, teamId);
         }
         Team team = teamRepository.findOne(teamId);
@@ -114,8 +112,8 @@ public class TeamService {
         Team team = teamRepository.findOne(teamId);
         User leader = userRepository.findOne(leaderId);
         List<User> members = team.getMembers();
-        for(User member : members) {
-            if(member.getId() == leader.getId()) {
+        for (User member : members) {
+            if (member.getId() == leader.getId()) {
                 return true;
             }
         }

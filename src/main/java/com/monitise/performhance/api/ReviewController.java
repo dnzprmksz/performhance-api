@@ -1,6 +1,5 @@
 package com.monitise.performhance.api;
 
-import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.api.model.AddReviewRequest;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
@@ -9,6 +8,7 @@ import com.monitise.performhance.api.model.SimplifiedReview;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.User;
+import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.services.CriteriaService;
