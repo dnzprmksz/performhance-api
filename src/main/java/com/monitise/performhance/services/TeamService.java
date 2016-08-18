@@ -118,6 +118,14 @@ public class TeamService {
         return updatedTeam;
     }
 
+    public void ensureTeamHasLeader(int teamId) throws BaseException {
+        Team team = teamRepository.findOne(teamId);
+        if(team.getLeader() == null) {
+            throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER,
+                    "Given team has no leader");
+        }
+    }
+
     private boolean isLeaderAMemberOfTheTeam(int teamId, int leaderId) {
         Team team = teamRepository.findOne(teamId);
         User leader = userRepository.findOne(leaderId);

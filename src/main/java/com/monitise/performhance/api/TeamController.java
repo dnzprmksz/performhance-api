@@ -113,6 +113,7 @@ public class TeamController {
     public Response<TeamResponse> removeTeamLeader(@PathVariable int teamId)
             throws BaseException {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+        teamService.ensureTeamHasLeader(teamId);
 
         Team updatedTeam = teamService.removeLeadershipFromTeam(teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
@@ -129,6 +130,7 @@ public class TeamController {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
         securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
         relationshipHelper.ensureTeamEmployeeIndependence(teamId, userId);
+
         Team updatedTeam = teamService.assignEmployeeToTeam(userId, teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
