@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -154,41 +153,9 @@ public class UserController {
     public Response<EmployeeScoreResponse> getEmployeeReviewScore(@PathVariable int userId) throws BaseException {
         User employee = userService.get(userId);
         securityHelper.checkAuthentication(employee.getOrganization().getId());
-        List<Review> employeeReviews = employee.getReviews();
-        Map<String, Integer> criteriaScores = new HashMap<>();
-        int reviewCount = employeeReviews.size();
 
-        // The total score for each Criteria will be stored in an array.
-        List<Criteria> employeeCriteriaList = employee.getCriteriaList();
-        int employeeCriteriaCount = employeeCriteriaList.size();
-        int[] criteriaTotalScore = new int[employeeCriteriaCount];
-
-        for (Review review : employeeReviews) {
-            Map<Criteria, Integer> evaluation = review.getEvaluation();
-            // Add each criteria's score to corresponding array location.
-            int criteriaIndex = 0;
-            for (Map.Entry entry : evaluation.entrySet()) {
-                int score = (int)entry.getValue();
-                criteriaTotalScore[criteriaIndex] += score;
-                criteriaIndex++;
-            }
-        }
-
-        // Calculate average score for each criteria.
-        int[] criteriaAverageScore = new int[employeeCriteriaCount];
-        int index = 0;
-        for (int totalScore : criteriaTotalScore) {
-            criteriaAverageScore[index] = criteriaTotalScore[index] / reviewCount;
-            index++;
-        }
-
-        index = 0;
-        for (Criteria criteria : employeeCriteriaList) {
-            String criteriaName = criteria.getCriteria();
-            int criteriaAverageValue = criteriaAverageScore[index];
-            criteriaScores.put(criteriaName, criteriaAverageValue);
-            index++;
-        }
+        Map<String, Integer> criteriaScores = calculateCriteriaScores(employee);
+        int reviewCount = employee.getReviews().size();
 
         EmployeeScoreResponse employeeScoreResponse = new EmployeeScoreResponse(
                 employee.getName(),
@@ -285,6 +252,50 @@ public class UserController {
             throw new BaseException(ResponseCode.SEARCH_INVALID_ID_FORMAT, "id's must be positive integers");
         }
         return candidate > 0;
+    }
+
+    private Map<String, Integer> calculateCriteriaScores(User employee) {
+        int[] averageCriteriaScores = calculateAverageCriteriaScores(employee);
+        List<Criteria> employeeCriteriaList = employee.getCriteriaList();
+
+        Map<String, Integer> criteriaScores = new HashMap<>();
+        for (int index = 0; index < employeeCriteriaList.size(); index++) {
+            String criteriaName = employeeCriteriaList.get(index).getCriteria();
+            int averageCriteriaScore = averageCriteriaScores[index];
+            criteriaScores.put(criteriaName, averageCriteriaScore);
+        }
+        return criteriaScores;
+    }
+
+    private int[] calculateAverageCriteriaScores(User employee) {
+        int[] totalCriteriaScores = calculateTotalCriteriaScores(employee);
+        int employeeCriteriaCount = employee.getCriteriaList().size();
+        int employeeReviewCount = employee.getReviews().size();
+
+        int[] averageCriteriaScores = new int[employeeCriteriaCount];
+        for (int index = 0; index < totalCriteriaScores.length; index++) {
+            averageCriteriaScores[index] = totalCriteriaScores[index] / employeeReviewCount;
+        }
+        return averageCriteriaScores;
+    }
+
+    private int[] calculateTotalCriteriaScores(User employee) {
+        List<Review> employeeReviews = employee.getReviews();
+        List<Criteria> employeeCriteriaList = employee.getCriteriaList();
+        int employeeCriteriaCount = employeeCriteriaList.size();
+
+        int[] totalCriteriaScores = new int[employeeCriteriaCount];
+        for (Review review : employeeReviews) {
+            Map<Criteria, Integer> evaluation = review.getEvaluation();
+            // Add each criteria's score to corresponding array location.
+            int criteriaIndex = 0;
+            for (Map.Entry entry : evaluation.entrySet()) {
+                int score = (int) entry.getValue();
+                totalCriteriaScores[criteriaIndex] += score;
+                criteriaIndex++;
+            }
+        }
+        return totalCriteriaScores;
     }
 
     // endregion
