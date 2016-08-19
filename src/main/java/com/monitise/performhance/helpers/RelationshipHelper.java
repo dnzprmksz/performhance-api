@@ -133,4 +133,21 @@ public class RelationshipHelper {
         }
     }
 
+    public void ensureTeamUserSameOrganization(int teamId, int userId) throws BaseException {
+        Team team = teamService.get(teamId);
+        User user = userService.get(userId);
+        if (team.getOrganization().getId() != user.getOrganization().getId()) {
+            throw new BaseException(ResponseCode.TEAM_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS,
+                    "Given team and user belong to different organizations.");
+        }
+    }
+
+    public void ensureTeamCriteriaRelationship(int teamId, int criteriaId) throws BaseException {
+        Team team = teamService.get(teamId);
+        Criteria criteria = criteriaService.get(criteriaId);
+        if (team.getOrganization().getId() != criteria.getOrganization().getId()) {
+            throw new BaseException(ResponseCode.CRITERIA_AND_TEAM_BELONG_TO_DIFFERENT_ORGANIZATIONS,
+                    "Given team and criteria belong to different organizations.");
+        }
+    }
 }

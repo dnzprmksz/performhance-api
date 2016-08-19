@@ -73,12 +73,6 @@ public class CriteriaService {
         return userService.update(user);
     }
 
-    /*
-
-        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
-        List<Integer> userIdList = userService.getIdListByJobTitleId(jobTitleId);
-        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
-    */
 
     // Finds all the users of a given job title and assigns the criteria to each of them.
     // The criteria has already been assigned to some users, nothing happens.
@@ -86,6 +80,15 @@ public class CriteriaService {
     public ArrayList<Integer> assignCriteriaToJobTitle(int criteriaId, int jobTitleId) throws BaseException{
         relationshipHelper.ensureJobTitleCriteriaRelationship(jobTitleId, criteriaId);
         List<Integer> userIdList = userService.getIdListByJobTitleId(jobTitleId);
+        return assignCriteriaToUserList(criteriaId, userIdList);
+    }
+
+    // Finds all the users of a given team and assigns the criteria to each of them.
+    // The criteria has already been assigned to some users, nothing happens.
+    // Returns a list of user's ids who already have the criteria.
+    public ArrayList<Integer> assignCriteriaToTeam(int criteriaId, int teamId) throws BaseException {
+        relationshipHelper.ensureTeamCriteriaRelationship(teamId, criteriaId);
+        List<Integer> userIdList = userService.getIdListByTeamId(teamId);
         return assignCriteriaToUserList(criteriaId, userIdList);
     }
 

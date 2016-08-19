@@ -76,6 +76,8 @@ public class ResponseCode {
     public static final int RELATIONSHIP_MANAGER_REVIEW_UNSATISFIED = 1701;
     public static final int RELATIONSHIP_TEAM_LEADER_REVIEW_UNSATISFIED = 1702;
     public static final int RELATIONSHIP_JOB_TITLE_CRITERIA_UNSATISFIED = 1703;
+    public static final int TEAM_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS = 1704;
+    public static final int CRITERIA_AND_TEAM_BELONG_TO_DIFFERENT_ORGANIZATIONS = 1705;
 
     /**
      * SEARCH RELATED RESPONSE CODES
