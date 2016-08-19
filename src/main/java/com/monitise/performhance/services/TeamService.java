@@ -1,6 +1,7 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -51,6 +53,7 @@ public class TeamService {
 
     public void deleteTeam(int teamId) throws BaseException {
         ensureExistence(teamId);
+        removeLeadershipFromTeam(teamId);
         removeAllEmployeesFromTeam(teamId);
         removeTeamFromOrganization(teamId);
         teamRepository.delete(teamId);
@@ -80,20 +83,25 @@ public class TeamService {
         team.getMembers().add(user);
         Team updatedTeam = teamRepository.save(team);
         user.setTeam(team);
-        userRepository.save(user);
+        User userFromRepo = userRepository.save(user);
+
+        if (updatedTeam == null || userFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not assign given employee to the given team.");
+        }
         return updatedTeam;
     }
 
     public Team removeEmployeeFromTeam(int employeeId, int teamId) throws BaseException {
         Team team = teamRepository.findOne(teamId);
         User employee = userRepository.findOne(employeeId);
-
         team.getMembers().remove(employee);
         employee.setTeam(null);
 
         Team updatedTeam = teamRepository.save(team);
-        userRepository.save(employee);
-
+        User userFromRepo = userRepository.save(employee);
+        if (updatedTeam == null || userFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not remove given employee from given team.");
+        }
         return updatedTeam;
     }
 
@@ -104,15 +112,26 @@ public class TeamService {
         Team team = teamRepository.findOne(teamId);
         User leader = userRepository.findOne(leaderId);
         team.setLeader(leader);
+        leader.setRole(Role.TEAM_LEADER);
+        User userFromRepo = userRepository.save(leader);
         Team updatedTeam = teamRepository.save(team);
+        if (updatedTeam == null || userFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not assign given user as given team's leader.");
+        }
         return updatedTeam;
     }
 
     // Leader stays in the team, only his/her leadership is removed.
     public Team removeLeadershipFromTeam(int teamId) throws BaseException {
         Team team = teamRepository.findOne(teamId);
+        User leader = team.getLeader();
         team.setLeader(null);
+        leader.setRole(Role.EMPLOYEE);
         Team updatedTeam = teamRepository.save(team);
+        User userFromRepo = userRepository.save(leader);
+        if (userFromRepo == null || updatedTeam == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not remove given team's leader.");
+        }
         return updatedTeam;
     }
 
@@ -146,7 +165,7 @@ public class TeamService {
     }
 
     private void removeAllEmployeesFromTeam(int teamId) throws BaseException {
-        List<User> employees = get(teamId).getMembers();
+        List<User> employees = new ArrayList<>(get(teamId).getMembers());
         for (User employee : employees) {
             removeEmployeeFromTeam(employee.getId(), teamId);
         }

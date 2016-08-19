@@ -106,13 +106,13 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{teamId}/leader/{userId}", method = RequestMethod.POST)
-    public Response<TeamResponse> assignTeamLeader(@PathVariable int teamId, @PathVariable int userId)
+    @RequestMapping(value = "/{teamId}/leader", method = RequestMethod.DELETE)
+    public Response<TeamResponse> removeTeamLeader(@PathVariable int teamId)
             throws BaseException {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
-        securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
+        teamService.ensureTeamHasLeader(teamId);
 
-        Team updatedTeam = teamService.assignLeaderToTeam(userId, teamId);
+        Team updatedTeam = teamService.removeLeadershipFromTeam(teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
         response.setData(teamResponse);
@@ -121,13 +121,13 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{teamId}/leader/", method = RequestMethod.DELETE)
-    public Response<TeamResponse> removeTeamLeader(@PathVariable int teamId)
+    @RequestMapping(value = "/{teamId}/leader/{userId}", method = RequestMethod.POST)
+    public Response<TeamResponse> assignTeamLeader(@PathVariable int teamId, @PathVariable int userId)
             throws BaseException {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
-        teamService.ensureTeamHasLeader(teamId);
+        securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
 
-        Team updatedTeam = teamService.removeLeadershipFromTeam(teamId);
+        Team updatedTeam = teamService.assignLeaderToTeam(userId, teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
         response.setData(teamResponse);
