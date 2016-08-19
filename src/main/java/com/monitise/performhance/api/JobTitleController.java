@@ -97,11 +97,9 @@ public class JobTitleController {
                                                           @PathVariable int criteriaId) throws BaseException {
         int organizationId = jobTitleService.get(jobTitleId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
-        List<Integer> userIdList = userService.getIdListByJobTitleId(jobTitleId);
-        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
+        securityHelper.checkAuthentication(criteriaId);
 
-        ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
+        ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToJobTitle(criteriaId, jobTitleId);
         ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setMessage(generateExistingUsersMessage(existingUserList));
         response.setSuccess(true);

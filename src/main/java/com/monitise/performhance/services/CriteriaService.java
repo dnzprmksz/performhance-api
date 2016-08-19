@@ -73,20 +73,23 @@ public class CriteriaService {
         return userService.update(user);
     }
 
-    // return List of users who already has the criteria.
-    public ArrayList<Integer> assignCriteriaToUserList(int criteriaId, List<Integer> userIdList) throws BaseException {
-        int organizationId = get(criteriaId).getOrganization().getId();
+    /*
+
+        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
+        List<Integer> userIdList = userService.getIdListByJobTitleId(jobTitleId);
         relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
-        ArrayList<Integer> existingUserList = new ArrayList<>();
-        // Add criteria to users. If user already has this criteria, add his/her ID to the list.
-        for (int userId : userIdList) {
-            boolean userAlreadyHasCriteria = checkUserExistenceAndAssignCriteriaById(userId, criteriaId);
-            if (userAlreadyHasCriteria) {
-                existingUserList.add(userId);
-            }
-        }
-        return existingUserList;
+    */
+
+    // Finds all the users of a given job title and assigns the criteria to each of them.
+    // The criteria has already been assigned to some users, nothing happens.
+    // Returns a list of user's ids who already have the criteria.
+    public ArrayList<Integer> assignCriteriaToJobTitle(int criteriaId, int jobTitleId) throws BaseException{
+        relationshipHelper.ensureJobTitleCriteriaRelationship(jobTitleId, criteriaId);
+        List<Integer> userIdList = userService.getIdListByJobTitleId(jobTitleId);
+        return assignCriteriaToUserList(criteriaId, userIdList);
     }
+
+
 
     public void removeCriteriaFromUserById(int criteriaId, int userId) throws BaseException {
         User user = userService.get(userId);
@@ -105,6 +108,21 @@ public class CriteriaService {
     }
 
     // region Helper Methods
+
+    // return List of users who already have the criteria.
+    private ArrayList<Integer> assignCriteriaToUserList(int criteriaId, List<Integer> userIdList) throws BaseException {
+        int organizationId = get(criteriaId).getOrganization().getId();
+        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
+        ArrayList<Integer> existingUserList = new ArrayList<>();
+        // Add criteria to users. If user already has this criteria, add his/her ID to the list.
+        for (int userId : userIdList) {
+            boolean userAlreadyHasCriteria = checkUserExistenceAndAssignCriteriaById(userId, criteriaId);
+            if (userAlreadyHasCriteria) {
+                existingUserList.add(userId);
+            }
+        }
+        return existingUserList;
+    }
 
     /**
      * @return The existence of the user.
