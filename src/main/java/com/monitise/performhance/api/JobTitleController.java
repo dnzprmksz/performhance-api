@@ -4,6 +4,7 @@ import com.monitise.performhance.api.model.AddJobTitleRequest;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.JobTitleResponse;
 import com.monitise.performhance.api.model.Response;
+import com.monitise.performhance.api.model.UpdateJobTitleRequest;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
@@ -87,6 +88,32 @@ public class JobTitleController {
 
         Response<JobTitleResponse> response = new Response<>();
         response.setData(jobTitleResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{jobTitleId}", method = RequestMethod.PUT)
+    public Response<JobTitleResponse> update(@RequestBody UpdateJobTitleRequest updateJobTitleRequest,
+                                             @PathVariable int jobTitleId) throws BaseException {
+        JobTitle jobTitle = jobTitleService.get(jobTitleId);
+        securityHelper.checkAuthentication(jobTitle.getOrganization().getId());
+        jobTitle.setTitle(updateJobTitleRequest.getTitle());
+        JobTitle jobTitleFromService = jobTitleService.update(jobTitle);
+
+        JobTitleResponse jobTitleResponse = JobTitleResponse.fromJobTitle(jobTitleFromService);
+        Response<JobTitleResponse> response = new Response<>();
+        response.setData(jobTitleResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{jobTitleId}", method = RequestMethod.DELETE)
+    public Response<Object> remove(@PathVariable int jobTitleId) throws BaseException {
+        securityHelper.checkAuthentication(jobTitleService.get(jobTitleId).getOrganization().getId());
+        jobTitleService.remove(jobTitleId);
+        Response<Object> response = new Response<>();
         response.setSuccess(true);
         return response;
     }

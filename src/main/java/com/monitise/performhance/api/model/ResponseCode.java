@@ -44,6 +44,7 @@ public class ResponseCode {
     public static final int JOB_TITLE_ID_DOES_NOT_EXIST = 1401;
     public static final int JOB_TITLE_ID_INVALID = 1402;
     public static final int JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION = 1403;
+    public static final int JOB_TITLE_IS_IN_USE = 1404;
 
     /**
      * CRITERIA RELATED RESPONSE CODES.
