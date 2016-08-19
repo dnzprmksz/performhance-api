@@ -299,9 +299,9 @@ public class UserController {
                     current.setReviewTimes(current.getReviewTimes() + 1);
                 }
             }
+            }
+            return totalCriteriaScores;
         }
-        return totalCriteriaScores;
-    }
 
     private List<String> findAllComments(User employee) {
         List<String> comments = new ArrayList<>();

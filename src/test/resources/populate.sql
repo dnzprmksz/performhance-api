@@ -84,3 +84,29 @@ UPDATE `user` SET team_id = 2 WHERE id = 8;
 UPDATE `organization` SET manager_id = 1, number_of_employees = 5 WHERE id = 1;
 UPDATE `organization` SET manager_id = 6, number_of_employees = 3 WHERE id = 2;
 
+
+--                       CRITERIA INSERTIONS                       --
+INSERT INTO `criteria`(criteria, organization_id) VALUES("Manners", 1);
+INSERT INTO `criteria`(criteria, organization_id) VALUES("Code Review", 1);
+INSERT INTO `criteria`(criteria, organization_id) VALUES("Code Coverage", 1);
+INSERT INTO `criteria`(criteria, organization_id) VALUES("Dress Code", 1);
+
+
+--              ORGANIZATION-CRITERIA LIST INSERTIONS              --
+INSERT INTO `organization_criteria_list`(organization_id, criteria_list_id) VALUES(1,1);
+INSERT INTO `organization_criteria_list`(organization_id, criteria_list_id) VALUES(1,2);
+INSERT INTO `organization_criteria_list`(organization_id, criteria_list_id) VALUES(1,3);
+INSERT INTO `organization_criteria_list`(organization_id, criteria_list_id) VALUES(1,4);
+
+
+--                  USER-CRITERIA LIST INSERTIONS                  --
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(2,1);
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(2,3);
+
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(3,1);
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(3,2);
+
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,1);
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,2);
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,3);
+INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,4);
