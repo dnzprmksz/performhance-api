@@ -1,8 +1,10 @@
 SET FOREIGN_KEY_CHECKS=0;
 
+
 TRUNCATE TABLE `criteria`;                  ALTER TABLE `criteria` ALTER COLUMN `id` RESTART WITH 1;
 TRUNCATE TABLE `job_title`;                 ALTER TABLE `job_title` ALTER COLUMN `id` RESTART WITH 1;
 TRUNCATE TABLE `organization`;              ALTER TABLE `organization` ALTER COLUMN `id` RESTART WITH 1;
+TRUNCATE TABLE `organization_criteria_list`;
 TRUNCATE TABLE `organization_teams`;
 TRUNCATE TABLE `organization_users`;
 TRUNCATE TABLE `organization_job_titles`;

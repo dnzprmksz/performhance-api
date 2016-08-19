@@ -56,12 +56,14 @@ INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 8);
 
 --                         TEAM INSERTIONS                         --
 INSERT INTO `team`(name, leader_id, organization_id) VALUES('TeamPelin', 2, 1);
-INSERT INTO `team`(name, organization_id) VALUES('Leaderless', 2);
+INSERT INTO `team`(name, organization_id) VALUES('MonitiseLeaderless', 2);
+INSERT INTO `team`(name, organization_id) VALUES('GoogleLeaderless', 1);
 
 
 --                 ORGANIZATION-TEAMS INSERTIONS                   --
 INSERT INTO `organization_teams`(organization_id, teams_id) VALUES(1,1);
 INSERT INTO `organization_teams`(organization_id, teams_id) VALUES(2,2);
+INSERT INTO `organization_teams`(organization_id, teams_id) VALUES(1,3);
 
 
 --                      TEAM-MEMBER INSERTIONS                     --
@@ -86,10 +88,10 @@ UPDATE `organization` SET manager_id = 6, number_of_employees = 3 WHERE id = 2;
 
 
 --                       CRITERIA INSERTIONS                       --
-INSERT INTO `criteria`(criteria, organization_id) VALUES("Manners", 1);
-INSERT INTO `criteria`(criteria, organization_id) VALUES("Code Review", 1);
-INSERT INTO `criteria`(criteria, organization_id) VALUES("Code Coverage", 1);
-INSERT INTO `criteria`(criteria, organization_id) VALUES("Dress Code", 1);
+INSERT INTO `criteria`(criteria, organization_id) VALUES('Manners', 1);
+INSERT INTO `criteria`(criteria, organization_id) VALUES('Code Review', 1);
+INSERT INTO `criteria`(criteria, organization_id) VALUES('Code Coverage', 1);
+INSERT INTO `criteria`(criteria, organization_id) VALUES('Dress Code', 1);
 
 
 --              ORGANIZATION-CRITERIA LIST INSERTIONS              --
@@ -100,13 +102,13 @@ INSERT INTO `organization_criteria_list`(organization_id, criteria_list_id) VALU
 
 
 --                  USER-CRITERIA LIST INSERTIONS                  --
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(2,1);
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(2,3);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(2,1);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(2,3);
 
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(3,1);
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(3,2);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(3,1);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(3,2);
 
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,1);
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,2);
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,3);
-INSERT INTO `user_criteria_list`(user_id, criteria_id) VALUES(4,4);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,1);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,2);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,3);
+INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,4);

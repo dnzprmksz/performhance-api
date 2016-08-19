@@ -49,7 +49,6 @@ public class TeamService {
     }
 
     public List<Team> getListFilterByOrganizationId(int organizationId) throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
         return teamRepository.findByOrganizationId(organizationId);
     }
 
