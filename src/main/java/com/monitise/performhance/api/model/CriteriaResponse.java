@@ -25,7 +25,7 @@ public class CriteriaResponse {
         }
         List<CriteriaResponse> criteriaResponseList = new ArrayList<>();
         for (Criteria criteria : criteriaList) {
-            criteriaResponseList.add(new CriteriaResponse(criteria.getId(), criteria.getCriteria()));
+            criteriaResponseList.add(fromCriteria(criteria));
         }
         return criteriaResponseList;
     }

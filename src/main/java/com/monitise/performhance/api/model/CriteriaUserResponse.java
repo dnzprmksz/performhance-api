@@ -10,14 +10,14 @@ public class CriteriaUserResponse {
     private int id;
     private String name;
     private String surname;
-    private JobTitle jobTitle;
+    private JobTitleResponse jobTitle;
     private List<CriteriaResponse> criteriaList;
 
     public CriteriaUserResponse(User user) {
         id = user.getId();
         name = user.getName();
         surname = user.getSurname();
-        jobTitle = user.getJobTitle();
+        jobTitle = JobTitleResponse.fromJobTitle(user.getJobTitle());
         criteriaList = CriteriaResponse.fromList(user.getCriteriaList());
     }
 
@@ -54,11 +54,11 @@ public class CriteriaUserResponse {
         this.surname = surname;
     }
 
-    public JobTitle getJobTitle() {
+    public JobTitleResponse getJobTitle() {
         return jobTitle;
     }
 
-    public void setJobTitle(JobTitle jobTitle) {
+    public void setJobTitle(JobTitleResponse jobTitle) {
         this.jobTitle = jobTitle;
     }
 
