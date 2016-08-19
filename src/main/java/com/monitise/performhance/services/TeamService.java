@@ -43,6 +43,15 @@ public class TeamService {
         return team;
     }
 
+    public Team update(Team team) throws BaseException {
+        ensureExistence(team.getId());
+        Team teamFromRepo = teamRepository.save(team);
+        if (teamFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not update given Team.");
+        }
+        return teamFromRepo;
+    }
+
     public List<Team> searchTeams(int organizationId, String teamName) {
         Specification<Team> filter = Team.organizationIdIs(organizationId);
         if (!UNDEFINED.equals(teamName)) {

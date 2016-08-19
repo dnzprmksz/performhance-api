@@ -7,6 +7,7 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.SimplifiedTeam;
 import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.TeamResponse;
+import com.monitise.performhance.api.model.UpdateTeamRequest;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.exceptions.BaseException;
@@ -94,6 +95,22 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{teamId}", method = RequestMethod.PUT)
+    public Response<TeamResponse> updateTeam(@PathVariable int teamId, @RequestBody UpdateTeamRequest updateTeamRequest)
+            throws BaseException {
+        Team team = teamService.get(teamId);
+        securityHelper.checkAuthentication(team.getOrganization().getId());
+        team.setName(updateTeamRequest.getName());
+        Team teamFromService = teamService.update(team);
+
+        TeamResponse teamResponse = TeamResponse.fromTeam(teamFromService);
+        Response<TeamResponse> response = new Response<>();
+        response.setData(teamResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}", method = RequestMethod.DELETE)
     public Response<Object> deleteTeam(@PathVariable int teamId) throws BaseException {
         Team team = teamService.get(teamId);
@@ -107,8 +124,7 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}/leader", method = RequestMethod.DELETE)
-    public Response<TeamResponse> removeTeamLeader(@PathVariable int teamId)
-            throws BaseException {
+    public Response<TeamResponse> removeTeamLeader(@PathVariable int teamId) throws BaseException {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
         teamService.ensureTeamHasLeader(teamId);
 
@@ -212,4 +228,5 @@ public class TeamController {
         }
         return message;
     }
+
 }
