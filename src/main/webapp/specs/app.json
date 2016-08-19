@@ -621,6 +621,39 @@
             }
           }
         }
+      },
+      "delete": {
+        "operationId": "deleteTeam",
+        "description": "Deletes the `Team` with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team` to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A `Team` with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
       }
     },
     "/teams/{teamId}/users/{userId}": {
