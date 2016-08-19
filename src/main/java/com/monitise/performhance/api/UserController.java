@@ -61,6 +61,7 @@ public class UserController {
         User manager = securityHelper.getAuthenticatedUser();
         int organizationId = manager.getOrganization().getId();
         List<User> employees = userService.getByOrganizationId(organizationId);
+
         List<SimplifiedUser> simplifiedList = SimplifiedUser.fromUserList(employees);
         Response<List<SimplifiedUser>> response = new Response<>();
         response.setData(simplifiedList);
