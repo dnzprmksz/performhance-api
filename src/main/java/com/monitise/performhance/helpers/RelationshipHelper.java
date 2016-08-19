@@ -2,11 +2,13 @@ package com.monitise.performhance.helpers;
 
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
+import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.services.CriteriaService;
+import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.TeamService;
 import com.monitise.performhance.services.UserService;
@@ -29,6 +31,8 @@ public class RelationshipHelper {
     private UserService userService;
     @Autowired
     private SecurityHelper securityHelper;
+    @Autowired
+    private JobTitleService jobTitleService;
 
     public void ensureOrganizationJobTitleRelationship(int organizationId, int jobTitleId) throws BaseException {
         if (!organizationService.isJobTitleDefined(organizationId, jobTitleId)) {
@@ -117,6 +121,15 @@ public class RelationshipHelper {
                     "Reviewed employee and reviewer are in different teams.");
         } else if (first.getId() == second.getId()) {
             throw new BaseException(ResponseCode.REVIEW_SAME_USER, "You cannot review yourself.");
+        }
+    }
+
+    public void ensureJobTitleCriteriaRelationship(int jobTitleId, int criteriaId) throws BaseException {
+        JobTitle jobTitle = jobTitleService.get(jobTitleId);
+        Criteria criteria = criteriaService.get(criteriaId);
+        if (jobTitle.getOrganization().getId() != criteria.getOrganization().getId()) {
+            throw new BaseException(ResponseCode.RELATIONSHIP_JOB_TITLE_CRITERIA_UNSATISFIED,
+                    "Given criteria and job title belong to different organizations.");
         }
     }
 
