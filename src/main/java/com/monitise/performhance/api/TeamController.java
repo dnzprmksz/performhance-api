@@ -128,7 +128,6 @@ public class TeamController {
     @RequestMapping(value = "/{teamId}/leader", method = RequestMethod.DELETE)
     public Response<TeamResponse> removeTeamLeader(@PathVariable int teamId) throws BaseException {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
-        teamService.ensureTeamHasLeader(teamId);
 
         Team updatedTeam = teamService.removeLeadershipFromTeam(teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
@@ -159,7 +158,6 @@ public class TeamController {
             throws BaseException {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
         securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
-        relationshipHelper.ensureTeamEmployeeIndependence(teamId, userId);
 
         Team updatedTeam = teamService.assignEmployeeToTeam(userId, teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
@@ -175,7 +173,6 @@ public class TeamController {
             throws BaseException {
         securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
         securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
-        relationshipHelper.ensureTeamEmployeeRelationShip(teamId, userId);
 
         Team updatedTeam = teamService.removeEmployeeFromTeam(userId, teamId);
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
@@ -189,13 +186,12 @@ public class TeamController {
     @RequestMapping(value = "/{teamId}/criteria/{criteriaId}", method = RequestMethod.POST)
     public Response<Object> assignCriteriaToTeamUsers(@PathVariable int teamId,
                                                       @PathVariable int criteriaId) throws BaseException {
-        int organizationId = teamService.get(teamId).getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
-        List<Integer> userIdList = userService.getIdListByTeamId(teamId);
-        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
+        User manager = securityHelper.getAuthenticatedUser();
+        int organizationId = manager.getOrganization().getId();
+        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+        securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
 
-        ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
+        ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToTeam(criteriaId, teamId);
         ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setMessage(generateExistingUsersMessage(existingUserList));
         response.setSuccess(true);

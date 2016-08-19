@@ -6,6 +6,7 @@ import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.repositories.TeamRepository;
 import com.monitise.performhance.repositories.UserRepository;
@@ -32,6 +33,8 @@ public class TeamService {
     private OrganizationService organizationService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RelationshipHelper relationshipHelper;
 
     public List<Team> getAll() {
         return teamRepository.findAll();
@@ -87,12 +90,11 @@ public class TeamService {
     }
 
     public Team assignEmployeeToTeam(int userId, int teamId) throws BaseException {
+        relationshipHelper.ensureTeamUserSameOrganization(teamId, userId);
+        relationshipHelper.ensureTeamEmployeeIndependence(teamId, userId);
         Team team = get(teamId);
         User user = userService.get(userId);
-        if (team.getMembers().contains(user)) {
-            throw new BaseException(ResponseCode.USER_ALREADY_A_MEMBER,
-                    "Given user is already a member of this team.");
-        }
+
         team.getMembers().add(user);
         Team updatedTeam = teamRepository.save(team);
         user.setTeam(team);
@@ -107,10 +109,9 @@ public class TeamService {
     public Team removeEmployeeFromTeam(int employeeId, int teamId) throws BaseException {
         Team team = get(teamId);
         User employee = userService.get(employeeId);
-        if (!team.getMembers().contains(employee)) {
-            throw new BaseException(ResponseCode.USER_IS_NOT_A_MEMBER,
-                    "Given user is not a member of this team.");
-        }
+        relationshipHelper.ensureTeamUserSameOrganization(teamId, employeeId);
+        relationshipHelper.ensureTeamEmployeeRelationShip(teamId, employeeId);
+
         team.getMembers().remove(employee);
         employee.setTeam(null);
 
@@ -123,6 +124,7 @@ public class TeamService {
     }
 
     public Team assignLeaderToTeam(int leaderId, int teamId) throws BaseException {
+        relationshipHelper.ensureTeamUserSameOrganization(teamId, leaderId);
         if (!isLeaderAMemberOfTheTeam(teamId, leaderId)) {
             assignEmployeeToTeam(leaderId, teamId);
         }
@@ -140,6 +142,7 @@ public class TeamService {
 
     // Leader stays in the team, only his/her leadership is removed.
     public Team removeLeadershipFromTeam(int teamId) throws BaseException {
+        ensureTeamHasLeader(teamId);
         Team team = teamRepository.findOne(teamId);
         User leader = team.getLeader();
         team.setLeader(null);
@@ -152,15 +155,17 @@ public class TeamService {
         return updatedTeam;
     }
 
-    public void ensureTeamHasLeader(int teamId) throws BaseException {
+
+    // region Helper Methods
+
+
+    private void ensureTeamHasLeader(int teamId) throws BaseException {
         Team team = teamRepository.findOne(teamId);
         if (team.getLeader() == null) {
             throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER,
                     "Given team has no leader");
         }
     }
-
-    // region Helper Methods
 
     private boolean isLeaderAMemberOfTheTeam(int teamId, int leaderId) {
         Team team = teamRepository.findOne(teamId);
