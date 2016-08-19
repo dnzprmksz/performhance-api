@@ -5,6 +5,7 @@ import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.entity.Criteria;
+import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
@@ -48,10 +49,12 @@ public class CriteriaController {
 
     // endregion
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<CriteriaResponse>> getAll() {
-        List<Criteria> list = criteriaService.getAll();
+    public Response<List<CriteriaResponse>> getAll() throws BaseException {
+        User manager = securityHelper.getAuthenticatedUser();
+        int organizationId = manager.getOrganization().getId();
+        List<Criteria> list = criteriaService.getAllFilterByOrganizationId(organizationId);
         List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(list);
 
         Response<List<CriteriaResponse>> response = new Response<>();
