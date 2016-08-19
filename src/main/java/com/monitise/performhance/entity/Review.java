@@ -40,7 +40,7 @@ public class Review {
         this.comment = comment;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -69,10 +69,6 @@ public class Review {
     public Map<Criteria, Integer> getEvaluation() {
         return evaluation;
     }
-
-    // endregion
-
-    // region Setters
 
     public void setEvaluation(Map<Criteria, Integer> evaluation) {
         this.evaluation = evaluation;
