@@ -1,6 +1,7 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
@@ -46,6 +47,13 @@ public class TeamService {
             filter = Specifications.where(filter).and(Team.teamNameContains(teamName));
         }
         return teamRepository.findAll(filter);
+    }
+
+    public void deleteTeam(int teamId) throws BaseException {
+        ensureExistence(teamId);
+        removeAllEmployeesFromTeam(teamId);
+        removeTeamFromOrganization(teamId);
+        teamRepository.delete(teamId);
     }
 
     public List<Team> getListFilterByOrganizationId(int organizationId) throws BaseException {
@@ -110,11 +118,13 @@ public class TeamService {
 
     public void ensureTeamHasLeader(int teamId) throws BaseException {
         Team team = teamRepository.findOne(teamId);
-        if(team.getLeader() == null) {
+        if (team.getLeader() == null) {
             throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER,
                     "Given team has no leader");
         }
     }
+
+    // region Helper Methods
 
     private boolean isLeaderAMemberOfTheTeam(int teamId, int leaderId) {
         Team team = teamRepository.findOne(teamId);
@@ -127,5 +137,28 @@ public class TeamService {
         }
         return false;
     }
+
+    private void ensureExistence(int teamId) throws BaseException {
+        Team team = teamRepository.findOne(teamId);
+        if (team == null) {
+            throw new BaseException(ResponseCode.TEAM_ID_DOES_NOT_EXIST, "A team with given ID does not exist.");
+        }
+    }
+
+    private void removeAllEmployeesFromTeam(int teamId) throws BaseException {
+        List<User> employees = get(teamId).getMembers();
+        for (User employee : employees) {
+            removeEmployeeFromTeam(employee.getId(), teamId);
+        }
+    }
+
+    private void removeTeamFromOrganization(int teamId) throws BaseException {
+        Team team = get(teamId);
+        Organization organization = team.getOrganization();
+        organization.getTeams().remove(team);
+        organizationService.update(organization);
+    }
+
+    // endregion
 
 }

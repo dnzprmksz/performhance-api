@@ -94,6 +94,18 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{teamId}", method = RequestMethod.DELETE)
+    public Response<Object> deleteTeam(@PathVariable int teamId) throws BaseException {
+        Team team = teamService.get(teamId);
+        securityHelper.checkAuthentication(team.getOrganization().getId());
+        teamService.deleteTeam(teamId);
+
+        Response<Object> response = new Response<>();
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}/leader/{userId}", method = RequestMethod.POST)
     public Response<TeamResponse> assignTeamLeader(@PathVariable int teamId, @PathVariable int userId)
             throws BaseException {

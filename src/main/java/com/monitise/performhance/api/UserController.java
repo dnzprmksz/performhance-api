@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -299,9 +298,9 @@ public class UserController {
                     current.setReviewTimes(current.getReviewTimes() + 1);
                 }
             }
-            }
-            return totalCriteriaScores;
         }
+        return totalCriteriaScores;
+    }
 
     private List<String> findAllComments(User employee) {
         List<String> comments = new ArrayList<>();
