@@ -288,11 +288,12 @@ public class UserController {
         for (Review review : employeeReviews) {
             Map<Criteria, Integer> evaluation = review.getEvaluation();
             // Add each criteria's score to corresponding array location.
-            for (int i=0 ; i<employeeCriteriaCount ; ++i) {
-                Criteria currentCriteria = employeeCriteriaList.get(i);
-                totalCriteriaScores[i] += evaluation.get(currentCriteria);
-            }
 
+            for (int index = 0; index < employeeCriteriaCount; index++) {
+                Criteria criteria = employeeCriteriaList.get(index);
+                int criteriaScore = evaluation.get(criteria);
+                totalCriteriaScores[index] += criteriaScore;
+            }
         }
         return totalCriteriaScores;
     }
