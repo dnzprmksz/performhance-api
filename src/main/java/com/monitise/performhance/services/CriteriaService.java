@@ -89,6 +89,20 @@ public class CriteriaService {
         return assignCriteriaToUserList(criteriaId, userIdList);
     }
 
+    // return List of users who already have the criteria.
+    public ArrayList<Integer> assignCriteriaToUserList(int criteriaId, List<Integer> userIdList) throws BaseException {
+        int organizationId = get(criteriaId).getOrganization().getId();
+        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
+        ArrayList<Integer> existingUserList = new ArrayList<>();
+        // Add criteria to users. If user already has this criteria, add his/her ID to the list.
+        for (int userId : userIdList) {
+            boolean userAlreadyHasCriteria = checkUserExistenceAndAssignCriteriaById(userId, criteriaId);
+            if (userAlreadyHasCriteria) {
+                existingUserList.add(userId);
+            }
+        }
+        return existingUserList;
+    }
 
 
     public void removeCriteriaFromUserById(int criteriaId, int userId) throws BaseException {
@@ -108,21 +122,6 @@ public class CriteriaService {
     }
 
     // region Helper Methods
-
-    // return List of users who already have the criteria.
-    private ArrayList<Integer> assignCriteriaToUserList(int criteriaId, List<Integer> userIdList) throws BaseException {
-        int organizationId = get(criteriaId).getOrganization().getId();
-        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
-        ArrayList<Integer> existingUserList = new ArrayList<>();
-        // Add criteria to users. If user already has this criteria, add his/her ID to the list.
-        for (int userId : userIdList) {
-            boolean userAlreadyHasCriteria = checkUserExistenceAndAssignCriteriaById(userId, criteriaId);
-            if (userAlreadyHasCriteria) {
-                existingUserList.add(userId);
-            }
-        }
-        return existingUserList;
-    }
 
     /**
      * @return The existence of the user.

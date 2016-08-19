@@ -119,7 +119,7 @@ public class OrganizationController {
         return response;
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{organizationId}/users", method = RequestMethod.GET)
     public Response<List<OrganizationUserResponse>> getUsers(@PathVariable int organizationId) throws BaseException {
         securityHelper.checkAuthentication(organizationId);
@@ -148,7 +148,7 @@ public class OrganizationController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{organizationId}/criteria", method = RequestMethod.GET)
-    public Response<List<CriteriaResponse>> getAllFilterByOrganizationId(@PathVariable int organizationId)
+    public Response<List<CriteriaResponse>> getAllCriteriaFilterByOrganizationId(@PathVariable int organizationId)
             throws BaseException {
         securityHelper.checkAuthentication(organizationId);
         List<Criteria> list = criteriaService.getAllFilterByOrganizationId(organizationId);
