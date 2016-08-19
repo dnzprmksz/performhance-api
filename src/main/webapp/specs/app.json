@@ -225,6 +225,17 @@
       }
     },
     "/users/": {
+      "get": {
+        "description": "Gets all `User`s that authenticated user can access",
+        "responses": {
+          "200": {
+            "description": "Returns successfully added `User` object",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
       "post": {
         "description": "Adds a new `User`",
         "parameters": [
@@ -445,7 +456,7 @@
     "/users/{userId}/score": {
       "get": {
         "operationId": "getEmployeeReviewScore",
-        "description": "Computes and returns the average score of `User`'s all `Criteria`s",
+        "description": "Gets all comments and average `Criteria` scores of the given `User`",
         "parameters": [
           {
             "name": "userId",
@@ -622,6 +633,48 @@
           }
         }
       },
+      "put": {
+        "operationId": "updateTeam",
+        "description": "Updates the `Team` with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team` to update"
+          },
+          {
+            "name": "updateUserRequest",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateTeamRequest"
+            },
+            "required": true,
+            "description": "The properties of `Team` to update"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A user with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
       "delete": {
         "operationId": "deleteTeam",
         "description": "Deletes the `Team` with given id",
@@ -656,10 +709,127 @@
         }
       }
     },
+    "/teams/{teamId}/leader": {
+      "delete": {
+        "operationId": "removeTeamLeader",
+        "description": "Removes the leader of the `Team` with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A `Team` with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
+    "/teams/{teamId}/leader/{userId}": {
+      "post": {
+        "operationId": "assignTeamLeader",
+        "description": "Assigns the given `User` as leader of the `Team` with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team`"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A `Team` or `User` with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
     "/teams/{teamId}/users/{userId}": {
       "post": {
         "operationId": "assignUserToTeam",
         "description": "Assigns the given `User` to the `Team` with given id",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Team`"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "removeUserFromTeam",
+        "description": "Removes the given `User` from the `Team` with given id",
         "parameters": [
           {
             "name": "teamId",
@@ -1503,6 +1673,15 @@
         },
         "evaluationIdMap": {
           "$ref": "#/definitions/evaluation"
+        }
+      }
+    },
+    "UpdateTeamRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the Team"
         }
       }
     }
