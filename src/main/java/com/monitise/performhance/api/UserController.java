@@ -1,6 +1,7 @@
 package com.monitise.performhance.api;
 
 import com.monitise.performhance.api.model.AddUserRequest;
+import com.monitise.performhance.api.model.AverageCriteriaScore;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.CriteriaUserResponse;
 import com.monitise.performhance.api.model.EmployeeScoreResponse;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,13 +169,15 @@ public class UserController {
         User employee = userService.get(userId);
         securityHelper.checkAuthentication(employee.getOrganization().getId());
 
-        Map<String, Integer> criteriaScores = calculateCriteriaScores(employee);
+        List<AverageCriteriaScore> criteriaScores = calculateCriteriaScores(employee);
         int reviewCount = employee.getReviews().size();
+        List<String> comments = findAllComments(employee);
 
         EmployeeScoreResponse employeeScoreResponse = new EmployeeScoreResponse(
-                employee.getName(),
+                employee.getName() + " " + employee.getSurname(),
                 reviewCount,
-                criteriaScores
+                criteriaScores,
+                comments
         );
         Response<EmployeeScoreResponse> response = new Response<>();
         response.setData(employeeScoreResponse);
@@ -267,48 +271,61 @@ public class UserController {
         return candidate > 0;
     }
 
-    private Map<String, Integer> calculateCriteriaScores(User employee) {
-        int[] averageCriteriaScores = calculateAverageCriteriaScores(employee);
-        List<Criteria> employeeCriteriaList = employee.getCriteriaList();
-
-        Map<String, Integer> criteriaScores = new HashMap<>();
-        for (int index = 0; index < employeeCriteriaList.size(); index++) {
-            String criteriaName = employeeCriteriaList.get(index).getCriteria();
-            int averageCriteriaScore = averageCriteriaScores[index];
-            criteriaScores.put(criteriaName, averageCriteriaScore);
+    private List<AverageCriteriaScore> calculateCriteriaScores(User employee) {
+        AverageCriteriaScore[] averageCriteriaScores = calculateAverageCriteriaScores(employee);
+        List<AverageCriteriaScore> criteriaScores = new ArrayList<>();
+        for (int index = 0; index < averageCriteriaScores.length; index++) {
+            criteriaScores.add(averageCriteriaScores[index]);
         }
         return criteriaScores;
     }
 
-    private int[] calculateAverageCriteriaScores(User employee) {
-        int[] totalCriteriaScores = calculateTotalCriteriaScores(employee);
-        int employeeCriteriaCount = employee.getCriteriaList().size();
-        int employeeReviewCount = employee.getReviews().size();
-
-        int[] averageCriteriaScores = new int[employeeCriteriaCount];
-        for (int index = 0; index < totalCriteriaScores.length; index++) {
-            averageCriteriaScores[index] = totalCriteriaScores[index] / employeeReviewCount;
+    private AverageCriteriaScore[] calculateAverageCriteriaScores(User employee) {
+        AverageCriteriaScore[] averageCriteriaScores = calculateTotalCriteriaScores(employee);
+        for (int index = 0; index < averageCriteriaScores.length; index++) {
+            AverageCriteriaScore current = averageCriteriaScores[index];
+            int averageScore = current.getTotalScore() / current.getReviewTimes();
+            current.setAverageScore(averageScore);
         }
         return averageCriteriaScores;
     }
 
-    private int[] calculateTotalCriteriaScores(User employee) {
+    private AverageCriteriaScore[] calculateTotalCriteriaScores(User employee) {
         List<Review> employeeReviews = employee.getReviews();
         List<Criteria> employeeCriteriaList = employee.getCriteriaList();
         int employeeCriteriaCount = employeeCriteriaList.size();
 
-        int[] totalCriteriaScores = new int[employeeCriteriaCount];
+        AverageCriteriaScore[] totalCriteriaScores = new AverageCriteriaScore[employeeCriteriaCount];
+        int index = 0;
+        for (Criteria criteria : employeeCriteriaList) {
+            totalCriteriaScores[index++] = new AverageCriteriaScore(criteria.getCriteria());
+        }
+
         for (Review review : employeeReviews) {
             Map<Criteria, Integer> evaluation = review.getEvaluation();
-            // Add each criteria's score to corresponding array location.
+            index = 0;
+            for (Criteria criteria : employeeCriteriaList) {
+                if (evaluation.containsKey(criteria)) {
+                    int criteriaScore = evaluation.get(criteria);
+                    AverageCriteriaScore current = totalCriteriaScores[index++];
+                    current.setTotalScore(current.getTotalScore() + criteriaScore);
+                    current.setReviewTimes(current.getReviewTimes() + 1);
+                }
+            }
+            }
+            return totalCriteriaScores;
+        }
 
-            for (int index = 0; index < employeeCriteriaCount; index++) {
-                Criteria criteria = employeeCriteriaList.get(index);
-                int criteriaScore = evaluation.get(criteria);
-                totalCriteriaScores[index] += criteriaScore;
+    private List<String> findAllComments(User employee) {
+        List<String> comments = new ArrayList<>();
+        List<Review> employeeReviews = employee.getReviews();
+        for (Review review : employeeReviews) {
+            String comment = review.getComment();
+            if (comment != null) {
+                comments.add(comment);
             }
         }
-        return totalCriteriaScores;
+        return comments;
     }
 
     // endregion

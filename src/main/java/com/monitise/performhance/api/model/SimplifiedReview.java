@@ -15,7 +15,7 @@ public class SimplifiedReview {
     public SimplifiedReview(Review review) {
         id = review.getId();
         reviewedEmployeeName = review.getReviewedEmployee().getName();
-        reviewerName = review.getReviewer().getName();
+        reviewerName = review.getReviewer().getName() + " " + review.getReviewer().getSurname();
         comment = review.getComment();
     }
 
@@ -27,7 +27,7 @@ public class SimplifiedReview {
         return list;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -44,10 +44,6 @@ public class SimplifiedReview {
     public void setReviewedEmployeeName(String reviewedEmployeeName) {
         this.reviewedEmployeeName = reviewedEmployeeName;
     }
-
-    // endregion
-
-    // region Setters
 
     public String getReviewerName() {
         return reviewerName;

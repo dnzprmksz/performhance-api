@@ -1,18 +1,23 @@
 package com.monitise.performhance.api.model;
 
-import java.util.Map;
+import java.util.List;
 
 public class EmployeeScoreResponse {
 
     private String reviewedEmployeeName;
     private int reviewCount;
-    private Map<String, Integer> averageCriteriaScores;
+    private List<AverageCriteriaScore> averageCriteriaScores;
+    private List<String> comments;
 
-    public EmployeeScoreResponse(String reviewedEmployee, int reviewCount, Map<String, Integer> criteriaScores) {
+    public EmployeeScoreResponse(String reviewedEmployee, int reviewCount, List<AverageCriteriaScore> criteriaScores,
+                                 List<String> comments) {
         this.reviewedEmployeeName = reviewedEmployee;
         this.reviewCount = reviewCount;
         this.averageCriteriaScores = criteriaScores;
+        this.comments = comments;
     }
+
+    // region Getters & Setters
 
     public String getReviewedEmployeeName() {
         return reviewedEmployeeName;
@@ -30,11 +35,22 @@ public class EmployeeScoreResponse {
         this.reviewCount = reviewCount;
     }
 
-    public Map<String, Integer> getAverageCriteriaScores() {
+    public List<AverageCriteriaScore> getAverageCriteriaScores() {
         return averageCriteriaScores;
     }
 
-    public void setAverageCriteriaScores(Map<String, Integer> averageCriteriaScores) {
+    public void setAverageCriteriaScores(List<AverageCriteriaScore> averageCriteriaScores) {
         this.averageCriteriaScores = averageCriteriaScores;
     }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+    }
+
+    // endregion
+
 }
