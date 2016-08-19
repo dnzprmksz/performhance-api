@@ -54,7 +54,20 @@ public class UserController {
 
     // endregion
 
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public Response<List<SimplifiedUser>> listEmployeesOfAnOrganization() throws BaseException {
+        User manager = securityHelper.getAuthenticatedUser();
+        int organizationId = manager.getOrganization().getId();
+        List<User> employees = userService.getByOrganizationId(organizationId);
+        List<SimplifiedUser> simplifiedList = SimplifiedUser.fromUserList(employees);
+        Response<List<SimplifiedUser>> response = new Response<>();
+        response.setData(simplifiedList);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<SimplifiedUser> addEmployee(@RequestBody AddUserRequest addUserRequest) throws BaseException {
         int organizationId = addUserRequest.getOrganizationId();
