@@ -9,6 +9,7 @@ import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.TeamResponse;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
+import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
@@ -66,7 +67,8 @@ public class TeamController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<TeamResponse> addTeam(@RequestBody AddTeamRequest addTeamRequest) throws BaseException {
-        int organizationId = addTeamRequest.getOrganizationId();
+        User manager = securityHelper.getAuthenticatedUser();
+        int organizationId = manager.getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
 
         Organization organization = organizationService.get(organizationId);

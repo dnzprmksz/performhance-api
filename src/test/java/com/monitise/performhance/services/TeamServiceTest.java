@@ -2,6 +2,7 @@ package com.monitise.performhance.services;
 
 
 import com.monitise.performhance.AppConfig;
+import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.expression.ExpressionException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -29,18 +31,16 @@ import java.util.List;
         @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:populate.sql"),
         @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
 })
+@Transactional
 public class TeamServiceTest {
 
     @Autowired
     private UserService userService;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private TeamService teamService;
 
 
     @Test
-    @Transactional
     public void getAllTeamsOfAnOrganization() throws BaseException {
         List<Team> teams = teamService.getListFilterByOrganizationId(1);
 
@@ -51,7 +51,6 @@ public class TeamServiceTest {
     }
 
     @Test
-    @Transactional
     public void getExistingTeamById() throws BaseException {
         Team team = teamService.get(1);
         List<User> members = team.getMembers();
@@ -73,6 +72,62 @@ public class TeamServiceTest {
     @Test(expected = BaseException.class)
     public void getNonExistingTeamById() throws BaseException {
         Team team = teamService.get(1123);
+    }
+
+    @Test(expected = BaseException.class)
+    public void deleteTeam() throws BaseException {
+        teamService.deleteTeam(1);
+
+        User pelin = userService.get(2);
+        User faruk = userService.get(3);
+        User pelya = userService.get(3);
+
+        Assert.assertEquals(Role.EMPLOYEE,pelin.getRole());
+        Assert.assertNull(pelin.getTeam());
+
+        Assert.assertNull(faruk.getTeam());
+        Assert.assertNull(pelya.getTeam());
+
+        Team team = teamService.get(1);
+    }
+
+    @Test(expected = BaseException.class)
+    public void deleteNonExistingTeam() throws BaseException {
+        teamService.deleteTeam(5000);
+    }
+
+    @Test
+    public void assignEmployee() throws BaseException {
+        teamService.assignEmployeeToTeam(5,1);
+        Team team = teamService.get(1);
+        List<User> members = team.getMembers();
+
+        Assert.assertNotNull(team);
+        Assert.assertNotNull(members);
+
+        Assert.assertEquals(4, members.size());
+        Assert.assertTrue(listContainsUser(members, 2, "Pelin", "Sonmez"));
+        Assert.assertTrue(listContainsUser(members, 3, "Faruk", "Gulmez"));
+        Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
+        Assert.assertTrue(listContainsUser(members, 5, "Fatih", "Songul"));
+
+        User fatih = userService.get(5);
+        Assert.assertEquals(1, fatih.getTeam().getId());
+    }
+
+    @Test(expected = BaseException.class)
+    public void assignEmployeeThatIsAlreadyInTheTeam() throws BaseException {
+        teamService.assignEmployeeToTeam(3,1);
+    }
+
+    @Test(expected = BaseException.class)
+    public void assignNonExistingEmployeeToATeam() throws BaseException {
+        teamService.assignEmployeeToTeam(5005, 1);
+    }
+
+    @Test(expected = BaseException.class)
+    public void assignEmployeeToANonExistinTeam() throws BaseException {
+        teamService.assignEmployeeToTeam(5,9876);
     }
 
 

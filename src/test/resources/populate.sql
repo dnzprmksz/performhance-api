@@ -26,7 +26,7 @@ INSERT INTO `organization_job_titles`(organization_id, job_titles_id) VALUES(2, 
 INSERT INTO `user`(name, password, role, surname, username, organization_id)
     VALUES('Google', '123', 'MANAGER', 'Manager', 'google.manager', 1);
 INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
-    VALUES('Pelin', '123', 'EMPLOYEE', 'Sonmez', 'pelin.sonmez', 1, 1);
+    VALUES('Pelin', '123', 'TEAM_LEADER', 'Sonmez', 'pelin.sonmez', 1, 1);
 INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)
     VALUES('Faruk', '123', 'EMPLOYEE', 'Gulmez', 'faruk.gulmez', 2, 1);
 INSERT INTO `user`(name, password, role, surname, username, job_title_id, organization_id)

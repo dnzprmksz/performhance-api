@@ -4,6 +4,7 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.repositories.CriteriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ public class CriteriaService {
     private UserService userService;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private RelationshipHelper relationshipHelper;
 
     public List<Criteria> getAll() {
         return criteriaRepository.findAll();
@@ -72,6 +75,8 @@ public class CriteriaService {
 
     // return List of users who already has the criteria.
     public ArrayList<Integer> assignCriteriaToUserList(int criteriaId, List<Integer> userIdList) throws BaseException {
+        int organizationId = get(criteriaId).getOrganization().getId();
+        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
         ArrayList<Integer> existingUserList = new ArrayList<>();
         // Add criteria to users. If user already has this criteria, add his/her ID to the list.
         for (int userId : userIdList) {

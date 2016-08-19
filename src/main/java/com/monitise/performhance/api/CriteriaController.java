@@ -66,7 +66,8 @@ public class CriteriaController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<CriteriaResponse> add(@RequestBody CriteriaRequest criteriaRequest) throws BaseException {
-        int organizationId = criteriaRequest.getOrganizationId();
+        User manager = securityHelper.getAuthenticatedUser();
+        int organizationId = manager.getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
         Criteria criteria = new Criteria(criteriaRequest.getCriteria(), organizationService.get(organizationId));
         Criteria criteriaFromService = criteriaService.add(criteria);
@@ -125,7 +126,6 @@ public class CriteriaController {
                                                   @RequestBody List<Integer> userIdList) throws BaseException {
         int organizationId = criteriaService.get(criteriaId).getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.ensureOrganizationUserListRelationship(organizationId, userIdList);
 
         ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToUserList(criteriaId, userIdList);
         ExtendedResponse<Object> response = new ExtendedResponse<>();

@@ -30,6 +30,8 @@ public class TeamService {
     private UserRepository userRepository;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private UserService userService;
 
     public List<Team> getAll() {
         return teamRepository.findAll();
@@ -76,9 +78,12 @@ public class TeamService {
     }
 
     public Team assignEmployeeToTeam(int userId, int teamId) throws BaseException {
-        Team team = teamRepository.findOne(teamId);
-        User user = userRepository.findOne(userId);
-
+        Team team = get(teamId);
+        User user = userService.get(userId);
+        if (team.getMembers().contains(user)) {
+            throw new BaseException(ResponseCode.USER_ALREADY_A_MEMBER,
+                    "Given user is already a member of this team.");
+        }
         team.getMembers().add(user);
         Team updatedTeam = teamRepository.save(team);
         user.setTeam(team);
@@ -91,8 +96,12 @@ public class TeamService {
     }
 
     public Team removeEmployeeFromTeam(int employeeId, int teamId) throws BaseException {
-        Team team = teamRepository.findOne(teamId);
-        User employee = userRepository.findOne(employeeId);
+        Team team = get(teamId);
+        User employee = userService.get(employeeId);
+        if (!team.getMembers().contains(employee)) {
+            throw new BaseException(ResponseCode.USER_IS_NOT_A_MEMBER,
+                    "Given user is not a member of this team.");
+        }
         team.getMembers().remove(employee);
         employee.setTeam(null);
 
@@ -108,7 +117,7 @@ public class TeamService {
         if (!isLeaderAMemberOfTheTeam(teamId, leaderId)) {
             assignEmployeeToTeam(leaderId, teamId);
         }
-        Team team = teamRepository.findOne(teamId);
+        Team team = get(teamId);
         User leader = userRepository.findOne(leaderId);
         team.setLeader(leader);
         leader.setRole(Role.TEAM_LEADER);

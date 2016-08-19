@@ -72,7 +72,8 @@ public class UserController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<SimplifiedUser> addEmployee(@RequestBody AddUserRequest addUserRequest) throws BaseException {
-        int organizationId = addUserRequest.getOrganizationId();
+        User manager = securityHelper.getAuthenticatedUser();
+        int organizationId = manager.getOrganization().getId();
         securityHelper.checkAuthentication(organizationId);
         Organization organization = organizationService.get(organizationId);
         validateUserRequest(organization, addUserRequest);
