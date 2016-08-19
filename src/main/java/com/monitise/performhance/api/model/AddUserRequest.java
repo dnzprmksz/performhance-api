@@ -6,7 +6,6 @@ public class AddUserRequest implements Serializable {
     private String name;
     private String surname;
     private int jobTitleId;
-    private int organizationId;
     private String username;
     private String password;
 
@@ -37,14 +36,6 @@ public class AddUserRequest implements Serializable {
 
     public void setJobTitleId(int jobTitleId) {
         this.jobTitleId = jobTitleId;
-    }
-
-    public int getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(int organizationId) {
-        this.organizationId = organizationId;
     }
 
     public String getUsername() {

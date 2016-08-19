@@ -3,7 +3,6 @@ package com.monitise.performhance.api.model;
 public class CriteriaRequest {
 
     private String criteria;
-    private int organizationId;
 
     public CriteriaRequest() {
     }
@@ -16,12 +15,5 @@ public class CriteriaRequest {
         this.criteria = criteria;
     }
 
-    public int getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(int organizationId) {
-        this.organizationId = organizationId;
-    }
 
 }
