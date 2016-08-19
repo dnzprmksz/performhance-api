@@ -17,6 +17,8 @@ public class JobTitleService {
     private JobTitleRepository jobTitleRepository;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private UserService userService;
 
     public JobTitle add(JobTitle jobTitle) throws BaseException {
         JobTitle jobTitleFromRepo = jobTitleRepository.save(jobTitle);
@@ -48,5 +50,48 @@ public class JobTitleService {
     public List<JobTitle> getListFilterByOrganizationId(int organizationId) throws BaseException {
         return organizationService.get(organizationId).getJobTitles();
     }
+
+    public JobTitle update(JobTitle jobTitle) throws BaseException {
+        ensureExistence(jobTitle.getId());
+        JobTitle jobTitleFromRepo = jobTitleRepository.save(jobTitle);
+        if (jobTitleFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not update given Job Title.");
+        }
+        return jobTitleFromRepo;
+    }
+
+    public void remove(int jobTitleId) throws BaseException {
+        ensureExistence(jobTitleId);
+        ensureJobTitleIsNotUsed(jobTitleId);
+        removeJobTitleFromOrganization(jobTitleId);
+        jobTitleRepository.delete(jobTitleId);
+    }
+
+    // region Helper Methods
+
+    private void ensureExistence(int jobTitleId) throws BaseException {
+        JobTitle jobTitle = jobTitleRepository.findOne(jobTitleId);
+        if (jobTitle == null) {
+            throw new BaseException(ResponseCode.JOB_TITLE_ID_DOES_NOT_EXIST,
+                    "A job title with given ID does not exist.");
+        }
+    }
+
+    private void ensureJobTitleIsNotUsed(int jobTitleId) throws BaseException {
+        int employeesWithThisJobTitle = userService.getIdListByJobTitleId(jobTitleId).size();
+        if (employeesWithThisJobTitle > 0) {
+            throw new BaseException(ResponseCode.JOB_TITLE_IS_IN_USE,
+                    "Cannot remove the Job Title when there are employees using this Job Title.");
+        }
+    }
+
+    private void removeJobTitleFromOrganization(int jobTitleId) throws BaseException {
+        JobTitle jobTitle = get(jobTitleId);
+        Organization organization = jobTitle.getOrganization();
+        organization.getJobTitles().remove(jobTitle);
+        organizationService.update(organization);
+    }
+
+    // endregion
 
 }

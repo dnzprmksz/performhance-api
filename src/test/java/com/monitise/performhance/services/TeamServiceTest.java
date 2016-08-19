@@ -3,19 +3,14 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
 import com.monitise.performhance.api.model.Role;
-import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
-import com.monitise.performhance.repositories.OrganizationRepository;
-import com.monitise.performhance.repositories.UserRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.expression.ExpressionException;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -82,7 +77,7 @@ public class TeamServiceTest {
         User faruk = userService.get(3);
         User pelya = userService.get(3);
 
-        Assert.assertEquals(Role.EMPLOYEE,pelin.getRole());
+        Assert.assertEquals(Role.EMPLOYEE, pelin.getRole());
         Assert.assertNull(pelin.getTeam());
 
         Assert.assertNull(faruk.getTeam());
@@ -98,7 +93,7 @@ public class TeamServiceTest {
 
     @Test
     public void assignEmployee() throws BaseException {
-        teamService.assignEmployeeToTeam(5,1);
+        teamService.assignEmployeeToTeam(5, 1);
         Team team = teamService.get(1);
         List<User> members = team.getMembers();
 
@@ -117,7 +112,7 @@ public class TeamServiceTest {
 
     @Test(expected = BaseException.class)
     public void assignEmployeeThatIsAlreadyInTheTeam() throws BaseException {
-        teamService.assignEmployeeToTeam(3,1);
+        teamService.assignEmployeeToTeam(3, 1);
     }
 
     @Test(expected = BaseException.class)
@@ -127,9 +122,8 @@ public class TeamServiceTest {
 
     @Test(expected = BaseException.class)
     public void assignEmployeeToANonExistinTeam() throws BaseException {
-        teamService.assignEmployeeToTeam(5,9876);
+        teamService.assignEmployeeToTeam(5, 9876);
     }
-
 
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {

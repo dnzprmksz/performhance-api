@@ -1030,6 +1030,75 @@
             "description": "A `JobTitle` with given id does not exist"
           }
         }
+      },
+      "put": {
+        "operationId": "updateJobtitle",
+        "description": "Update the `JobTitle` with given id",
+        "parameters": [
+          {
+            "name": "jobTitleId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `JobTitle`"
+          },
+          {
+            "name": "updateJobTitleRequest",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateJobTitleRequest"
+            },
+            "required": true,
+            "description": "Properties of `JobTitle` to update"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucessful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A `JobTitle` with given id does not exist"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteJobtitle",
+        "description": "Deletes the `JobTitle` with given id",
+        "parameters": [
+          {
+            "name": "jobTitleId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `JobTitle`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucessful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A `JobTitle` with given id does not exist"
+          }
+        }
       }
     },
     "/jobTitles/{jobTitleId}/criteria/{criteriaId}": {
@@ -1682,6 +1751,15 @@
         "name": {
           "type": "string",
           "description": "Name of the Team"
+        }
+      }
+    },
+    "UpdateJobTitleRequest": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Name of the Job Title"
         }
       }
     }
