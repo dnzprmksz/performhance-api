@@ -115,7 +115,7 @@ public class TeamService {
 
         team.getMembers().remove(employee);
         employee.setTeam(null);
-        if ( leader != null && employee.getId() == leader.getId()) {
+        if (leader != null && employee.getId() == leader.getId()) {
             leader.setRole(Role.EMPLOYEE);
             team.setLeader(null);
         }
@@ -163,12 +163,10 @@ public class TeamService {
 
     // region Helper Methods
 
-
     private void ensureTeamHasLeader(int teamId) throws BaseException {
         Team team = get(teamId);
         if (team.getLeader() == null) {
-            throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER,
-                    "Given team has no leader");
+            throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER, "Given team has no leader");
         }
     }
 

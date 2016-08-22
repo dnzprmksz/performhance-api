@@ -281,8 +281,6 @@ public class TeamServiceTest {
     }
 
 
-
-
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {
         for (User user : list) {
             if (user.getId() == id && user.getName().equals(name) && user.getSurname().equals(surname)) {
