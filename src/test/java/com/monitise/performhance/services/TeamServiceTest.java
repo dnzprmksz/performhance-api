@@ -1,6 +1,7 @@
 package com.monitise.performhance.services;
 
 
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.monitise.performhance.AppConfig;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.Team;
@@ -79,10 +80,11 @@ public class TeamServiceTest {
 
         Assert.assertEquals(Role.EMPLOYEE, pelin.getRole());
         Assert.assertNull(pelin.getTeam());
-
         Assert.assertNull(faruk.getTeam());
         Assert.assertNull(pelya.getTeam());
 
+        List<Team> teams = teamService.getListFilterByOrganizationId(1);
+        Assert.assertEquals(1, teams.size());
         Team team = teamService.get(1);
     }
 
@@ -124,6 +126,99 @@ public class TeamServiceTest {
     public void assignEmployeeToANonExistinTeam() throws BaseException {
         teamService.assignEmployeeToTeam(5, 9876);
     }
+
+    @Test(expected = BaseException.class)
+    public void assignEmployeeFromAnotherOrganization() throws BaseException {
+        teamService.assignEmployeeToTeam(7, 1);
+    }
+
+    @Test// Team leader is a member in this case.
+    public void assignTeamLeader() throws BaseException {
+        teamService.assignLeaderToTeam(3, 1);
+
+        Team team = teamService.get(1);
+        List<User> members = team.getMembers();
+        User leader = team.getLeader();
+
+        Assert.assertEquals(3, members.size());
+        Assert.assertEquals(3, leader.getId());
+        Assert.assertEquals("faruk.gulmez", leader.getUsername());
+
+        Assert.assertTrue(listContainsUser(members, 2, "Pelin", "Sonmez"));
+        Assert.assertTrue(listContainsUser(members, 3, "Faruk", "Gulmez"));
+        Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
+    }
+
+    @Test// Team leader is not a member here.
+    public void assignTeamLeaderThatIsNotAMember() throws BaseException {
+        teamService.assignLeaderToTeam(5, 1);
+
+        Team team = teamService.get(1);
+        List<User> members = team.getMembers();
+        User leader = team.getLeader();
+
+        Assert.assertEquals(4, members.size());
+        Assert.assertEquals(5, leader.getId());
+        Assert.assertEquals("fatih.songul", leader.getUsername());
+
+        Assert.assertTrue(listContainsUser(members, 2, "Pelin", "Sonmez"));
+        Assert.assertTrue(listContainsUser(members, 3, "Faruk", "Gulmez"));
+        Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
+        Assert.assertTrue(listContainsUser(members, 5, "Fatih", "Songul"));
+
+    }
+
+    @Test
+    public void assignNonExistingUserAsLeader() throws BaseException {
+        teamService.assignLeaderToTeam(10000, 1);
+    }
+
+    @Test
+    public void assignLeaderToNonExistinTeam() throws BaseException {
+        teamService.assignLeaderToTeam(3, 10000);
+    }
+
+    @Test
+    public void assignLeaderFromAnotherOrganization() throws BaseException {
+        teamService.assignLeaderToTeam(7, 1);
+    }
+
+    @Test
+    public void removeLeadershipFromTeam() throws BaseException {
+        teamService.removeLeadershipFromTeam(1);
+
+        Team team = teamService.get(1);
+        List<User> members = team.getMembers();
+        User leader = team.getLeader();
+
+        Assert.assertNull(leader);
+        Assert.assertEquals(3, members.size());
+
+        Assert.assertTrue(listContainsUser(members, 2, "Pelin", "Sonmez"));
+        Assert.assertTrue(listContainsUser(members, 3, "Faruk", "Gulmez"));
+        Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
+        Assert.assertTrue(listContainsUser(members, 5, "Fatih", "Songul"));
+    }
+
+    @Test
+    public void removeLeadershipFromNonExistingTeam() throws BaseException {
+        teamService.removeLeadershipFromTeam(181818);
+    }
+
+    @Test
+    public void removeReaderFromTeam() throws BaseException {
+        teamService.removeEmployeeFromTeam(2, 1);
+
+        User pelin = userService.get(2);
+        Assert.assertEquals(Role.EMPLOYEE, pelin.getRole());
+        Assert.assertNull(pelin.getTeam());
+
+        Team pelinsOldTeam = teamService.get(1);
+        Assert.assertNull(pelinsOldTeam.getLeader());
+        Assert.assertEquals(2, pelinsOldTeam.getMembers().size());
+
+    }
+
 
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {
