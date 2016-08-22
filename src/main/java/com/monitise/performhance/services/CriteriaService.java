@@ -2,6 +2,7 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
+import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
@@ -51,7 +52,7 @@ public class CriteriaService {
         if (criteriaFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add the given criteria.");
         }
-        organizationService.addCriteria(criteriaFromRepo.getOrganization().getId(), criteria);
+        addCriteriaToOrganization(criteriaFromRepo.getOrganization().getId(), criteria);
         return criteriaFromRepo;
     }
 
@@ -81,7 +82,6 @@ public class CriteriaService {
         user.setCriteriaList(criteriaList);
         return userService.update(user);
     }
-
 
     // Finds all the users of a given job title and assigns the criteria to each of them.
     // The criteria has already been assigned to some users, nothing happens.
@@ -115,7 +115,6 @@ public class CriteriaService {
         }
         return existingUserList;
     }
-
 
     public void removeCriteriaFromUserById(int criteriaId, int userId) throws BaseException {
         relationshipHelper.ensureUserCriteriaSameOrganization(userId, criteriaId);
@@ -184,6 +183,15 @@ public class CriteriaService {
     private void checkExistenceInUser(User user, Criteria criteria) throws BaseException {
         if (user.getCriteriaList().contains(criteria)) {
             throw new BaseException(ResponseCode.CRITERIA_EXISTS_IN_USER, "Given user already has this criteria.");
+        }
+    }
+
+    private void addCriteriaToOrganization(int organizationId, Criteria criteria) throws BaseException {
+        Organization organization = organizationService.get(organizationId);
+        organization.getCriteriaList().add(criteria);
+        Organization updatedOrganization = organizationService.update(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add given criteria to given organization.");
         }
     }
 

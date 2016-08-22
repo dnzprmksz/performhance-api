@@ -1,14 +1,20 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
+import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.Role;
+import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.matcher.CustomMatcher;
 import com.monitise.performhance.repositories.JobTitleRepository;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +24,8 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,6 +44,8 @@ public class UserServiceTest {
     private OrganizationRepository organizationRepository;
     @Autowired
     private JobTitleRepository jobTitleRepository;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
@@ -63,13 +73,46 @@ public class UserServiceTest {
         Assert.assertEquals(user.getSurname(), addedUser.getSurname());
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void add_employeeExistingUsername_shouldNotAdd() throws BaseException {
         Organization monitise = organizationRepository.findOne(2);
         JobTitle iosDev = jobTitleRepository.findOne(3);
         User user = new User("Ali", "Yılmaz", monitise, iosDev, "monitise.manager", "123");
-        User addedUser = userService.addEmployee(user);
+
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_USERNAME_ALREADY_TAKEN));
+        userService.addEmployee(user);
+    }
+
+    @Test(expected = BaseException.class)
+    @WithMockUser(roles = {"MANAGER"})
+    public void addEmployee_managerUser_shouldNotAdd() throws BaseException {
+        Organization monitise = organizationRepository.findOne(2);
+        User user = new User("Ali", "Yılmaz", monitise, Role.MANAGER, "manager", "123");
+        userService.addEmployee(user);
+    }
+
+    @Test()
+    @WithMockUser(roles = {"MANAGER"})
+    public void addManager_managerUser_shouldAdd() throws BaseException {
+        Organization pozitron = organizationRepository.findOne(3);
+        User user = new User("Ali", "Yılmaz", pozitron, Role.MANAGER, "manager", "123");
+        User userFromService = userService.addManager(user);
+
+        Assert.assertNotNull(userFromService);
+        Assert.assertEquals(user.getName(), userFromService.getName());
+        Assert.assertEquals(user.getSurname(), userFromService.getSurname());
+        Assert.assertEquals(user.getUsername(), userFromService.getUsername());
+        Assert.assertEquals(user.getPassword(), userFromService.getPassword());
+        Assert.assertEquals(user.getRole(), userFromService.getRole());
+    }
+
+    @Test(expected = BaseException.class)
+    @WithMockUser(roles = {"MANAGER"})
+    public void addManager_employeeUser_shouldNotAdd() throws BaseException {
+        Organization pozitron = organizationRepository.findOne(3);
+        User user = new User("Ahmet", "Han", pozitron, Role.EMPLOYEE, "ahmet.han", "123");
+        userService.addManager(user);
     }
 
     @Test
@@ -89,11 +132,29 @@ public class UserServiceTest {
         userService.get(1884);
     }
 
+    @Test
+    @WithMockUser(roles = {"MANAGER"})
+    public void getByUsername_existingUsername_shouldGet() throws BaseException {
+        User user = userService.getByUsername("bilge.olmez");
+        Assert.assertNotNull(user);
+        Assert.assertEquals("Bilge", user.getName());
+        Assert.assertEquals("Olmez", user.getSurname());
+    }
+
+    @Test(expected = BaseException.class)
+    @WithMockUser(roles = {"MANAGER"})
+    public void getByUsername_nonExistingUsername_shouldNotGet() throws BaseException {
+        User user = userService.getByUsername("bilge.sonmez");
+    }
+
     @Test(expected = BaseException.class)
     @WithMockUser(roles = {"MANAGER"})
     public void delete_existingId() throws BaseException {
-        Organization monitise = organizationRepository.findOne(2);
+        User userBilgeOlmez = userService.get(7);
         userService.remove(7);
+        Organization monitise = organizationRepository.findOne(2);
+
+        Assert.assertFalse(listContainsUser(monitise.getUsers(), 7, "Bilge", "Olmez"));
         userService.get(7);
     }
 
@@ -101,6 +162,33 @@ public class UserServiceTest {
     @WithMockUser(roles = {"MANAGER"})
     public void delete_nonExistingId() throws BaseException {
         userService.remove(1884);
+    }
+
+    @Test
+    @WithMockUser(roles = {"MANAGER"})
+    public void updateFromRequest_validData_shouldUpdate() throws BaseException {
+        User user = userService.get(7);
+        UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+        updateUserRequest.setName("Arda");
+        updateUserRequest.setSurname("Yılmaz");
+        updateUserRequest.setPassword("12345");
+        updateUserRequest.setJobTitleId(5);
+        User userFromService = userService.updateFromRequest(updateUserRequest, user);
+
+        Assert.assertNotNull(userFromService);
+        Assert.assertEquals(updateUserRequest.getName(), userFromService.getName());
+        Assert.assertEquals(updateUserRequest.getSurname(), userFromService.getSurname());
+        Assert.assertEquals(updateUserRequest.getPassword(), userFromService.getPassword());
+        Assert.assertEquals(updateUserRequest.getJobTitleId(), userFromService.getJobTitle().getId());
+    }
+
+    private boolean listContainsUser(List<User> list, int id, String name, String surname) {
+        for (User user : list) {
+            if (user.getId() == id && user.getName().equals(name) && user.getSurname().equals(surname)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

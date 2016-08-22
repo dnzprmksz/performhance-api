@@ -86,7 +86,7 @@ public class TeamService {
         if (teamFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given team.");
         }
-        organizationService.addTeam(organizationId, teamFromRepo);
+        addTeamToOrganization(organizationId, teamFromRepo);
         return teamFromRepo;
     }
 
@@ -116,7 +116,7 @@ public class TeamService {
 
         team.getMembers().remove(employee);
         employee.setTeam(null);
-        if ( leader != null && employee.getId() == leader.getId()) {
+        if (leader != null && employee.getId() == leader.getId()) {
             leader.setRole(Role.EMPLOYEE);
             team.setLeader(null);
         }
@@ -167,14 +167,12 @@ public class TeamService {
         return update(team);
     }
 
-
     // region Helper Methods
 
     private void ensureTeamHasLeader(int teamId) throws BaseException {
         Team team = get(teamId);
         if (team.getLeader() == null) {
-            throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER,
-                    "Given team has no leader");
+            throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER, "Given team has no leader");
         }
     }
 
@@ -209,6 +207,15 @@ public class TeamService {
         Organization organization = team.getOrganization();
         organization.getTeams().remove(team);
         organizationService.update(organization);
+    }
+
+    private void addTeamToOrganization(int organizationId, Team team) throws BaseException {
+        Organization organization = organizationService.get(organizationId);
+        organization.getTeams().add(team);
+        Organization updatedOrganization = organizationService.update(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
+        }
     }
 
     // endregion

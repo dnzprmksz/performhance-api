@@ -1,6 +1,7 @@
 --                     ORGANIZATION INSERTIONS                     --
 INSERT INTO `organization`(name, number_of_employees) VALUES ('Google', 0);
 INSERT INTO `organization`(name, number_of_employees) VALUES ('Monitise', 0);
+INSERT INTO `organization`(name, number_of_employees) VALUES ('Pozitron', 0);
 
 
 --                       JOB TITLE INSERTIONS                      --

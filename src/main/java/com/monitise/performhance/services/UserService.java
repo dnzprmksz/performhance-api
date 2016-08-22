@@ -82,8 +82,8 @@ public class UserService {
 
     public void remove(int userId) throws BaseException {
         ensureExistence(userId);
-        userRepository.delete(userId);
         removeUserFromOrganization(userId);
+        userRepository.delete(userId);
     }
 
     public User update(User user) throws BaseException {
