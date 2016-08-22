@@ -85,7 +85,6 @@ public class OrganizationService {
         return organizationId == teamOrganizationId;
     }
 
-    // TODO: TEST THIS METHOD
     public Organization addEmployee(int organizationId, int employeeId) throws BaseException {
         Organization organization = organizationRepository.findOne(organizationId);
         User employee = userService.get(employeeId);
@@ -99,28 +98,6 @@ public class OrganizationService {
         return updatedOrganization;
     }
 
-    // TODO: TEST THIS METHOD
-    public Organization addTeam(int organizationId, Team team) throws BaseException {
-        Organization organization = get(organizationId);
-        organization.getTeams().add(team);
-        Organization updatedOrganization = organizationRepository.save(organization);
-        if (updatedOrganization == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
-        }
-        return updatedOrganization;
-    }
-
-    public Organization addCriteria(int organizationId, Criteria criteria) throws BaseException {
-        Organization organization = get(organizationId);
-        organization.getCriteriaList().add(criteria);
-        Organization updatedOrganization = organizationRepository.save(organization);
-        if (updatedOrganization == null) {
-            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add given criteria to given organization.");
-        }
-        return updatedOrganization;
-    }
-
-    // TODO: TEST THIS METHOD
     public Organization setManager(int organizationId, int managerId) throws BaseException {
         Organization organization = organizationRepository.findOne(organizationId);
         User manager = userService.get(managerId);

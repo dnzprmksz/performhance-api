@@ -1,16 +1,20 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.matcher.CustomMatcher;
 import com.monitise.performhance.repositories.JobTitleRepository;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +44,8 @@ public class UserServiceTest {
     private OrganizationRepository organizationRepository;
     @Autowired
     private JobTitleRepository jobTitleRepository;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
@@ -67,13 +73,15 @@ public class UserServiceTest {
         Assert.assertEquals(user.getSurname(), addedUser.getSurname());
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void add_employeeExistingUsername_shouldNotAdd() throws BaseException {
         Organization monitise = organizationRepository.findOne(2);
         JobTitle iosDev = jobTitleRepository.findOne(3);
         User user = new User("Ali", "Yılmaz", monitise, iosDev, "monitise.manager", "123");
-        User addedUser = userService.addEmployee(user);
+
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_USERNAME_ALREADY_TAKEN));
+        userService.addEmployee(user);
     }
 
     @Test(expected = BaseException.class)

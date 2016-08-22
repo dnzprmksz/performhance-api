@@ -86,7 +86,7 @@ public class TeamService {
         if (teamFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given team.");
         }
-        organizationService.addTeam(organizationId, teamFromRepo);
+        addTeamToOrganization(organizationId, teamFromRepo);
         return teamFromRepo;
     }
 
@@ -207,6 +207,15 @@ public class TeamService {
         Organization organization = team.getOrganization();
         organization.getTeams().remove(team);
         organizationService.update(organization);
+    }
+
+    private void addTeamToOrganization(int organizationId, Team team) throws BaseException {
+        Organization organization = organizationService.get(organizationId);
+        organization.getTeams().add(team);
+        Organization updatedOrganization = organizationService.update(organization);
+        if (updatedOrganization == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
+        }
     }
 
     // endregion
