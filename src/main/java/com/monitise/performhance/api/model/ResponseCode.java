@@ -60,6 +60,8 @@ public class ResponseCode {
     public static final int CRITERIA_DOES_NOT_EXIST_IN_USER = 1508;
     public static final int CRITERIA_EXISTS_IN_SOME_USERS = 1509;
     public static final int CRITERIA_BELONGS_TO_ANOTHER_ORGANIZATION = 1510;
+    public static final int CRITERIA_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS = 1511;
+    public static final int CRITERIA_CAN_NOT_BE_DELETED = 1512;
 
     /**
      * REVIEW RELATED RESPONSE CODES.
@@ -72,7 +74,7 @@ public class ResponseCode {
     public static final int REVIEW_SAME_USER = 1606;
 
     /**
-     * RELATIONSHIP RELAETED RESPONSE CODES.
+     * RELATIONSHIP RELATED RESPONSE CODES.
      */
     public static final int RELATIONSHIP_MANAGER_REVIEW_UNSATISFIED = 1701;
     public static final int RELATIONSHIP_TEAM_LEADER_REVIEW_UNSATISFIED = 1702;

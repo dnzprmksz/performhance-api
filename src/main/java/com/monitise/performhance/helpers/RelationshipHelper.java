@@ -150,4 +150,14 @@ public class RelationshipHelper {
                     "Given team and criteria belong to different organizations.");
         }
     }
+
+    public void ensureUserCriteriaSameOrganization(int userId, int criteriaId) throws BaseException {
+        User user = userService.get(userId);
+        Criteria criteria = criteriaService.get(criteriaId);
+        if (user.getOrganization().getId() != criteria.getOrganization().getId()) {
+            throw new BaseException(ResponseCode.CRITERIA_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS,
+                    "Given team and criteria belong to different organizations.");
+        }
+    }
+
 }

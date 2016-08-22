@@ -24,4 +24,8 @@ public interface UserRepository extends CrudRepository<User, Integer>, JpaSpecif
     @Query(value = "SELECT id FROM user WHERE job_title_id = ?1", nativeQuery = true)
     List<Integer> findAllByJobTitleIdSelectUserId(int jobTitleId);
 
+    @Query(value = "SELECT user_id FROM user_criteria_list WHERE criteria_list_id = ?1", nativeQuery = true)
+    List<Integer> findAllByCriteriaIdSelectUserId(int criteriaId);
+
+
 }

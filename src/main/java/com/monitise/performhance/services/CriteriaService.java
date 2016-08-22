@@ -6,6 +6,7 @@ import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.repositories.CriteriaRepository;
+import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class CriteriaService {
     private OrganizationService organizationService;
     @Autowired
     private RelationshipHelper relationshipHelper;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Criteria> getAll() {
         return criteriaRepository.findAll();
@@ -54,6 +57,11 @@ public class CriteriaService {
 
     public void remove(int criteriaId) throws BaseException {
         ensureExistence(criteriaId);
+        List<Integer> userIdList = userRepository.findAllByCriteriaIdSelectUserId(criteriaId);
+        if (userIdList.size() > 0) {
+            throw new BaseException(ResponseCode.CRITERIA_CAN_NOT_BE_DELETED,
+                    "Criteria with given id is assigned to some users.");
+        }
         criteriaRepository.delete(criteriaId);
     }
 
@@ -64,6 +72,7 @@ public class CriteriaService {
     }
 
     public User assignCriteriaToUserById(int criteriaId, int userId) throws BaseException {
+        relationshipHelper.ensureUserCriteriaSameOrganization(userId, criteriaId);
         User user = userService.get(userId);
         Criteria criteria = get(criteriaId);
         checkExistenceInUser(user, criteria);
@@ -109,6 +118,7 @@ public class CriteriaService {
 
 
     public void removeCriteriaFromUserById(int criteriaId, int userId) throws BaseException {
+        relationshipHelper.ensureUserCriteriaSameOrganization(userId, criteriaId);
         User user = userService.get(userId);
         Criteria criteria = get(criteriaId);
         List<Criteria> criteriaList = user.getCriteriaList();

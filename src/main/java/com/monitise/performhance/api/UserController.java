@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,6 @@ public class UserController {
     public Response<SimplifiedUser> addEmployee(@RequestBody AddUserRequest addUserRequest) throws BaseException {
         User manager = securityHelper.getAuthenticatedUser();
         int organizationId = manager.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
         Organization organization = organizationService.get(organizationId);
         validateUserRequest(organization, addUserRequest);
         JobTitle jobTitle = jobTitleService.get(addUserRequest.getJobTitleId());
@@ -156,9 +156,8 @@ public class UserController {
     @RequestMapping(value = "/{userId}/criteria/{criteriaId}", method = RequestMethod.POST)
     public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int userId,
                                                                @PathVariable int criteriaId) throws BaseException {
-        int organizationId = userService.get(userId).getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
+        securityHelper.checkAuthentication(criteriaId);
+        securityHelper.checkAuthentication(userId);
         User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
 
         CriteriaUserResponse criteriaUserResponse = CriteriaUserResponse.fromUser(userFromService);
@@ -172,9 +171,8 @@ public class UserController {
     @RequestMapping(value = "/{userId}/criteria/{criteriaId}", method = RequestMethod.DELETE)
     public Response<Object> removeCriteriaFromUser(@PathVariable int userId,
                                                    @PathVariable int criteriaId) throws BaseException {
-        int organizationId = userService.get(userId).getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
-        relationshipHelper.ensureOrganizationCriteriaRelationship(organizationId, criteriaId);
+        securityHelper.checkAuthentication(userId);
+        securityHelper.checkAuthentication(criteriaId);
 
         criteriaService.removeCriteriaFromUserById(criteriaId, userId);
         Response<Object> response = new Response<>();
