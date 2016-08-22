@@ -10,7 +10,7 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.SimplifiedOrganization;
 import com.monitise.performhance.api.model.SimplifiedTeam;
-import com.monitise.performhance.api.model.UpdateOrganizatonRequest;
+import com.monitise.performhance.api.model.UpdateOrganizationRequest;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
@@ -109,9 +109,9 @@ public class OrganizationController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{organizationId}", method = RequestMethod.PUT)
     public Response<OrganizationResponse> update(@PathVariable int organizationId,
-                                                 @RequestBody UpdateOrganizatonRequest updateOrganizatonRequest) throws BaseException {
+                                                 @RequestBody UpdateOrganizationRequest updateOrganizationRequest) throws BaseException {
         securityHelper.checkAuthentication(organizationId);
-        organizationService.updateFromRequest(updateOrganizatonRequest, organizationId);
+        organizationService.updateFromRequest(updateOrganizationRequest, organizationId);
         Organization organization = organizationService.get(organizationId);
 
         OrganizationResponse organizationResponse = OrganizationResponse.fromOrganization(organization);

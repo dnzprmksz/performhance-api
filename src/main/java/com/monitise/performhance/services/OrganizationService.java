@@ -1,7 +1,7 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
-import com.monitise.performhance.api.model.UpdateOrganizatonRequest;
+import com.monitise.performhance.api.model.UpdateOrganizationRequest;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
@@ -65,10 +65,10 @@ public class OrganizationService {
         return organizationFromRepo;
     }
 
-    public Organization updateFromRequest(UpdateOrganizatonRequest updateOrganizatonRequest, int organizationId)
+    public Organization updateFromRequest(UpdateOrganizationRequest updateOrganizationRequest, int organizationId)
             throws BaseException {
         Organization organization = get(organizationId);
-        String name = updateOrganizatonRequest.getName();
+        String name = updateOrganizationRequest.getName();
         if (name != null && !name.trim().equals("")) {
             organization.setName(name);
         }

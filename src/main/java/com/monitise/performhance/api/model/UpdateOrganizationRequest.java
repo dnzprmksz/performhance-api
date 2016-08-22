@@ -1,10 +1,10 @@
 package com.monitise.performhance.api.model;
 
-public class UpdateOrganizatonRequest {
+public class UpdateOrganizationRequest {
 
     private String name;
 
-    public UpdateOrganizatonRequest() {
+    public UpdateOrganizationRequest() {
     }
 
     public String getName() {
