@@ -2,6 +2,7 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
+import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.UserRepository;
@@ -20,6 +21,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private JobTitleService jobTitleService;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -110,6 +113,28 @@ public class UserService {
         return addedManager;
     }
 
+    public User updateFromRequest(UpdateUserRequest updateUserRequest, User user) throws BaseException {
+        String name = updateUserRequest.getName();
+        String surname = updateUserRequest.getSurname();
+        String password = updateUserRequest.getPassword();
+        int jobTitleId = updateUserRequest.getJobTitleId();
+
+        if (!isNullOrEmpty(name)) {
+            user.setName(name);
+        }
+        if (!isNullOrEmpty(surname)) {
+            user.setSurname(surname);
+        }
+        if (jobTitleId > 0) {
+            user.setJobTitle(jobTitleService.get(jobTitleId));
+        }
+        if (!isNullOrEmpty(password)) {
+            user.setPassword(password);
+        }
+
+        return update(user);
+    }
+
     // region Helper Methods
 
     private User addUser(User user) throws BaseException {
@@ -133,6 +158,10 @@ public class UserService {
         if (userFromRepo == null) {
             throw new BaseException(ResponseCode.USER_ID_DOES_NOT_EXIST, "A user with given ID does not exist.");
         }
+    }
+
+    private boolean isNullOrEmpty(String str) {
+        return (str == null || str.trim().equals(""));
     }
 
     // endregion

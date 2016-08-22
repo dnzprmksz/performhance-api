@@ -8,6 +8,8 @@ import com.monitise.performhance.api.model.EmployeeScoreResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.SimplifiedUser;
+import com.monitise.performhance.api.model.UpdateUserRequest;
+import com.monitise.performhance.api.model.UserResponse;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
@@ -117,6 +119,21 @@ public class UserController {
         userService.remove(userId);
 
         Response response = new Response<>();
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
+    public Response<UserResponse> updateUser(@PathVariable int userId, @RequestBody UpdateUserRequest updateUserRequest)
+            throws BaseException {
+        User user = userService.get(userId);
+        securityHelper.checkAuthentication(user.getOrganization().getId());
+        User userFromService = userService.updateFromRequest(updateUserRequest, user);
+
+        UserResponse userResponse = UserResponse.fromUser(userFromService);
+        Response<UserResponse> response = new Response<>();
+        response.setData(userResponse);
         response.setSuccess(true);
         return response;
     }
