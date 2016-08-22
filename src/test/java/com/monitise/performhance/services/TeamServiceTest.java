@@ -6,7 +6,7 @@ import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
-import org.hibernate.validator.cfg.defs.AssertTrueDef;
+import com.monitise.performhance.repositories.UserRepository;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,9 +32,9 @@ import java.util.List;
 public class TeamServiceTest {
 
     @Autowired
-    private UserService userService;
-    @Autowired
     private TeamService teamService;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Test
@@ -75,9 +75,9 @@ public class TeamServiceTest {
     public void deleteTeam_shouldDelete() throws BaseException {
         teamService.deleteTeam(1);
 
-        User pelin = userService.get(2);
-        User faruk = userService.get(3);
-        User pelya = userService.get(4);
+        User pelin = userRepository.findOne(2);
+        User faruk = userRepository.findOne(3);
+        User pelya = userRepository.findOne(4);
 
         Assert.assertEquals(Role.EMPLOYEE, pelin.getRole());
         Assert.assertNull(pelin.getTeam());
@@ -109,7 +109,7 @@ public class TeamServiceTest {
         Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
         Assert.assertTrue(listContainsUser(members, 5, "Fatih", "Songul"));
 
-        User fatih = userService.get(5);
+        User fatih = userRepository.findOne(5);
         Assert.assertEquals(1, fatih.getTeam().getId());
     }
 
@@ -214,7 +214,7 @@ public class TeamServiceTest {
     public void removeEmployeeFromTeam_employeeIsTeamLeader_shouldRemove() throws BaseException {
         teamService.removeEmployeeFromTeam(2, 1);
 
-        User pelin = userService.get(2);
+        User pelin = userRepository.findOne(2);
         Assert.assertEquals(Role.EMPLOYEE, pelin.getRole());
         Assert.assertNull(pelin.getTeam());
 
@@ -230,7 +230,7 @@ public class TeamServiceTest {
 
         Team team = teamService.get(1);
         List<User> members = team.getMembers();
-        User faruk = userService.get(3);
+        User faruk = userRepository.findOne(3);
 
         Assert.assertNull(faruk.getTeam());
         Assert.assertEquals(2, members.size());

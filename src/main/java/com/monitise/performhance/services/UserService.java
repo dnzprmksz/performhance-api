@@ -3,6 +3,7 @@ package com.monitise.performhance.services;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.UpdateUserRequest;
+import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.UserRepository;
@@ -23,6 +24,8 @@ public class UserService {
     private OrganizationService organizationService;
     @Autowired
     private JobTitleService jobTitleService;
+    @Autowired
+    private UserService userService;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -77,10 +80,10 @@ public class UserService {
         return userRepository.findAll(filter);
     }
 
-    // TODO: Remove user from organization as well
-    public void remove(int id) throws BaseException {
-        ensureExistence(id);
-        userRepository.delete(id);
+    public void remove(int userId) throws BaseException {
+        ensureExistence(userId);
+        userRepository.delete(userId);
+        removeUserFromOrganization(userId);
     }
 
     public User update(User user) throws BaseException {
@@ -162,6 +165,13 @@ public class UserService {
 
     private boolean isNullOrEmpty(String str) {
         return (str == null || str.trim().equals(""));
+    }
+
+    private void removeUserFromOrganization(int userId) throws BaseException {
+        User user = userService.get(userId);
+        Organization organization = user.getOrganization();
+        organization.getUsers().remove(user);
+        organizationService.update(organization);
     }
 
     // endregion
