@@ -9,16 +9,4 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableAspectJAutoProxy
 @ComponentScan("com.monitise.performhance")
 public class AppConfig extends WebMvcConfigurerAdapter {
-
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//
-//        registry.addInterceptor(new LoggerInterceptor());
-//
-//    }
-
-//    @Bean
-//    public LogAspect logAspect() {
-//        return new LogAspect();
-//    }
 }

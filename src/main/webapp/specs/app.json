@@ -111,6 +111,12 @@
               "$ref": "#/definitions/Response"
             }
           },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
           "404": {
             "description": "An organization with given id does not exist",
             "schema": {
