@@ -82,6 +82,42 @@
             }
           }
         }
+      },
+      "put": {
+        "operationId": "updateOrganization",
+        "description": "Updates the `Organization` with given id",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Organization` to update"
+          },
+          {
+            "name": "updateOrganizationRequest",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateOrganizationRequest"
+            },
+            "required": true,
+            "description": "Properties to update"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "An organization with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
       }
     },
     "/organizations/{organizationId}/jobTitles": {
@@ -282,6 +318,45 @@
             "type": "integer",
             "required": true,
             "description": "Id of the `User` object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a response that contains a `User` object"
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "A `User` with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateUser",
+        "description": "Updates the `User` with given id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User` object"
+          },
+          {
+            "name": "updateUserRequest",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserRequest"
+            },
+            "required": true,
+            "description": "Properties to update"
           }
         ],
         "responses": {
@@ -1674,10 +1749,6 @@
           "type": "integer",
           "description": "The `JobTitle` id of the employee"
         },
-        "organizationId": {
-          "type": "integer",
-          "description": "The `Organization` id that employee will be added"
-        },
         "username": {
           "type": "string",
           "description": "Username that employee will use to login"
@@ -1694,10 +1765,6 @@
         "name": {
           "type": "string",
           "description": "Name of the `Team` to be created"
-        },
-        "organizationId": {
-          "type": "integer",
-          "description": "Id of `Organization` that `Team` will be added into"
         }
       }
     },
@@ -1707,10 +1774,6 @@
         "title": {
           "type": "string",
           "description": "Name of the `JobTitle`"
-        },
-        "organizationId": {
-          "type": "integer",
-          "description": "Id of `Organization` that `JobTitle` will be added into"
         }
       }
     },
@@ -1720,10 +1783,6 @@
         "criteria": {
           "type": "string",
           "description": "The criteria description"
-        },
-        "organizationId": {
-          "type": "integer",
-          "description": "The organization that criteria will be added"
         }
       }
     },
@@ -1760,6 +1819,36 @@
         "title": {
           "type": "string",
           "description": "Name of the Job Title"
+        }
+      }
+    },
+    "UpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the person"
+        },
+        "surname": {
+          "type": "string",
+          "description": "Surname of the person"
+        },
+        "jobTitleId": {
+          "type": "integer",
+          "description": "Job Title id of the user"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password of the user"
+        }
+      }
+    },
+    "UpdateOrganizationRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the Organization"
         }
       }
     }

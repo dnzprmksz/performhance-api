@@ -1,6 +1,7 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.UpdateOrganizationRequest;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
@@ -57,7 +58,21 @@ public class OrganizationService {
 
     public Organization update(Organization organization) throws BaseException {
         ensureExistence(organization.getId());
-        return organizationRepository.save(organization);
+        Organization organizationFromRepo = organizationRepository.save(organization);
+        if (organizationFromRepo == null) {
+            throw new BaseException(ResponseCode.UNEXPECTED, "Could not update given organization.");
+        }
+        return organizationFromRepo;
+    }
+
+    public Organization updateFromRequest(UpdateOrganizationRequest updateOrganizationRequest, int organizationId)
+            throws BaseException {
+        Organization organization = get(organizationId);
+        String name = updateOrganizationRequest.getName();
+        if (name != null && !name.trim().equals("")) {
+            organization.setName(name);
+        }
+        return update(organization);
     }
 
     public boolean isJobTitleDefined(int organizationId, int jobTitleId) throws BaseException {

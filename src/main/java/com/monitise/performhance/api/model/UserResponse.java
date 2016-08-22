@@ -27,6 +27,13 @@ public class UserResponse {
         }
     }
 
+    public static UserResponse fromUser(User user) {
+        if (user == null) {
+            return null;
+        }
+        return new UserResponse(user);
+    }
+
     // region Getters & Setters
 
     public int getId() {
