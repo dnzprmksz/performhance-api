@@ -260,6 +260,26 @@ public class CriteriaServiceTest {
         criteriaService.get(TEST_CRITERIA_ID);
     }
 
+    @Test
+    public void update() throws  BaseException {
+        Criteria manners = criteriaService.get(1);
+        manners.setCriteria("Shop Lifting Skills");
+        criteriaService.update(manners);
+
+        Criteria fetched = criteriaService.get(1);
+        Assert.assertEquals("Shop Lifting Skills", fetched.getCriteria());
+        Assert.assertEquals(1, fetched.getOrganization().getId());
+    }
+
+    @Test
+    public void update_emptyName_shouldNotUpdate() throws  BaseException {
+        Criteria manners = criteriaService.get(1);
+        manners.setCriteria("");
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_EMPTY));
+        criteriaService.update(manners);
+
+    }
+
     // Returns added criteria's id.
     private int addTestCriteria(int organizationId) throws BaseException {
         Organization organization = organizationRepository.findOne(organizationId);
