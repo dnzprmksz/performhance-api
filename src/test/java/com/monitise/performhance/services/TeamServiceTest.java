@@ -9,6 +9,7 @@ import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.UserRepository;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +38,7 @@ public class TeamServiceTest {
 
 
     @Test
-    public void getAllTeamsOfAnOrganization() throws BaseException {
+    public void getListFilterByOrganizationId_allTeamsOfAnOrganization() throws BaseException {
         List<Team> teams = teamService.getListFilterByOrganizationId(1);
 
         Assert.assertNotNull(teams);
@@ -47,7 +48,7 @@ public class TeamServiceTest {
     }
 
     @Test
-    public void getExistingTeamById() throws BaseException {
+    public void get_existingTeamById() throws BaseException {
         Team team = teamService.get(1);
         List<User> members = team.getMembers();
         User leader = team.getLeader();
@@ -66,12 +67,12 @@ public class TeamServiceTest {
     }
 
     @Test(expected = BaseException.class)
-    public void getNonExistingTeamById() throws BaseException {
+    public void get_nonExistingTeamById() throws BaseException {
         Team team = teamService.get(1123);
     }
 
     @Test(expected = BaseException.class)
-    public void deleteTeam() throws BaseException {
+    public void deleteTeam_shouldDelete() throws BaseException {
         teamService.deleteTeam(1);
 
         User pelin = userRepository.findOne(2);
@@ -89,12 +90,12 @@ public class TeamServiceTest {
     }
 
     @Test(expected = BaseException.class)
-    public void deleteNonExistingTeam() throws BaseException {
+    public void deleteTeam_nonExistingTeam_shouldNotDelete() throws BaseException {
         teamService.deleteTeam(5000);
     }
 
     @Test
-    public void assignEmployee() throws BaseException {
+    public void assignEmployeeToTeam_shouldAssign() throws BaseException {
         teamService.assignEmployeeToTeam(5, 1);
         Team team = teamService.get(1);
         List<User> members = team.getMembers();
@@ -113,27 +114,27 @@ public class TeamServiceTest {
     }
 
     @Test(expected = BaseException.class)
-    public void assignEmployeeThatIsAlreadyInTheTeam() throws BaseException {
+    public void assignEmployeeToTeam_employeeAlreadyInTheTeam_shouldNotAssign() throws BaseException {
         teamService.assignEmployeeToTeam(3, 1);
     }
 
     @Test(expected = BaseException.class)
-    public void assignNonExistingEmployeeToATeam() throws BaseException {
+    public void assignEmployeeToTeam_nonExistingEmployee_shouldNotAssign() throws BaseException {
         teamService.assignEmployeeToTeam(5005, 1);
     }
 
     @Test(expected = BaseException.class)
-    public void assignEmployeeToANonExistinTeam() throws BaseException {
+    public void assignEmployeeToTeam_nonExistingTeam_shouldNotAssign() throws BaseException {
         teamService.assignEmployeeToTeam(5, 9876);
     }
 
     @Test(expected = BaseException.class)
-    public void assignEmployeeFromAnotherOrganization() throws BaseException {
+    public void assignEmployeeToTeam_assignEmployeeFromAnotherOrganization() throws BaseException {
         teamService.assignEmployeeToTeam(7, 1);
     }
 
     @Test// Team leader is a member in this case.
-    public void assignTeamLeader() throws BaseException {
+    public void assignLeaderToTeam_shouldAssign() throws BaseException {
         teamService.assignLeaderToTeam(3, 1);
 
         Team team = teamService.get(1);
@@ -149,8 +150,8 @@ public class TeamServiceTest {
         Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
     }
 
-    @Test// Team leader is not a member here.
-    public void assignTeamLeaderThatIsNotAMember() throws BaseException {
+    @Test// Team leader is not a member here. Should add the leader to team --> assign as leader.
+    public void assignLeaderToTeam_teamLeaderNotAMember_shouldAssign() throws BaseException {
         teamService.assignLeaderToTeam(5, 1);
 
         Team team = teamService.get(1);
@@ -169,22 +170,22 @@ public class TeamServiceTest {
     }
 
     @Test(expected = BaseException.class)
-    public void assignNonExistingUserAsLeader() throws BaseException {
+    public void assignLeaderToTeam_nonExistingUser_shouldNotAssign() throws BaseException {
         teamService.assignLeaderToTeam(10000, 1);
     }
 
     @Test(expected = BaseException.class)
-    public void assignLeaderToNonExistingTeam() throws BaseException {
+    public void assignLeaderToTeam_nonExistingTeam_shouldNotAssign() throws BaseException {
         teamService.assignLeaderToTeam(3, 10000);
     }
 
     @Test(expected = BaseException.class)
-    public void assignLeaderFromAnotherOrganization() throws BaseException {
+    public void assignLeaderToTeam_leaderFromOtherOrganization_shouldNotAssign() throws BaseException {
         teamService.assignLeaderToTeam(7, 1);
     }
 
     @Test
-    public void removeLeadershipFromTeam() throws BaseException {
+    public void removeLeadershipFromTeam_shouldRemove() throws BaseException {
         teamService.removeLeadershipFromTeam(1);
 
         Team team = teamService.get(1);
@@ -200,17 +201,17 @@ public class TeamServiceTest {
     }
 
     @Test(expected = BaseException.class)
-    public void removeLeadershipFromATeamThatHasNoLeader() throws BaseException {
+    public void removeLeadershipFromTeam_teamHasNoLeader_shouldNotRemove() throws BaseException {
         teamService.removeLeadershipFromTeam(3);
     }
 
     @Test(expected = BaseException.class)
-    public void removeLeadershipFromNonExistingTeam() throws BaseException {
+    public void removeLeadershipFromTeam_nonExistingTeam_shouldNotRemove() throws BaseException {
         teamService.removeLeadershipFromTeam(181818);
     }
 
     @Test
-    public void removeReaderFromTeam() throws BaseException {
+    public void removeEmployeeFromTeam_employeeIsTeamLeader_shouldRemove() throws BaseException {
         teamService.removeEmployeeFromTeam(2, 1);
 
         User pelin = userRepository.findOne(2);
@@ -224,7 +225,7 @@ public class TeamServiceTest {
     }
 
     @Test
-    public void removeEmployeeFromTeam() throws BaseException {
+    public void removeEmployeeFromTeam_shouldRemove() throws BaseException {
         teamService.removeEmployeeFromTeam(3, 1);
 
         Team team = teamService.get(1);
@@ -238,23 +239,22 @@ public class TeamServiceTest {
     }
 
     @Test(expected = BaseException.class)
-    public void removeNonExistingEmployeeFromTeam() throws BaseException {
+    public void removeEmployeeFromTeam_nonExistingEmployee_shouldNotRemove() throws BaseException {
         teamService.removeEmployeeFromTeam(10001, 1);
     }
 
     @Test(expected = BaseException.class)
-    public void removeEmployeeFromNonExistingTeam() throws BaseException {
+    public void removeEmployeeFromTeam_nonExistingTeam_shouldNotRemove() throws BaseException {
         teamService.removeEmployeeFromTeam(2, 10001);
     }
 
     @Test(expected = BaseException.class)
-    public void removeEmployeeOfAnotherOrganizationFromTeam() throws BaseException {
+    public void removeEmployeeFromTeam_employeeFromOtherOrganization_shouldNotRemove() throws BaseException {
         teamService.removeEmployeeFromTeam(7, 1);
-
     }
 
     @Test
-    public void searchTeamsWithUndefTeamName() {
+    public void searchTeams_undefTeamName() {
         String undef = TeamService.UNDEFINED;
         List<Team> teams = teamService.searchTeams(1, undef);
 
@@ -264,22 +264,22 @@ public class TeamServiceTest {
     }
 
     @Test
-    public void searchTeamsWithPartialTeamName_1() {
+    public void searchTeams_partialTeamName_1() {
         List<Team> teams = teamService.searchTeams(1, "ea");
 
         Assert.assertEquals(2, teams.size());
         Assert.assertTrue(listContainsTeam(teams, 1, "TeamPelin", 1, 3));
         Assert.assertTrue(listContainsTeam(teams, 3, "GoogleLeaderless", 1, 0));
+        ExpectedException.none();
     }
 
     @Test
-    public void searchTeamsWithPartialTeamName_2() {
+    public void searchTeams_partialTeamName_2() {
         List<Team> teams = teamService.searchTeams(1, "team");
 
         Assert.assertEquals(1, teams.size());
         Assert.assertTrue(listContainsTeam(teams, 1, "TeamPelin", 1, 3));
     }
-
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {
         for (User user : list) {
