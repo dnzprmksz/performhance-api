@@ -109,11 +109,16 @@ public class TeamService {
     public Team removeEmployeeFromTeam(int employeeId, int teamId) throws BaseException {
         Team team = get(teamId);
         User employee = userService.get(employeeId);
+        User leader = team.getLeader();
         relationshipHelper.ensureTeamUserSameOrganization(teamId, employeeId);
         relationshipHelper.ensureTeamEmployeeRelationShip(teamId, employeeId);
 
         team.getMembers().remove(employee);
         employee.setTeam(null);
+        if ( leader != null && employee.getId() == leader.getId()) {
+            leader.setRole(Role.EMPLOYEE);
+            team.setLeader(null);
+        }
 
         Team updatedTeam = teamRepository.save(team);
         User userFromRepo = userRepository.save(employee);

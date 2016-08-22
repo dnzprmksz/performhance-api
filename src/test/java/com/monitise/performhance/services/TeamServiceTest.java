@@ -1,7 +1,6 @@
 package com.monitise.performhance.services;
 
 
-import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.monitise.performhance.AppConfig;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.Team;
@@ -11,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AppConfig.class)
+@SpringBootTest(classes = AppConfig.class)
 @WebAppConfiguration
 @SqlGroup({
         @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:populate.sql"),
@@ -76,7 +75,7 @@ public class TeamServiceTest {
 
         User pelin = userService.get(2);
         User faruk = userService.get(3);
-        User pelya = userService.get(3);
+        User pelya = userService.get(4);
 
         Assert.assertEquals(Role.EMPLOYEE, pelin.getRole());
         Assert.assertNull(pelin.getTeam());
@@ -201,6 +200,11 @@ public class TeamServiceTest {
     }
 
     @Test
+    public void removeLeadershipFromATeamThatHasNoLeader() throws BaseException {
+        teamService.removeLeadershipFromTeam(3);
+    }
+
+    @Test
     public void removeLeadershipFromNonExistingTeam() throws BaseException {
         teamService.removeLeadershipFromTeam(181818);
     }
@@ -219,7 +223,36 @@ public class TeamServiceTest {
 
     }
 
+    @Test
+    public void removeEmployeeFromTeam() throws BaseException {
+        teamService.removeEmployeeFromTeam(3, 1);
 
+        Team team = teamService.get(1);
+        List<User> members = team.getMembers();
+        User faruk = userService.get(3);
+
+        Assert.assertNull(faruk.getTeam());
+        Assert.assertEquals(2, members.size());
+        Assert.assertTrue(listContainsUser(members, 2, "Pelin", "Sonmez"));
+        Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
+    }
+
+    @Test
+    public void removeNonExistingEmployeeFromTeam() throws BaseException {
+        teamService.removeEmployeeFromTeam(10001, 1);
+    }
+
+    @Test
+    public void removeEmployeeFromNonExistingTeam() throws BaseException {
+        teamService.removeEmployeeFromTeam(2, 10001);
+    }
+
+    @Test
+    public void removeEmployeeOfAnotherOrganizationFromTeam() throws BaseException {
+        teamService.removeEmployeeFromTeam(7, 1);
+
+    }
+    
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {
         for (User user : list) {
