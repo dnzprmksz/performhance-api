@@ -165,7 +165,7 @@ public class TeamService {
 
 
     private void ensureTeamHasLeader(int teamId) throws BaseException {
-        Team team = teamRepository.findOne(teamId);
+        Team team = get(teamId);
         if (team.getLeader() == null) {
             throw new BaseException(ResponseCode.TEAM_HAS_NO_LEADER,
                     "Given team has no leader");

@@ -6,6 +6,7 @@ import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import org.hibernate.validator.cfg.defs.AssertTrueDef;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -167,17 +168,17 @@ public class TeamServiceTest {
 
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     public void assignNonExistingUserAsLeader() throws BaseException {
         teamService.assignLeaderToTeam(10000, 1);
     }
 
-    @Test
-    public void assignLeaderToNonExistinTeam() throws BaseException {
+    @Test(expected = BaseException.class)
+    public void assignLeaderToNonExistingTeam() throws BaseException {
         teamService.assignLeaderToTeam(3, 10000);
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     public void assignLeaderFromAnotherOrganization() throws BaseException {
         teamService.assignLeaderToTeam(7, 1);
     }
@@ -196,15 +197,14 @@ public class TeamServiceTest {
         Assert.assertTrue(listContainsUser(members, 2, "Pelin", "Sonmez"));
         Assert.assertTrue(listContainsUser(members, 3, "Faruk", "Gulmez"));
         Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
-        Assert.assertTrue(listContainsUser(members, 5, "Fatih", "Songul"));
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     public void removeLeadershipFromATeamThatHasNoLeader() throws BaseException {
         teamService.removeLeadershipFromTeam(3);
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     public void removeLeadershipFromNonExistingTeam() throws BaseException {
         teamService.removeLeadershipFromTeam(181818);
     }
@@ -237,22 +237,51 @@ public class TeamServiceTest {
         Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     public void removeNonExistingEmployeeFromTeam() throws BaseException {
         teamService.removeEmployeeFromTeam(10001, 1);
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     public void removeEmployeeFromNonExistingTeam() throws BaseException {
         teamService.removeEmployeeFromTeam(2, 10001);
     }
 
-    @Test
+    @Test(expected = BaseException.class)
     public void removeEmployeeOfAnotherOrganizationFromTeam() throws BaseException {
         teamService.removeEmployeeFromTeam(7, 1);
 
     }
-    
+
+    @Test
+    public void searchTeamsWithUndefTeamName() {
+        String undef = TeamService.UNDEFINED;
+        List<Team> teams = teamService.searchTeams(1, undef);
+
+        Assert.assertEquals(2, teams.size());
+        Assert.assertTrue(listContainsTeam(teams, 1, "TeamPelin", 1, 3));
+        Assert.assertTrue(listContainsTeam(teams, 3, "GoogleLeaderless", 1, 0));
+    }
+
+    @Test
+    public void searchTeamsWithPartialTeamName_1() {
+        List<Team> teams = teamService.searchTeams(1, "ea");
+
+        Assert.assertEquals(2, teams.size());
+        Assert.assertTrue(listContainsTeam(teams, 1, "TeamPelin", 1, 3));
+        Assert.assertTrue(listContainsTeam(teams, 3, "GoogleLeaderless", 1, 0));
+    }
+
+    @Test
+    public void searchTeamsWithPartialTeamName_2() {
+        List<Team> teams = teamService.searchTeams(1, "team");
+
+        Assert.assertEquals(1, teams.size());
+        Assert.assertTrue(listContainsTeam(teams, 1, "TeamPelin", 1, 3));
+    }
+
+
+
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {
         for (User user : list) {
