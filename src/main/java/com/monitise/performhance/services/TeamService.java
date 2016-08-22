@@ -2,6 +2,7 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
+import com.monitise.performhance.api.model.UpdateTeamRequest;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
@@ -160,9 +161,14 @@ public class TeamService {
         return updatedTeam;
     }
 
+    public Team updateFromRequest(int teamId, UpdateTeamRequest updateRequest) throws BaseException {
+        Team team = get(teamId);
+        team.setName(updateRequest.getName());
+        return update(team);
+    }
+
 
     // region Helper Methods
-
 
     private void ensureTeamHasLeader(int teamId) throws BaseException {
         Team team = get(teamId);

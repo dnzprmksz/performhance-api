@@ -70,7 +70,6 @@ public class TeamController {
     public Response<TeamResponse> addTeam(@RequestBody AddTeamRequest addTeamRequest) throws BaseException {
         User manager = securityHelper.getAuthenticatedUser();
         int organizationId = manager.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
 
         Organization organization = organizationService.get(organizationId);
         Team team = new Team(addTeamRequest.getName(), organization);
@@ -102,8 +101,8 @@ public class TeamController {
             throws BaseException {
         Team team = teamService.get(teamId);
         securityHelper.checkAuthentication(team.getOrganization().getId());
-        team.setName(updateTeamRequest.getName());
-        Team teamFromService = teamService.update(team);
+        validateUpdateTeamRequest(updateTeamRequest);
+        Team teamFromService = teamService.updateFromRequest(teamId, updateTeamRequest);
 
         TeamResponse teamResponse = TeamResponse.fromTeam(teamFromService);
         Response<TeamResponse> response = new Response<>();
@@ -227,4 +226,10 @@ public class TeamController {
         return message;
     }
 
+    private void validateUpdateTeamRequest(UpdateTeamRequest updateRequest) throws BaseException {
+        String name = updateRequest.getName();
+        if (name == null || name.equals("")) {
+            throw new BaseException(ResponseCode.INVALID_TEAM_NAME, "Team name can not be empty");
+        }
+    }
 }

@@ -37,6 +37,7 @@ public class ResponseCode {
     public static final int TEAM_HAS_NO_LEADER = 1304;
     public static final int USER_ALREADY_A_MEMBER = 1305;
     public static final int USER_IS_NOT_A_MEMBER = 1306;
+    public static final int INVALID_TEAM_NAME = 1307;
 
     /**
      * JOB TITLE RELATED RESPONSE CODES.
