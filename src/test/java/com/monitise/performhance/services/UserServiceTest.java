@@ -10,15 +10,23 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = AppConfig.class)
+@SpringBootTest(classes = AppConfig.class)
 @WebAppConfiguration
+@SqlGroup({
+        @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:populate.sql"),
+        @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+})
+@Transactional
 public class UserServiceTest {
 
     @Autowired
@@ -29,14 +37,6 @@ public class UserServiceTest {
     private OrganizationService organizationService;
     @Autowired
     private OrganizationRepository organizationRepository;
-
-    @Test
-    public void reallyjusttesting() throws BaseException {
-        Organization organization = organizationService.get(1);
-        Assert.assertEquals(organization.getName(), "Google");
-        Assert.assertEquals(organization.getNumberOfEmployees(), 0);
-    }
-
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
