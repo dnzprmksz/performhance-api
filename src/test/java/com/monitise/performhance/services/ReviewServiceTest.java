@@ -3,7 +3,6 @@ package com.monitise.performhance.services;
 import com.monitise.performhance.AppConfig;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
-import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;

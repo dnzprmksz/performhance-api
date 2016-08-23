@@ -59,9 +59,8 @@ public class UserController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Response<List<SimplifiedUser>> listEmployeesOfAnOrganization() throws BaseException {
-        User manager = securityHelper.getAuthenticatedUser();
-        int organizationId = manager.getOrganization().getId();
+    public Response<List<SimplifiedUser>> getAll() throws BaseException {
+        int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
         List<User> employees = userService.getByOrganizationId(organizationId);
 
         List<SimplifiedUser> simplifiedList = SimplifiedUser.fromUserList(employees);
@@ -73,9 +72,8 @@ public class UserController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response<SimplifiedUser> addEmployee(@RequestBody AddUserRequest addUserRequest) throws BaseException {
-        User manager = securityHelper.getAuthenticatedUser();
-        int organizationId = manager.getOrganization().getId();
+    public Response<SimplifiedUser> add(@RequestBody AddUserRequest addUserRequest) throws BaseException {
+        int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
         Organization organization = organizationService.get(organizationId);
         validateUserRequest(organization, addUserRequest);
         JobTitle jobTitle = jobTitleService.get(addUserRequest.getJobTitleId());
@@ -99,9 +97,9 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-    public Response<SimplifiedUser> getSingleUser(@PathVariable int userId) throws BaseException {
+    public Response<SimplifiedUser> get(@PathVariable int userId) throws BaseException {
+        checkAuthentication(userId);
         User user = userService.get(userId);
-        securityHelper.checkAuthentication(user.getOrganization().getId());
 
         SimplifiedUser responseUser = SimplifiedUser.fromUser(user);
         Response response = new Response();
@@ -112,11 +110,9 @@ public class UserController {
 
     @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
-    public Response<Object> deleteUser(@PathVariable int userId) throws BaseException {
-        User user = userService.get(userId);
-        securityHelper.checkAuthentication(user.getOrganization().getId());
+    public Response<Object> remove(@PathVariable int userId) throws BaseException {
+        checkAuthentication(userId);
         userService.remove(userId);
-
         Response response = new Response<>();
         response.setSuccess(true);
         return response;
@@ -124,11 +120,10 @@ public class UserController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
-    public Response<UserResponse> updateUser(@PathVariable int userId, @RequestBody UpdateUserRequest updateUserRequest)
-            throws BaseException {
-        User user = userService.get(userId);
-        securityHelper.checkAuthentication(user.getOrganization().getId());
-        User userFromService = userService.updateFromRequest(updateUserRequest, user);
+    public Response<UserResponse> update(@PathVariable int userId,
+                                         @RequestBody UpdateUserRequest updateUserRequest) throws BaseException {
+        checkAuthentication(userId);
+        User userFromService = userService.updateFromRequest(updateUserRequest, userId);
 
         UserResponse userResponse = UserResponse.fromUser(userFromService);
         Response<UserResponse> response = new Response<>();
@@ -140,8 +135,8 @@ public class UserController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{userId}/criteria", method = RequestMethod.GET)
     public Response<List<CriteriaResponse>> getUserCriteriaList(@PathVariable int userId) throws BaseException {
+        checkAuthentication(userId);
         User user = userService.get(userId);
-        securityHelper.checkAuthentication(user.getOrganization().getId());
         List<Criteria> criteriaList = user.getCriteriaList();
 
         List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(criteriaList);
@@ -155,8 +150,8 @@ public class UserController {
     @RequestMapping(value = "/{userId}/criteria/{criteriaId}", method = RequestMethod.POST)
     public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int userId,
                                                                @PathVariable int criteriaId) throws BaseException {
+        checkAuthentication(userId);
         securityHelper.checkAuthentication(criteriaId);
-        securityHelper.checkAuthentication(userId);
         User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
 
         CriteriaUserResponse criteriaUserResponse = CriteriaUserResponse.fromUser(userFromService);
@@ -170,9 +165,8 @@ public class UserController {
     @RequestMapping(value = "/{userId}/criteria/{criteriaId}", method = RequestMethod.DELETE)
     public Response<Object> removeCriteriaFromUser(@PathVariable int userId,
                                                    @PathVariable int criteriaId) throws BaseException {
-        securityHelper.checkAuthentication(userId);
+        checkAuthentication(userId);
         securityHelper.checkAuthentication(criteriaId);
-
         criteriaService.removeCriteriaFromUserById(criteriaId, userId);
         Response<Object> response = new Response<>();
         response.setSuccess(true);
@@ -181,8 +175,8 @@ public class UserController {
 
     @RequestMapping(value = "/{userId}/score", method = RequestMethod.GET)
     public Response<EmployeeScoreResponse> getEmployeeReviewScore(@PathVariable int userId) throws BaseException {
+        checkAuthentication(userId);
         User employee = userService.get(userId);
-        securityHelper.checkAuthentication(employee.getOrganization().getId());
 
         List<AverageCriteriaScore> criteriaScores = calculateCriteriaScores(employee);
         int reviewCount = employee.getReviews().size();
@@ -232,11 +226,18 @@ public class UserController {
 
     // region Helper Methods
 
+    private void checkAuthentication(int userId) throws BaseException {
+        User user = userService.get(userId);
+        Organization organization = user.getOrganization();
+        int organizationId = organization.getId();
+        securityHelper.checkAuthentication(organizationId);
+    }
+
     private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException {
         String name = employee.getName();
         String surname = employee.getSurname();
         if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
-            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "Empty user name is not allowed.");
+            throw new BaseException(ResponseCode.USER_USERNAME_DOES_NOT_EXIST, "Empty user name is not allowed.");
         }
         relationshipHelper.ensureOrganizationJobTitleRelationship(organization.getId(), employee.getJobTitleId());
     }

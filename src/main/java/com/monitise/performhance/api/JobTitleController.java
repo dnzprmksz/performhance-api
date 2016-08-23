@@ -62,8 +62,7 @@ public class JobTitleController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response<JobTitleResponse> addJobTitle(@RequestBody AddJobTitleRequest addJobTitleRequest)
-            throws BaseException {
+    public Response<JobTitleResponse> add(@RequestBody AddJobTitleRequest addJobTitleRequest) throws BaseException {
         int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitle = new JobTitle(addJobTitleRequest.getTitle(), organization);

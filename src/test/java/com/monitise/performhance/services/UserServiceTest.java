@@ -84,11 +84,12 @@ public class UserServiceTest {
         userService.addEmployee(user);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void addEmployee_managerUser_shouldNotAdd() throws BaseException {
         Organization monitise = organizationRepository.findOne(2);
         User user = new User("Ali", "Yılmaz", monitise, Role.MANAGER, "manager", "123");
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ROLE_INCORRECT));
         userService.addEmployee(user);
     }
 
@@ -107,11 +108,12 @@ public class UserServiceTest {
         Assert.assertEquals(user.getRole(), userFromService.getRole());
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void addManager_employeeUser_shouldNotAdd() throws BaseException {
         Organization pozitron = organizationRepository.findOne(3);
         User user = new User("Ahmet", "Han", pozitron, Role.EMPLOYEE, "ahmet.han", "123");
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ROLE_INCORRECT));
         userService.addManager(user);
     }
 
@@ -126,9 +128,10 @@ public class UserServiceTest {
 
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void get_nonExistingUserName() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
         userService.get(1884);
     }
 
@@ -141,26 +144,28 @@ public class UserServiceTest {
         Assert.assertEquals("Olmez", user.getSurname());
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void getByUsername_nonExistingUsername_shouldNotGet() throws BaseException {
-        User user = userService.getByUsername("bilge.sonmez");
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_USERNAME_DOES_NOT_EXIST));
+        userService.getByUsername("bilge.sonmez");
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void delete_existingId() throws BaseException {
-        User userBilgeOlmez = userService.get(7);
         userService.remove(7);
         Organization monitise = organizationRepository.findOne(2);
 
         Assert.assertFalse(listContainsUser(monitise.getUsers(), 7, "Bilge", "Olmez"));
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
         userService.get(7);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     @WithMockUser(roles = {"MANAGER"})
     public void delete_nonExistingId() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
         userService.remove(1884);
     }
 
@@ -173,7 +178,7 @@ public class UserServiceTest {
         updateUserRequest.setSurname("Yılmaz");
         updateUserRequest.setPassword("12345");
         updateUserRequest.setJobTitleId(5);
-        User userFromService = userService.updateFromRequest(updateUserRequest, user);
+        User userFromService = userService.updateFromRequest(updateUserRequest, 7);
 
         Assert.assertNotNull(userFromService);
         Assert.assertEquals(updateUserRequest.getName(), userFromService.getName());
