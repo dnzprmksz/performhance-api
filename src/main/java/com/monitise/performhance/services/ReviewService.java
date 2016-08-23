@@ -1,6 +1,7 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
@@ -18,16 +19,24 @@ public class ReviewService {
     private ReviewRepository reviewRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrganizationService organizationService;
+    @Autowired
+    private TeamService teamService;
 
     public List<Review> getAll() {
         return reviewRepository.findAll();
     }
 
-    public List<Review> getAllFilterByOrganizationId(int organizationId) {
+    public List<Review> getAllFilterByOrganizationId(int organizationId) throws BaseException{
+        // Make sure an organization with given id exists.
+        organizationService.get(organizationId);
         return reviewRepository.findByOrganizationId(organizationId);
     }
 
-    public List<Review> getAllFilterByTeamId(int teamId) {
+    public List<Review> getAllFilterByTeamId(int teamId) throws BaseException {
+        // Make sure a team with given id exists.
+        teamService.get(teamId);
         return reviewRepository.findByTeamId(teamId);
     }
 
@@ -48,11 +57,6 @@ public class ReviewService {
         employee.getReviews().add(review);
         userRepository.save(employee);
         return reviewFromRepo;
-    }
-
-    public Review update(Review review) throws BaseException {
-        ensureExistence(review.getId());
-        return reviewRepository.save(review);
     }
 
     public void remove(int reviewId) throws BaseException {
