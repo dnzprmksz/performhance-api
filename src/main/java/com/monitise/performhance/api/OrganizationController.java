@@ -61,7 +61,6 @@ public class OrganizationController {
     public Response<List<SimplifiedOrganization>> getAll() {
         List<Organization> list = organizationService.getAll();
         List<SimplifiedOrganization> responseList = SimplifiedOrganization.fromList(list);
-
         Response<List<SimplifiedOrganization>> response = new Response<>();
         response.setSuccess(true);
         response.setData(responseList);
@@ -97,9 +96,10 @@ public class OrganizationController {
 
     @RequestMapping(value = "/{organizationId}", method = RequestMethod.GET)
     public Response<OrganizationResponse> get(@PathVariable int organizationId) throws BaseException {
+        securityHelper.checkAuthentication(organizationId);
         Organization organizationFromService = organizationService.get(organizationId);
-        OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(organizationFromService);
 
+        OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(organizationFromService);
         Response<OrganizationResponse> response = new Response<>();
         response.setData(responseOrganization);
         response.setSuccess(true);
@@ -108,8 +108,8 @@ public class OrganizationController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{organizationId}", method = RequestMethod.PUT)
-    public Response<OrganizationResponse> update(@PathVariable int organizationId,
-                                                 @RequestBody UpdateOrganizationRequest updateOrganizationRequest) throws BaseException {
+    public Response<OrganizationResponse> update(@RequestBody UpdateOrganizationRequest updateOrganizationRequest,
+                                                 @PathVariable int organizationId) throws BaseException {
         securityHelper.checkAuthentication(organizationId);
         organizationService.updateFromRequest(updateOrganizationRequest, organizationId);
         Organization organization = organizationService.get(organizationId);
@@ -154,8 +154,8 @@ public class OrganizationController {
             throws BaseException {
         securityHelper.checkAuthentication(organizationId);
         List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
-        List<SimplifiedTeam> responseList = SimplifiedTeam.fromList(list);
 
+        List<SimplifiedTeam> responseList = SimplifiedTeam.fromList(list);
         Response<List<SimplifiedTeam>> response = new Response<>();
         response.setData(responseList);
         response.setSuccess(true);

@@ -10,7 +10,6 @@ import com.monitise.performhance.api.model.TeamResponse;
 import com.monitise.performhance.api.model.UpdateTeamRequest;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Team;
-import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
@@ -66,11 +65,22 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public Response<TeamResponse> addTeam(@RequestBody AddTeamRequest addTeamRequest) throws BaseException {
-        User manager = securityHelper.getAuthenticatedUser();
-        int organizationId = manager.getOrganization().getId();
+    @RequestMapping(value = "/{teamId}", method = RequestMethod.GET)
+    public Response<TeamResponse> get(@PathVariable int teamId) throws BaseException {
+        checkAuthentication(teamId);
+        Team team = teamService.get(teamId);
 
+        TeamResponse responseTeam = TeamResponse.fromTeam(team);
+        Response<TeamResponse> response = new Response<>();
+        response.setData(responseTeam);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/", method = RequestMethod.POST)
+    public Response<TeamResponse> add(@RequestBody AddTeamRequest addTeamRequest) throws BaseException {
+        int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
         Organization organization = organizationService.get(organizationId);
         Team team = new Team(addTeamRequest.getName(), organization);
         Team addedTeam = teamService.add(team);
@@ -83,24 +93,10 @@ public class TeamController {
     }
 
     @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{teamId}", method = RequestMethod.GET)
-    public Response<TeamResponse> getTeam(@PathVariable int teamId) throws BaseException {
-        Team team = teamService.get(teamId);
-        securityHelper.checkAuthentication(team.getOrganization().getId());
-        TeamResponse responseTeam = TeamResponse.fromTeam(team);
-
-        Response<TeamResponse> response = new Response<>();
-        response.setData(responseTeam);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}", method = RequestMethod.PUT)
-    public Response<TeamResponse> updateTeam(@PathVariable int teamId, @RequestBody UpdateTeamRequest updateTeamRequest)
-            throws BaseException {
-        Team team = teamService.get(teamId);
-        securityHelper.checkAuthentication(team.getOrganization().getId());
+    public Response<TeamResponse> update(@PathVariable int teamId,
+                                         @RequestBody UpdateTeamRequest updateTeamRequest) throws BaseException {
+        checkAuthentication(teamId);
         validateUpdateTeamRequest(updateTeamRequest);
         Team teamFromService = teamService.updateFromRequest(teamId, updateTeamRequest);
 
@@ -113,11 +109,9 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}", method = RequestMethod.DELETE)
-    public Response<Object> deleteTeam(@PathVariable int teamId) throws BaseException {
-        Team team = teamService.get(teamId);
-        securityHelper.checkAuthentication(team.getOrganization().getId());
+    public Response<Object> remove(@PathVariable int teamId) throws BaseException {
+        checkAuthentication(teamId);
         teamService.deleteTeam(teamId);
-
         Response<Object> response = new Response<>();
         response.setSuccess(true);
         return response;
@@ -126,9 +120,9 @@ public class TeamController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}/leader", method = RequestMethod.DELETE)
     public Response<TeamResponse> removeTeamLeader(@PathVariable int teamId) throws BaseException {
-        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
-
+        checkAuthentication(teamId);
         Team updatedTeam = teamService.removeLeadershipFromTeam(teamId);
+
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
         response.setData(teamResponse);
@@ -138,12 +132,12 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}/leader/{userId}", method = RequestMethod.POST)
-    public Response<TeamResponse> assignTeamLeader(@PathVariable int teamId, @PathVariable int userId)
-            throws BaseException {
-        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+    public Response<TeamResponse> assignTeamLeader(@PathVariable int teamId,
+                                                   @PathVariable int userId) throws BaseException {
+        checkAuthentication(teamId);
         securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
-
         Team updatedTeam = teamService.assignLeaderToTeam(userId, teamId);
+
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
         response.setData(teamResponse);
@@ -153,12 +147,12 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}/users/{userId}", method = RequestMethod.POST)
-    public Response<TeamResponse> assignEmployee(@PathVariable int teamId, @PathVariable int userId)
-            throws BaseException {
-        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+    public Response<TeamResponse> assignEmployee(@PathVariable int teamId,
+                                                 @PathVariable int userId) throws BaseException {
+        checkAuthentication(teamId);
         securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
-
         Team updatedTeam = teamService.assignEmployeeToTeam(userId, teamId);
+
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
         response.setData(teamResponse);
@@ -168,12 +162,12 @@ public class TeamController {
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{teamId}/users/{userId}", method = RequestMethod.DELETE)
-    public Response<TeamResponse> removeEmployeeFromTeam(@PathVariable int teamId, @PathVariable int userId)
-            throws BaseException {
-        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+    public Response<TeamResponse> removeEmployeeFromTeam(@PathVariable int teamId,
+                                                         @PathVariable int userId) throws BaseException {
+        checkAuthentication(teamId);
         securityHelper.checkAuthentication(userService.get(userId).getOrganization().getId());
-
         Team updatedTeam = teamService.removeEmployeeFromTeam(userId, teamId);
+
         TeamResponse teamResponse = TeamResponse.fromTeam(updatedTeam);
         Response<TeamResponse> response = new Response<>();
         response.setData(teamResponse);
@@ -185,12 +179,10 @@ public class TeamController {
     @RequestMapping(value = "/{teamId}/criteria/{criteriaId}", method = RequestMethod.POST)
     public Response<Object> assignCriteriaToTeamUsers(@PathVariable int teamId,
                                                       @PathVariable int criteriaId) throws BaseException {
-        User manager = securityHelper.getAuthenticatedUser();
-        int organizationId = manager.getOrganization().getId();
-        securityHelper.checkAuthentication(teamService.get(teamId).getOrganization().getId());
+        checkAuthentication(teamId);
         securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
-
         ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToTeam(criteriaId, teamId);
+
         ExtendedResponse<Object> response = new ExtendedResponse<>();
         response.setMessage(generateExistingUsersMessage(existingUserList));
         response.setSuccess(true);
@@ -215,6 +207,8 @@ public class TeamController {
         return response;
     }
 
+    // region Helper Methods
+
     private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
         String message = null;
         if (!existingUserList.isEmpty()) {
@@ -232,4 +226,14 @@ public class TeamController {
             throw new BaseException(ResponseCode.INVALID_TEAM_NAME, "Team name can not be empty");
         }
     }
+
+    private void checkAuthentication(int teamId) throws BaseException {
+        Team team = teamService.get(teamId);
+        Organization organization = team.getOrganization();
+        int organizationId = organization.getId();
+        securityHelper.checkAuthentication(organizationId);
+    }
+
+    // endregion
+
 }

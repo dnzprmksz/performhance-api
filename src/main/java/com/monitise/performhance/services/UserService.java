@@ -116,7 +116,8 @@ public class UserService {
         return addedManager;
     }
 
-    public User updateFromRequest(UpdateUserRequest updateUserRequest, User user) throws BaseException {
+    public User updateFromRequest(UpdateUserRequest updateUserRequest, int userId) throws BaseException {
+        User user = userService.get(userId);
         String name = updateUserRequest.getName();
         String surname = updateUserRequest.getSurname();
         String password = updateUserRequest.getPassword();

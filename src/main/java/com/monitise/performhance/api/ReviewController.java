@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,13 +50,7 @@ public class ReviewController {
     @Secured({"ROLE_MANAGER", "ROLE_TEAM_LEADER"})
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public Response<List<SimplifiedReview>> getAll() throws BaseException {
-        List<Review> list = null;
-        User user = securityHelper.getAuthenticatedUser();
-        if (securityHelper.isAuthenticatedUserManager()) {
-            list = reviewService.getAllFilterByOrganizationId(user.getOrganization().getId());
-        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
-            list = reviewService.getAllFilterByTeamId(user.getTeam().getId());
-        }
+        List<Review> list = getListForAuthenticatedUser();
         List<SimplifiedReview> simplifiedReviews = SimplifiedReview.fromList(list);
         Response<List<SimplifiedReview>> response = new Response<>();
         response.setData(simplifiedReviews);
@@ -85,11 +80,8 @@ public class ReviewController {
     @RequestMapping(value = "/{reviewId}", method = RequestMethod.GET)
     public Response<ReviewResponse> get(@PathVariable int reviewId) throws BaseException {
         Review review = reviewService.get(reviewId);
-        if (securityHelper.isAuthenticatedUserManager()) {
-            relationshipHelper.ensureManagerReviewRelationship(review);
-        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
-            relationshipHelper.ensureTeamLeaderReviewRelationship(review);
-        }
+        checkAuthenticationForReview(review);
+
         ReviewResponse reviewResponse = new ReviewResponse(review);
         Response<ReviewResponse> response = new Response<>();
         response.setData(reviewResponse);
@@ -153,6 +145,25 @@ public class ReviewController {
             hashMap.put(criteria, evaluationValue);
         }
         return hashMap;
+    }
+
+    private List<Review> getListForAuthenticatedUser() throws BaseException {
+        User user = securityHelper.getAuthenticatedUser();
+        if (securityHelper.isAuthenticatedUserManager()) {
+            return reviewService.getAllFilterByOrganizationId(user.getOrganization().getId());
+        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
+            return reviewService.getAllFilterByTeamId(user.getTeam().getId());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private void checkAuthenticationForReview(Review review) throws BaseException {
+        if (securityHelper.isAuthenticatedUserManager()) {
+            relationshipHelper.ensureManagerReviewRelationship(review);
+        } else if (securityHelper.isAuthenticatedUserTeamLeader()) {
+            relationshipHelper.ensureTeamLeaderReviewRelationship(review);
+        }
     }
 
     // endregion
