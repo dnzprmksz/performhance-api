@@ -172,7 +172,6 @@ public class UserServiceTest {
     @Test
     @WithMockUser(roles = {"MANAGER"})
     public void updateFromRequest_validData_shouldUpdate() throws BaseException {
-        User user = userService.get(7);
         UpdateUserRequest updateUserRequest = new UpdateUserRequest();
         updateUserRequest.setName("Arda");
         updateUserRequest.setSurname("Yılmaz");

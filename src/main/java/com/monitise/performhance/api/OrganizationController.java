@@ -19,6 +19,7 @@ import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
@@ -179,7 +180,7 @@ public class OrganizationController {
     // region Helper Methods
 
     private void validateName(String name) throws BaseException {
-        if (name == null || name.trim().equals("")) {
+        if (Util.isNullOrEmpty(name)) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty organization name is not allowed.");
         } else if (doesNameExists(name)) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS,

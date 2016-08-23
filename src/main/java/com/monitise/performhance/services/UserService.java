@@ -6,6 +6,7 @@ import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -123,16 +124,16 @@ public class UserService {
         String password = updateUserRequest.getPassword();
         int jobTitleId = updateUserRequest.getJobTitleId();
 
-        if (!isNullOrEmpty(name)) {
+        if (!Util.isNullOrEmpty(name)) {
             user.setName(name);
         }
-        if (!isNullOrEmpty(surname)) {
+        if (!Util.isNullOrEmpty(surname)) {
             user.setSurname(surname);
         }
         if (jobTitleId > 0) {
             user.setJobTitle(jobTitleService.get(jobTitleId));
         }
-        if (!isNullOrEmpty(password)) {
+        if (!Util.isNullOrEmpty(password)) {
             user.setPassword(password);
         }
 
@@ -162,10 +163,6 @@ public class UserService {
         if (userFromRepo == null) {
             throw new BaseException(ResponseCode.USER_ID_DOES_NOT_EXIST, "A user with given ID does not exist.");
         }
-    }
-
-    private boolean isNullOrEmpty(String str) {
-        return (str == null || str.trim().equals(""));
     }
 
     private void removeUserFromOrganization(int userId) throws BaseException {

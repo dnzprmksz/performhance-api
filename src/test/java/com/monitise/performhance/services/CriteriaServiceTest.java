@@ -36,7 +36,7 @@ import java.util.List;
 @Transactional
 public class CriteriaServiceTest {
 
-    private final String TEST_CRITERIA_NAME = "WOXWQZOE3BN9";
+    private static final String TEST_CRITERIA_NAME = "WOXWQZOE3BN9";
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @Autowired

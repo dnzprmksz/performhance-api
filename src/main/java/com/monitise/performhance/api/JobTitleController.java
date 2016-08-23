@@ -11,6 +11,7 @@ import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
@@ -125,27 +126,16 @@ public class JobTitleController {
 
         ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToJobTitle(criteriaId, jobTitleId);
         ExtendedResponse<Object> response = new ExtendedResponse<>();
-        response.setMessage(generateExistingUsersMessage(existingUserList));
+        response.setMessage(Util.generateExistingUsersMessage(existingUserList));
         response.setSuccess(true);
         return response;
     }
 
     // region Helper Methods
 
-    private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
-        String message = null;
-        if (!existingUserList.isEmpty()) {
-            message = "Completed successfully, however, the criteria was already assigned for following users:";
-            for (int userId : existingUserList) {
-                message += " " + userId;
-            }
-        }
-        return message;
-    }
-
     private void validateUpdateRequest(UpdateJobTitleRequest updateJobTitleRequest) throws BaseException {
         String title = updateJobTitleRequest.getTitle();
-        if (title == null || title.trim() == "") {
+        if (Util.isNullOrEmpty(title)) {
             throw new BaseException(ResponseCode.JOB_TITLE_UPDATE_EMPTY_TITLE, "Title cannot be empty.");
         }
     }

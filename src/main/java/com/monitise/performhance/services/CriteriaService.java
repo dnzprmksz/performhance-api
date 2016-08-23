@@ -7,6 +7,7 @@ import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.repositories.CriteriaRepository;
 import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,7 +180,7 @@ public class CriteriaService {
 
     private void validate(Criteria criteria) throws BaseException {
         String criteriaName = criteria.getCriteria();
-        if (criteriaName == null || criteriaName.trim().equals("")) {
+        if (Util.isNullOrEmpty(criteriaName)) {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY, "Empty criteria is not allowed.");
         } else if (criteria.getOrganization() == null) {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY_ORGANIZATION,

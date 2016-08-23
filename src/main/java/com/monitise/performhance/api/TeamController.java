@@ -13,6 +13,7 @@ import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.TeamService;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.monitise.performhance.helpers.Util.generateExistingUsersMessage;
 
 @RestController
 @RequestMapping("/teams")
@@ -209,20 +212,9 @@ public class TeamController {
 
     // region Helper Methods
 
-    private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
-        String message = null;
-        if (!existingUserList.isEmpty()) {
-            message = "Completed successfully, however, the criteria was already assigned for following users:";
-            for (int userId : existingUserList) {
-                message += " " + userId;
-            }
-        }
-        return message;
-    }
-
     private void validateUpdateTeamRequest(UpdateTeamRequest updateRequest) throws BaseException {
         String name = updateRequest.getName();
-        if (name == null || name.equals("")) {
+        if (Util.isNullOrEmpty(name)) {
             throw new BaseException(ResponseCode.INVALID_TEAM_NAME, "Team name can not be empty");
         }
     }

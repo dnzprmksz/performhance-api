@@ -5,6 +5,7 @@ import com.monitise.performhance.api.model.UpdateOrganizationRequest;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,7 @@ public class OrganizationService {
             throws BaseException {
         Organization organization = get(organizationId);
         String name = updateOrganizationRequest.getName();
-        if (name != null && !name.trim().equals("")) {
+        if (!Util.isNullOrEmpty(name)) {
             organization.setName(name);
         }
         return update(organization);

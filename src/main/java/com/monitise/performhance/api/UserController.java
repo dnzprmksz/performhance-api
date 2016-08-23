@@ -18,6 +18,7 @@ import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
@@ -236,7 +237,7 @@ public class UserController {
     private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException {
         String name = employee.getName();
         String surname = employee.getSurname();
-        if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
+        if (Util.isNullOrEmpty(name) || Util.isNullOrEmpty(surname)) {
             throw new BaseException(ResponseCode.USER_USERNAME_DOES_NOT_EXIST, "Empty user name is not allowed.");
         }
         relationshipHelper.ensureOrganizationJobTitleRelationship(organization.getId(), employee.getJobTitleId());

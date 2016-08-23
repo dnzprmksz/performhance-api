@@ -73,7 +73,7 @@ public class TeamServiceTest {
     @Test
     public void get_nonExistingTeamById() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
-        Team team = teamService.get(1123);
+        teamService.get(1123);
     }
 
     @Test

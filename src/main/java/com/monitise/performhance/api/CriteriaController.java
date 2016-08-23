@@ -9,6 +9,7 @@ import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
+import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.monitise.performhance.helpers.Util.generateExistingUsersMessage;
 
 @RestController
 @RequestMapping("/criteria")
@@ -126,17 +129,6 @@ public class CriteriaController {
     }
 
     // region Helper Methods
-
-    private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
-        String message = null;
-        if (!existingUserList.isEmpty()) {
-            message = "Completed successfully, however, the criteria was already assigned for following users:";
-            for (int userId : existingUserList) {
-                message += " " + userId;
-            }
-        }
-        return message;
-    }
 
     private void checkAuthentication(int criteriaId) throws BaseException {
         Criteria criteria = criteriaService.get(criteriaId);

@@ -39,8 +39,6 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
 
-        long start = System.currentTimeMillis();
-
         logger.info("Request URL: " + request.getRequestURL().toString());
 
         List<String> requestParamNames = Collections.list(request.getParameterNames());
