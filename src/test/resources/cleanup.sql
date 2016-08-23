@@ -14,6 +14,7 @@ TRUNCATE TABLE `team`;                      ALTER TABLE `team` ALTER COLUMN `id`
 TRUNCATE TABLE `team_members`;
 TRUNCATE TABLE `user`;                      ALTER TABLE `user` ALTER COLUMN `id` RESTART WITH 1;
 TRUNCATE TABLE `user_criteria_list`;
+TRUNCATE TABLE `user_reviews`;
 
 
 SET FOREIGN_KEY_CHECKS=1;
