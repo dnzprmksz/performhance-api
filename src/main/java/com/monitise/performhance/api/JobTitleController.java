@@ -4,10 +4,10 @@ import com.monitise.performhance.api.model.AddJobTitleRequest;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.JobTitleResponse;
 import com.monitise.performhance.api.model.Response;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.UpdateJobTitleRequest;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
@@ -52,8 +52,8 @@ public class JobTitleController {
     public Response<List<JobTitleResponse>> getAll() throws BaseException {
         int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
         List<JobTitle> list = jobTitleService.getListFilterByOrganizationId(organizationId);
-        List<JobTitleResponse> responseList = JobTitleResponse.fromList(list);
 
+        List<JobTitleResponse> responseList = JobTitleResponse.fromList(list);
         Response<List<JobTitleResponse>> response = new Response<>();
         response.setData(responseList);
         response.setSuccess(true);
@@ -64,10 +64,7 @@ public class JobTitleController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<JobTitleResponse> addJobTitle(@RequestBody AddJobTitleRequest addJobTitleRequest)
             throws BaseException {
-        User manager = securityHelper.getAuthenticatedUser();
-        int organizationId = manager.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
-
+        int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitle = new JobTitle(addJobTitleRequest.getTitle(), organization);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
@@ -82,10 +79,10 @@ public class JobTitleController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{jobTitleId}", method = RequestMethod.GET)
     public Response<JobTitleResponse> get(@PathVariable int jobTitleId) throws BaseException {
+        checkAuthentication(jobTitleId);
         JobTitle jobTitle = jobTitleService.get(jobTitleId);
-        securityHelper.checkAuthentication(jobTitle.getOrganization().getId());
-        JobTitleResponse jobTitleResponse = new JobTitleResponse(jobTitle);
 
+        JobTitleResponse jobTitleResponse = new JobTitleResponse(jobTitle);
         Response<JobTitleResponse> response = new Response<>();
         response.setData(jobTitleResponse);
         response.setSuccess(true);
@@ -96,8 +93,10 @@ public class JobTitleController {
     @RequestMapping(value = "/{jobTitleId}", method = RequestMethod.PUT)
     public Response<JobTitleResponse> update(@RequestBody UpdateJobTitleRequest updateJobTitleRequest,
                                              @PathVariable int jobTitleId) throws BaseException {
+        validateUpdateRequest(updateJobTitleRequest);
+        checkAuthentication(jobTitleId);
+
         JobTitle jobTitle = jobTitleService.get(jobTitleId);
-        securityHelper.checkAuthentication(jobTitle.getOrganization().getId());
         jobTitle.setTitle(updateJobTitleRequest.getTitle());
         JobTitle jobTitleFromService = jobTitleService.update(jobTitle);
 
@@ -111,7 +110,7 @@ public class JobTitleController {
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{jobTitleId}", method = RequestMethod.DELETE)
     public Response<Object> remove(@PathVariable int jobTitleId) throws BaseException {
-        securityHelper.checkAuthentication(jobTitleService.get(jobTitleId).getOrganization().getId());
+        checkAuthentication(jobTitleId);
         jobTitleService.remove(jobTitleId);
         Response<Object> response = new Response<>();
         response.setSuccess(true);
@@ -122,9 +121,8 @@ public class JobTitleController {
     @RequestMapping(value = "/{jobTitleId}/criteria/{criteriaId}", method = RequestMethod.POST)
     public Response<Object> assignCriteriaToJobTitleUsers(@PathVariable int jobTitleId,
                                                           @PathVariable int criteriaId) throws BaseException {
-        int organizationId = jobTitleService.get(jobTitleId).getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
-        securityHelper.checkAuthentication(criteriaId);
+        checkAuthentication(jobTitleId);
+        securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
 
         ArrayList<Integer> existingUserList = criteriaService.assignCriteriaToJobTitle(criteriaId, jobTitleId);
         ExtendedResponse<Object> response = new ExtendedResponse<>();
@@ -132,6 +130,8 @@ public class JobTitleController {
         response.setSuccess(true);
         return response;
     }
+
+    // region Helper Methods
 
     private String generateExistingUsersMessage(ArrayList<Integer> existingUserList) {
         String message = null;
@@ -143,5 +143,21 @@ public class JobTitleController {
         }
         return message;
     }
+
+    private void validateUpdateRequest(UpdateJobTitleRequest updateJobTitleRequest) throws BaseException {
+        String title = updateJobTitleRequest.getTitle();
+        if (title == null || title.trim() == "") {
+            throw new BaseException(ResponseCode.JOB_TITLE_UPDATE_EMPTY_TITLE, "Title cannot be empty.");
+        }
+    }
+
+    private void checkAuthentication(int jobTitleId) throws BaseException {
+        JobTitle jobTitle = jobTitleService.get(jobTitleId);
+        Organization organization = jobTitle.getOrganization();
+        int organizationId = organization.getId();
+        securityHelper.checkAuthentication(organizationId);
+    }
+
+    // endregion
 
 }

@@ -1,5 +1,6 @@
 package com.monitise.performhance.services;
 
+import com.monitise.performhance.api.model.CriteriaRequest;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
@@ -70,6 +71,12 @@ public class CriteriaService {
         validate(criteria);
         ensureExistence(criteria.getId());
         return criteriaRepository.save(criteria);
+    }
+
+    public Criteria updateFromRequest(CriteriaRequest criteriaRequest, int criteriaId) throws BaseException {
+        Criteria criteria = get(criteriaId);
+        criteria.setCriteria(criteriaRequest.getCriteria());
+        return update(criteria);
     }
 
     public User assignCriteriaToUserById(int criteriaId, int userId) throws BaseException {
@@ -172,7 +179,7 @@ public class CriteriaService {
 
     private void validate(Criteria criteria) throws BaseException {
         String criteriaName = criteria.getCriteria();
-        if (criteriaName == null || criteriaName.trim() == "") {
+        if (criteriaName == null || criteriaName.trim().equals("")) {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY, "Empty criteria is not allowed.");
         } else if (criteria.getOrganization() == null) {
             throw new BaseException(ResponseCode.CRITERIA_EMPTY_ORGANIZATION,

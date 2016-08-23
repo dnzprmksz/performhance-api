@@ -1,6 +1,7 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.UpdateJobTitleRequest;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.exceptions.BaseException;
@@ -55,6 +56,12 @@ public class JobTitleService {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not update given Job Title.");
         }
         return jobTitleFromRepo;
+    }
+
+    public JobTitle updateFromRequest(UpdateJobTitleRequest updateJobTitleRequest, int jobTitleId) throws BaseException {
+        JobTitle jobTitle = get(jobTitleId);
+        jobTitle.setTitle(updateJobTitleRequest.getTitle());
+        return update(jobTitle);
     }
 
     public void remove(int jobTitleId) throws BaseException {
