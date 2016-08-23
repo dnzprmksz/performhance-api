@@ -113,3 +113,37 @@ INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,1);
 INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,2);
 INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,3);
 INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(4,4);
+
+
+--                        REVIEW INSERTIONS                        --
+INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
+    VALUES('She is harder better faster stronger this year.', 1, 2, 3, 1);
+INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
+    VALUES('He has no idea what he is doing most of the time.', 1, 3, 4, 1);
+INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
+    VALUES('Brings a new notion to post modern CS.', 1, 2, 4, 1);
+INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
+    VALUES('Impressive for a Russian.', 1, 4, 3, 1);
+
+
+--                      USER REVIEW INSERTIONS                     --
+INSERT INTO `user_reviews`(user_id, review_id) VALUES(2, 1);
+INSERT INTO `user_reviews`(user_id, review_id) VALUES(3, 2);
+INSERT INTO `user_reviews`(user_id, review_id) VALUES(2, 3);
+INSERT INTO `user_reviews`(user_id, review_id) VALUES(4, 4);
+
+
+--                   REVIEW-EVALUATION INSERTIONS                  --
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(1, 95, 1);  -- Manners
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(1, 90, 3);  -- Code Coverage
+
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(2, 20, 1);  -- Manners
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(2, 30, 2);  -- Code Review
+
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(3, 90, 1);  -- Manners
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(3, 90, 3);  -- Code Coverage
+
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(4, 80, 1);  -- Manners
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(4, 100, 2); -- Code Review
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(4, 97, 3);  -- Code Coverage
+INSERT INTO `review_evaluation`(review_id, evaluation, evaluation_key) VALUES(4, 100, 4); -- Dress Code
