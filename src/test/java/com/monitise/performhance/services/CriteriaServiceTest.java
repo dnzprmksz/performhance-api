@@ -6,7 +6,7 @@ import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
-import com.monitise.performhance.matcher.CustomMatcher;
+import com.monitise.performhance.helpers.CustomMatcher;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import com.monitise.performhance.repositories.TeamRepository;
 import com.monitise.performhance.repositories.UserRepository;
@@ -22,6 +22,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,9 @@ import java.util.List;
 @Transactional
 public class CriteriaServiceTest {
 
+    private final String TEST_CRITERIA_NAME = "WOXWQZOE3BN9";
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Autowired
     private CriteriaService criteriaService;
     @Autowired
@@ -43,11 +47,6 @@ public class CriteriaServiceTest {
     private UserRepository userRepository;
     @Autowired
     private TeamRepository teamRepository;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    private final String TEST_CRITERIA_NAME = "WOXWQZOE3BN9";
 
     @Test
     public void getAllFilterByOrganizationId() throws BaseException {
@@ -135,7 +134,7 @@ public class CriteriaServiceTest {
     @Test
     public void assignCriteriaToTeam() throws BaseException {
         final int TEST_CRITERIA_ID = addTestCriteria(1);
-        criteriaService.assignCriteriaToTeam(TEST_CRITERIA_ID,1);
+        criteriaService.assignCriteriaToTeam(TEST_CRITERIA_ID, 1);
         List<Criteria> pelinCriteriaList = userRepository.findOne(2).getCriteriaList();
         List<Criteria> farukCriteriaList = userRepository.findOne(3).getCriteriaList();
         List<Criteria> pelyaCriteriaList = userRepository.findOne(4).getCriteriaList();
@@ -169,10 +168,9 @@ public class CriteriaServiceTest {
     }
 
 
-
     @Test
-    public void assignCriteriaToUserById() throws  BaseException {
-        criteriaService.assignCriteriaToUserById(2,2);
+    public void assignCriteriaToUserById() throws BaseException {
+        criteriaService.assignCriteriaToUserById(2, 2);
         List<Criteria> pelinCriteriaList = userRepository.findOne(2).getCriteriaList();
 
         Assert.assertNotNull(pelinCriteriaList);
@@ -181,31 +179,31 @@ public class CriteriaServiceTest {
     }
 
     @Test
-    public void assignCriteriaToUserById_userHasCriteria_shouldNotAdd() throws  BaseException {
+    public void assignCriteriaToUserById_userHasCriteria_shouldNotAdd() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_EXISTS_IN_USER));
-        criteriaService.assignCriteriaToUserById(4,4);
+        criteriaService.assignCriteriaToUserById(4, 4);
     }
 
     @Test
-    public void assignCriteriaToUserById_nonExistingCriteria_shouldNotAdd() throws  BaseException {
+    public void assignCriteriaToUserById_nonExistingCriteria_shouldNotAdd() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST));
-        criteriaService.assignCriteriaToUserById(23532,2);
+        criteriaService.assignCriteriaToUserById(23532, 2);
     }
 
     @Test
-    public void assignCriteriaToUserById_nonExistingUser_shouldNotAdd() throws  BaseException {
+    public void assignCriteriaToUserById_nonExistingUser_shouldNotAdd() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
-        criteriaService.assignCriteriaToUserById(2,9985899);
+        criteriaService.assignCriteriaToUserById(2, 9985899);
     }
 
     @Test
-    public void assignCriteriaToUserById_criteriaUserDifferentOrganizations_shouldNotAdd() throws  BaseException {
+    public void assignCriteriaToUserById_criteriaUserDifferentOrganizations_shouldNotAdd() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS));
-        criteriaService.assignCriteriaToUserById(2,7);
+        criteriaService.assignCriteriaToUserById(2, 7);
     }
 
     @Test
-    public void removeCriteriaFromUserById() throws  BaseException {
+    public void removeCriteriaFromUserById() throws BaseException {
         criteriaService.removeCriteriaFromUserById(3, 2);
 
         List<Criteria> pelinCriteriaList = userRepository.findOne(2).getCriteriaList();
@@ -216,26 +214,26 @@ public class CriteriaServiceTest {
     }
 
     @Test
-    public void removeCriteriaFromUserById_UserDoesNotHaveCriteria_shouldNotRemove() throws  BaseException {
+    public void removeCriteriaFromUserById_UserDoesNotHaveCriteria_shouldNotRemove() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_DOES_NOT_EXIST_IN_USER));
         criteriaService.removeCriteriaFromUserById(2, 2);
     }
 
     @Test
-    public void removeCriteriaFromUserById_nonExistingCriteria_shouldNotRemove() throws  BaseException {
+    public void removeCriteriaFromUserById_nonExistingCriteria_shouldNotRemove() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST));
         criteriaService.removeCriteriaFromUserById(3356533, 2);
     }
 
     @Test
-    public void removeCriteriaFromUserById_nonExistingUser_shouldNotRemove() throws  BaseException {
+    public void removeCriteriaFromUserById_nonExistingUser_shouldNotRemove() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
         criteriaService.removeCriteriaFromUserById(2, 3356533);
     }
 
     @Test
     public void removeCriteriaFromUserById_CriteriaUserDifferentOrganizations_shouldNotRemove()
-            throws  BaseException {
+            throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS));
         criteriaService.removeCriteriaFromUserById(2, 7);
     }
@@ -247,7 +245,7 @@ public class CriteriaServiceTest {
     }
 
     @Test
-    public void remove_nonExistingCriteria_shouldNotRemove() throws  BaseException {
+    public void remove_nonExistingCriteria_shouldNotRemove() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_ID_DOES_NOT_EXIST));
         criteriaService.remove(34544543);
     }
@@ -261,7 +259,7 @@ public class CriteriaServiceTest {
     }
 
     @Test
-    public void update() throws  BaseException {
+    public void update() throws BaseException {
         Criteria manners = criteriaService.get(1);
         manners.setCriteria("Shop Lifting Skills");
         criteriaService.update(manners);
@@ -272,7 +270,7 @@ public class CriteriaServiceTest {
     }
 
     @Test
-    public void update_emptyName_shouldNotUpdate() throws  BaseException {
+    public void update_emptyName_shouldNotUpdate() throws BaseException {
         Criteria manners = criteriaService.get(1);
         manners.setCriteria("");
         thrown.expect(CustomMatcher.hasCode(ResponseCode.CRITERIA_EMPTY));
@@ -285,7 +283,7 @@ public class CriteriaServiceTest {
         Organization organization = organizationRepository.findOne(organizationId);
         Criteria criteria = new Criteria(TEST_CRITERIA_NAME, organization);
         Criteria added = criteriaService.add(criteria);
-        return  added.getId();
+        return added.getId();
     }
 
     private boolean listContainsUser(List<User> list, int id, String name, String surname) {

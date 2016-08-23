@@ -2,9 +2,7 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.UpdateOrganizationRequest;
-import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.repositories.OrganizationRepository;

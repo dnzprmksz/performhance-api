@@ -5,7 +5,7 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.exceptions.BaseException;
-import com.monitise.performhance.matcher.CustomMatcher;
+import com.monitise.performhance.helpers.CustomMatcher;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -30,12 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class JobTitleTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Autowired
     private JobTitleService jobTitleService;
     @Autowired
     private OrganizationRepository organizationRepository;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void add_nonExisting_shouldAdd() throws BaseException {

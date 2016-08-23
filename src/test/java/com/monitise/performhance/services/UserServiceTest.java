@@ -8,7 +8,7 @@ import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
-import com.monitise.performhance.matcher.CustomMatcher;
+import com.monitise.performhance.helpers.CustomMatcher;
 import com.monitise.performhance.repositories.JobTitleRepository;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.junit.Assert;
@@ -38,14 +38,14 @@ import java.util.List;
 @Transactional
 public class UserServiceTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Autowired
     private UserService userService;
     @Autowired
     private OrganizationRepository organizationRepository;
     @Autowired
     private JobTitleRepository jobTitleRepository;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
