@@ -1,16 +1,13 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.AppConfig;
-import com.monitise.performhance.api.model.OrganizationResponse;
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.UpdateOrganizationRequest;
-import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
-import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
-import com.monitise.performhance.matcher.CustomMatcher;
+import com.monitise.performhance.helpers.CustomMatcher;
 import com.monitise.performhance.repositories.JobTitleRepository;
 import com.monitise.performhance.repositories.OrganizationRepository;
 import org.junit.Assert;
@@ -39,6 +36,8 @@ import java.util.List;
 @Transactional
 public class OrganizationServiceTest {
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Autowired
     private OrganizationService organizationService;
     @Autowired
@@ -47,8 +46,6 @@ public class OrganizationServiceTest {
     private JobTitleRepository jobTitleRepository;
     @Autowired
     private OrganizationRepository organizationRepository;
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void get_existingId_shouldGet() throws BaseException {

@@ -15,5 +15,4 @@ public class CriteriaRequest {
         this.criteria = criteria;
     }
 
-
 }
