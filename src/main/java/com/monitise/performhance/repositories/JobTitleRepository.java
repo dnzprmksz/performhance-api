@@ -3,7 +3,6 @@ package com.monitise.performhance.repositories;
 import com.monitise.performhance.entity.JobTitle;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -12,5 +11,7 @@ public interface JobTitleRepository extends CrudRepository<JobTitle, Integer> {
 
     @Override
     List<JobTitle> findAll();
+
+    JobTitle findByTitleAndOrganizationId(String title, int organizationId);
 
 }

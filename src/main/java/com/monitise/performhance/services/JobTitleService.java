@@ -21,16 +21,13 @@ public class JobTitleService {
     private UserService userService;
 
     public JobTitle add(JobTitle jobTitle) throws BaseException {
+        Organization organization = jobTitle.getOrganization();
+        ensureUniquenessInOrganization(jobTitle, organization.getId());
         JobTitle jobTitleFromRepo = jobTitleRepository.save(jobTitle);
-        Organization organization = organizationService.get(jobTitleFromRepo.getOrganization().getId());
-
-        List<JobTitle> organizationJobTitles = organization.getJobTitles();
-        organizationJobTitles.add(jobTitle);
-        organization.setJobTitles(organizationJobTitles);
-        Organization organizationFromService = organizationService.update(organization);
-        if (organizationFromService == null) {
+        if (jobTitleFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given job title.");
         }
+        addJobTitleToOrganization(jobTitle, organization);
         return jobTitleFromRepo;
     }
 
@@ -69,6 +66,15 @@ public class JobTitleService {
 
     // region Helper Methods
 
+    private void ensureUniquenessInOrganization(JobTitle jobTitle, int organizationId) throws BaseException {
+        JobTitle jobTitleFromRepo = jobTitleRepository.findByTitleAndOrganizationId(jobTitle.getTitle(),
+                organizationId);
+        if (jobTitleFromRepo != null) {
+            throw new BaseException(ResponseCode.JOB_TITLE_EXISTS_IN_ORGANIZATION,
+                    "Given job title already exists in this organization.");
+        }
+    }
+
     private void ensureExistence(int jobTitleId) throws BaseException {
         JobTitle jobTitle = jobTitleRepository.findOne(jobTitleId);
         if (jobTitle == null) {
@@ -80,7 +86,7 @@ public class JobTitleService {
     private void ensureJobTitleIsNotUsed(int jobTitleId) throws BaseException {
         int employeesWithThisJobTitle = userService.getIdListByJobTitleId(jobTitleId).size();
         if (employeesWithThisJobTitle > 0) {
-            throw new BaseException(ResponseCode.JOB_TITLE_IS_IN_USE,
+            throw new BaseException(ResponseCode.JOB_TITLE_IN_USE,
                     "Cannot remove the Job Title when there are employees using this Job Title.");
         }
     }
@@ -89,6 +95,11 @@ public class JobTitleService {
         JobTitle jobTitle = get(jobTitleId);
         Organization organization = jobTitle.getOrganization();
         organization.getJobTitles().remove(jobTitle);
+        organizationService.update(organization);
+    }
+
+    private void addJobTitleToOrganization(JobTitle jobTitle, Organization organization) throws BaseException {
+        organization.getJobTitles().add(jobTitle);
         organizationService.update(organization);
     }
 

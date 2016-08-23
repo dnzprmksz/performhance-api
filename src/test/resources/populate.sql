@@ -10,6 +10,7 @@ INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',1);
 INSERT INTO `job_title`(title, organization_id) VALUES('ios dev',2);
 INSERT INTO `job_title`(title, organization_id) VALUES('janitor',2);
 INSERT INTO `job_title`(title, organization_id) VALUES('back end',2);
+INSERT INTO `job_title`(title, organization_id) VALUES('Intern', 2);    -- DO NOT ASSIGN TO ANY EMPLOYEE --
 
 
 --                ORGANIZATION-JOB TITLE INSERTIONS                --

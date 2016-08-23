@@ -36,13 +36,13 @@ import java.util.List;
 public class CriteriaServiceTest {
 
     @Autowired
-    CriteriaService criteriaService;
+    private CriteriaService criteriaService;
     @Autowired
-    OrganizationRepository organizationRepository;
+    private OrganizationRepository organizationRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    TeamRepository teamRepository;
+    private TeamRepository teamRepository;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
