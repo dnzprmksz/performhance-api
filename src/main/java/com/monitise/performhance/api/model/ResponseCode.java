@@ -22,7 +22,7 @@ public class ResponseCode {
     public static final int USER_ID_DOES_NOT_EXIST = 1201;
     public static final int USER_ID_INVALID = 1202;
     public static final int USER_ROLE_INCORRECT = 1203;
-    public static final int USER_USERNAME_NOT_EXIST = 1204;
+    public static final int USER_USERNAME_DOES_NOT_EXIST = 1204;
     public static final int USER_USERNAME_ALREADY_TAKEN = 1205;
     public static final int USER_UNAUTHORIZED_ORGANIZATION = 1206;
     public static final int USER_BELONGS_TO_ANOTHER_ORGANIZATION = 1207;

@@ -42,7 +42,7 @@ public class UserService {
     public User getByUsername(String username) throws BaseException {
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "A user with given username does not exist.");
+            throw new BaseException(ResponseCode.USER_USERNAME_DOES_NOT_EXIST, "A user with given username does not exist.");
         }
         return user;
     }

@@ -237,7 +237,7 @@ public class UserController {
         String name = employee.getName();
         String surname = employee.getSurname();
         if (name == null || name.trim().equals("") || surname == null || surname.trim().equals("")) {
-            throw new BaseException(ResponseCode.USER_USERNAME_NOT_EXIST, "Empty user name is not allowed.");
+            throw new BaseException(ResponseCode.USER_USERNAME_DOES_NOT_EXIST, "Empty user name is not allowed.");
         }
         relationshipHelper.ensureOrganizationJobTitleRelationship(organization.getId(), employee.getJobTitleId());
     }
