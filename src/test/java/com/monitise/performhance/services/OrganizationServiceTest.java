@@ -67,7 +67,7 @@ public class OrganizationServiceTest {
         List<Organization> organizationList = organizationService.getAll();
         Assert.assertEquals(3, organizationList.size());
         Assert.assertTrue(listContainsOrganization(organizationList, "Google", 5, 1));
-        Assert.assertTrue(listContainsOrganization(organizationList, "Monitise", 3, 2));
+        Assert.assertTrue(listContainsOrganization(organizationList, "Monitise", 4, 2));
     }
 
     @Test
@@ -122,13 +122,11 @@ public class OrganizationServiceTest {
         google = organizationService.get(1); // updated google
 
         Assert.assertNotNull(addedEmployee);
-        Assert.assertEquals(9, addedEmployee.getId());
         Assert.assertEquals(1, addedEmployee.getJobTitle().getId());
         Assert.assertEquals("android dev", addedEmployee.getJobTitle().getTitle());
         Assert.assertEquals("Google", google.getName());
         Assert.assertEquals(6, google.getNumberOfEmployees());
         Assert.assertEquals(6, google.getUsers().size());
-        Assert.assertTrue(listContainsUser(google.getUsers(), 9, "Gilloume", "Pinto"));
     }
 
     @Test

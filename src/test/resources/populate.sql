@@ -19,6 +19,8 @@ INSERT INTO `organization_job_titles`(organization_id, job_titles_id) VALUES(1, 
 INSERT INTO `organization_job_titles`(organization_id, job_titles_id) VALUES(2, 3);
 INSERT INTO `organization_job_titles`(organization_id, job_titles_id) VALUES(2, 4);
 INSERT INTO `organization_job_titles`(organization_id, job_titles_id) VALUES(2, 5);
+INSERT INTO `organization_job_titles`(organization_id, job_titles_id) VALUES(2, 6);
+
 -- google jobs: android dev, ios dev and janitor.
 -- monitise jobs: ios dev, janitor and back end.
 
@@ -53,6 +55,7 @@ INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 2);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 3);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 4);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(1, 5);
+
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 6);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 7);
 INSERT INTO `organization_users`(organization_id, users_id) VALUES(2, 8);

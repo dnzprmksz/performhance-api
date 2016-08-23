@@ -93,7 +93,7 @@ public class CriteriaServiceTest {
         idList.add(3);
         idList.add(4);
         final int TEST_CRITERIA_ID = addTestCriteria(1);
-        criteriaService.assignCriteriaToUserList(5, idList);
+        criteriaService.assignCriteriaToUserList(TEST_CRITERIA_ID, idList);
 
         User pelin = userRepository.findOne(2);
         User faruk = userRepository.findOne(3);
@@ -134,6 +134,7 @@ public class CriteriaServiceTest {
     @Test
     public void assignCriteriaToTeam() throws BaseException {
         final int TEST_CRITERIA_ID = addTestCriteria(1);
+        Assert.assertEquals(8, TEST_CRITERIA_ID);
         criteriaService.assignCriteriaToTeam(TEST_CRITERIA_ID, 1);
         List<Criteria> pelinCriteriaList = userRepository.findOne(2).getCriteriaList();
         List<Criteria> farukCriteriaList = userRepository.findOne(3).getCriteriaList();

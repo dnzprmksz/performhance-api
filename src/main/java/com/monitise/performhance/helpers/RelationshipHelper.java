@@ -90,7 +90,7 @@ public class RelationshipHelper {
         Team team = teamService.get(teamId);
         Team employeesTeam = employee.getTeam();
         if (employeesTeam != null && employeesTeam.getId() == team.getId()) {
-            throw new BaseException(ResponseCode.USER_DOES_NOT_BELONG_TO_TEAM,
+            throw new BaseException(ResponseCode.USER_ALREADY_A_MEMBER,
                     "Given user is already a member of this team.");
         }
     }

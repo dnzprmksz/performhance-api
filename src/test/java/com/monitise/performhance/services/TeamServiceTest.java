@@ -2,12 +2,15 @@ package com.monitise.performhance.services;
 
 
 import com.monitise.performhance.AppConfig;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.helpers.CustomMatcher;
 import com.monitise.performhance.repositories.UserRepository;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
@@ -35,7 +38,8 @@ public class TeamServiceTest {
     private TeamService teamService;
     @Autowired
     private UserRepository userRepository;
-
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void getListFilterByOrganizationId_allTeamsOfAnOrganization() throws BaseException {
@@ -66,12 +70,13 @@ public class TeamServiceTest {
         Assert.assertEquals(2, leader.getId());
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void get_nonExistingTeamById() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
         Team team = teamService.get(1123);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void deleteTeam_shouldDelete() throws BaseException {
         teamService.deleteTeam(1);
 
@@ -84,13 +89,13 @@ public class TeamServiceTest {
         Assert.assertNull(faruk.getTeam());
         Assert.assertNull(pelya.getTeam());
 
-        List<Team> teams = teamService.getListFilterByOrganizationId(1);
-        Assert.assertEquals(1, teams.size());
-        Team team = teamService.get(1);
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
+        teamService.get(1);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void deleteTeam_nonExistingTeam_shouldNotDelete() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
         teamService.deleteTeam(5000);
     }
 
@@ -113,23 +118,28 @@ public class TeamServiceTest {
         Assert.assertEquals(1, fatih.getTeam().getId());
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void assignEmployeeToTeam_employeeAlreadyInTheTeam_shouldNotAssign() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ALREADY_A_MEMBER));
         teamService.assignEmployeeToTeam(3, 1);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void assignEmployeeToTeam_nonExistingEmployee_shouldNotAssign() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
+
         teamService.assignEmployeeToTeam(5005, 1);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void assignEmployeeToTeam_nonExistingTeam_shouldNotAssign() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
         teamService.assignEmployeeToTeam(5, 9876);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void assignEmployeeToTeam_assignEmployeeFromAnotherOrganization() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS));
         teamService.assignEmployeeToTeam(7, 1);
     }
 
@@ -169,18 +179,21 @@ public class TeamServiceTest {
 
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void assignLeaderToTeam_nonExistingUser_shouldNotAssign() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
         teamService.assignLeaderToTeam(10000, 1);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void assignLeaderToTeam_nonExistingTeam_shouldNotAssign() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
         teamService.assignLeaderToTeam(3, 10000);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void assignLeaderToTeam_leaderFromOtherOrganization_shouldNotAssign() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS));
         teamService.assignLeaderToTeam(7, 1);
     }
 
@@ -200,13 +213,15 @@ public class TeamServiceTest {
         Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void removeLeadershipFromTeam_teamHasNoLeader_shouldNotRemove() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_HAS_NO_LEADER));
         teamService.removeLeadershipFromTeam(3);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void removeLeadershipFromTeam_nonExistingTeam_shouldNotRemove() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
         teamService.removeLeadershipFromTeam(181818);
     }
 
@@ -238,18 +253,21 @@ public class TeamServiceTest {
         Assert.assertTrue(listContainsUser(members, 4, "Pelya", "Petroffski"));
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void removeEmployeeFromTeam_nonExistingEmployee_shouldNotRemove() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.USER_ID_DOES_NOT_EXIST));
         teamService.removeEmployeeFromTeam(10001, 1);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void removeEmployeeFromTeam_nonExistingTeam_shouldNotRemove() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
         teamService.removeEmployeeFromTeam(2, 10001);
     }
 
-    @Test(expected = BaseException.class)
+    @Test
     public void removeEmployeeFromTeam_employeeFromOtherOrganization_shouldNotRemove() throws BaseException {
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS));
         teamService.removeEmployeeFromTeam(7, 1);
     }
 
