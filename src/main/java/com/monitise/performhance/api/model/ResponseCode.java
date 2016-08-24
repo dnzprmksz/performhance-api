@@ -27,6 +27,10 @@ public class ResponseCode {
     public static final int USER_UNAUTHORIZED_ORGANIZATION = 1206;
     public static final int USER_BELONGS_TO_ANOTHER_ORGANIZATION = 1207;
     public static final int USER_DOES_NOT_BELONG_TO_TEAM = 1208;
+    public static final int USERNAME_INVALID = 1209;
+    public static final int USER_NAME_INVALID = 1210;
+    public static final int USER_SURNAME_INVALID = 1211;
+    public static final int PASSWORD_INVALID = 1212;
 
     /**
      * TEAM RELATED RESPONSE CODES.
@@ -38,17 +42,19 @@ public class ResponseCode {
     public static final int USER_ALREADY_A_MEMBER = 1305;
     public static final int USER_IS_NOT_A_MEMBER = 1306;
     public static final int INVALID_TEAM_NAME = 1307;
+    public static final int TEAM_NAME_TAKEN = 1308;
+
 
     /**
      * JOB TITLE RELATED RESPONSE CODES.
      */
     public static final int JOB_TITLE_ID_DOES_NOT_EXIST = 1401;
-    public static final int JOB_TITLE_ID_INVALID = 1402;
+    public static final int JOB_TITLE_NAME_INVALID = 1402;
     public static final int JOB_TITLE_BELONGS_TO_ANOTHER_ORGANIZATION = 1403;
     public static final int JOB_TITLE_IN_USE = 1404;
     public static final int JOB_TITLE_EXISTS_IN_ORGANIZATION = 1405;
     public static final int JOB_TITLE_UPDATE_EMPTY_TITLE = 1406;
-
+    public static final int JOB_TITLE_ID_INVALID = 1402;
     /**
      * CRITERIA RELATED RESPONSE CODES.
      */

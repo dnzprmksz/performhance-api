@@ -152,9 +152,9 @@ public class UserController {
     public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int userId,
                                                                @PathVariable int criteriaId) throws BaseException {
         checkAuthentication(userId);
-        securityHelper.checkAuthentication(criteriaId);
-        User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
+        securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
 
+        User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
         CriteriaUserResponse criteriaUserResponse = CriteriaUserResponse.fromUser(userFromService);
         Response<CriteriaUserResponse> response = new Response<>();
         response.setData(criteriaUserResponse);
@@ -167,7 +167,8 @@ public class UserController {
     public Response<Object> removeCriteriaFromUser(@PathVariable int userId,
                                                    @PathVariable int criteriaId) throws BaseException {
         checkAuthentication(userId);
-        securityHelper.checkAuthentication(criteriaId);
+        securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
+
         criteriaService.removeCriteriaFromUserById(criteriaId, userId);
         Response<Object> response = new Response<>();
         response.setSuccess(true);
@@ -234,13 +235,30 @@ public class UserController {
         securityHelper.checkAuthentication(organizationId);
     }
 
-    private void validateUserRequest(Organization organization, AddUserRequest employee) throws BaseException {
-        String name = employee.getName();
-        String surname = employee.getSurname();
-        if (Util.isNullOrEmpty(name) || Util.isNullOrEmpty(surname)) {
-            throw new BaseException(ResponseCode.USER_USERNAME_DOES_NOT_EXIST, "Empty user name is not allowed.");
+    private void validateUserRequest(Organization organization, AddUserRequest request) throws BaseException {
+        if (Util.isNullOrEmpty(request.getName())) {
+            throw new BaseException(ResponseCode.USER_NAME_INVALID, "Empty name is not allowed.");
         }
-        relationshipHelper.ensureOrganizationJobTitleRelationship(organization.getId(), employee.getJobTitleId());
+
+        if (Util.isNullOrEmpty(request.getSurname())) {
+            throw new BaseException(ResponseCode.USER_SURNAME_INVALID, "Empty surname is not allowed.");
+        }
+
+        String username = request.getUsername();
+        if (Util.isNullOrEmpty(username)) {
+            throw new BaseException(ResponseCode.USERNAME_INVALID, "Empty username is not allowed.");
+        }
+
+        if (Util.isNullOrEmpty(request.getPassword())) {
+            throw new BaseException(ResponseCode.PASSWORD_INVALID, "Empty password is not allowed.");
+        }
+
+        // This may mean the request body does not include jobTitleId field.
+        if (request.getJobTitleId() == 0) {
+            throw new BaseException(ResponseCode.JOB_TITLE_ID_INVALID, "Empty job title id is not allowed.");
+        }
+
+        relationshipHelper.ensureOrganizationJobTitleRelationship(organization.getId(), request.getJobTitleId());
     }
 
     private void formatValidateSearchRequest(String titleId, String teamId) throws BaseException {

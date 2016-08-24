@@ -49,6 +49,13 @@ public class JobTitleTest {
     }
 
     @Test
+    public void add_nonExistingOrganizationId() throws BaseException {
+        JobTitle jobTitle = new JobTitle("Comedian", new Organization("OS Corp"));
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST));
+        jobTitleService.add(jobTitle);
+    }
+
+    @Test
     public void add_existingInDifferentOrganization_shouldAdd() throws BaseException {
         Organization organization = organizationRepository.findOne(1);
         JobTitle jobTitle = new JobTitle("Intern", organization);  // Intern exists in Monitise (2)
