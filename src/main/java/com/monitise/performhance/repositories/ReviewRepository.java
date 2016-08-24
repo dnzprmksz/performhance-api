@@ -19,4 +19,6 @@ public interface ReviewRepository extends CrudRepository<Review, Integer> {
 
     List<Review> findByReviewerId(int reviewerId);
 
+    List<Review> findByReviewedEmployeeId(int reviewerId);
+
 }

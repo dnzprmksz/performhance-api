@@ -67,6 +67,10 @@ public class ReviewService {
         reviewRepository.delete(reviewId);
     }
 
+    public List<Review> getByReviewedUserId(int userId) {
+        return reviewRepository.findByReviewedEmployeeId(userId);
+    }
+
     // region Helper Methods
 
     private void ensureExistence(int reviewId) throws BaseException {

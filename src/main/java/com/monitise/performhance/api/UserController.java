@@ -7,6 +7,7 @@ import com.monitise.performhance.api.model.CriteriaUserResponse;
 import com.monitise.performhance.api.model.EmployeeScoreResponse;
 import com.monitise.performhance.api.model.Response;
 import com.monitise.performhance.api.model.ResponseCode;
+import com.monitise.performhance.api.model.ReviewResponse;
 import com.monitise.performhance.api.model.SimplifiedUser;
 import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.api.model.UserResponse;
@@ -22,6 +23,7 @@ import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.services.CriteriaService;
 import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
+import com.monitise.performhance.services.ReviewService;
 import com.monitise.performhance.services.UserService;
 import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,9 @@ public class UserController {
     private RelationshipHelper relationshipHelper;
     @Autowired
     private CriteriaService criteriaService;
+    @Autowired
+    private ReviewService reviewService;
+
 
     // endregion
 
@@ -195,6 +200,20 @@ public class UserController {
         response.setSuccess(true);
         return response;
     }
+
+    @RequestMapping(value = "/{userId}/review", method = RequestMethod.GET)
+    public Response<List<ReviewResponse>> getReviews(@PathVariable int userId) throws BaseException {
+        checkAuthentication(userId);
+
+        List<Review> reviews = reviewService.getByReviewedUserId(userId);
+        List<ReviewResponse> responseReviews = ReviewResponse.fromReviewList(reviews);
+
+        Response<List<ReviewResponse>> response = new Response<>();
+        response.setData(responseReviews);
+        response.setSuccess(true);
+        return response;
+    }
+
 
     @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/search", method = RequestMethod.GET)

@@ -3,7 +3,9 @@ package com.monitise.performhance.api.model;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Review;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ReviewResponse {
@@ -17,7 +19,12 @@ public class ReviewResponse {
     public ReviewResponse(Review review) {
         id = review.getId();
         reviewedEmployeeName = review.getReviewedEmployee().getName() + " " + review.getReviewedEmployee().getSurname();
-        reviewerName = review.getReviewer().getName() + " " + review.getReviewer().getSurname();
+
+        if (review.getReviewer() != null) {
+            reviewerName = review.getReviewer().getName() + " " + review.getReviewer().getSurname();
+        } else {
+            reviewerName = "N/A";
+        }
 
         HashMap<String, Integer> hashMap = new HashMap<>();
         for (Map.Entry entry : review.getEvaluation().entrySet()) {
@@ -27,6 +34,17 @@ public class ReviewResponse {
         }
         evaluation = hashMap;
         comment = review.getComment();
+    }
+
+    public static List<ReviewResponse> fromReviewList(List<Review> list) {
+        List<ReviewResponse> responseList = new ArrayList();
+        if (list == null) {
+            return responseList;
+        }
+        for (Review review : list) {
+            responseList.add(new ReviewResponse(review));
+        }
+        return responseList;
     }
 
     // region Getters
