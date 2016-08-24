@@ -27,6 +27,10 @@ public class ResponseCode {
     public static final int USER_UNAUTHORIZED_ORGANIZATION = 1206;
     public static final int USER_BELONGS_TO_ANOTHER_ORGANIZATION = 1207;
     public static final int USER_DOES_NOT_BELONG_TO_TEAM = 1208;
+    public static final int USERNAME_INVALID = 1209;
+    public static final int USER_NAME_INVALID = 1210;
+    public static final int USER_SURNAME_INVALID = 1211;
+    public static final int PASSWORD_INVALID = 1212;
 
     /**
      * TEAM RELATED RESPONSE CODES.

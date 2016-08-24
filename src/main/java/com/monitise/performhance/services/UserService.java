@@ -151,7 +151,7 @@ public class UserService {
         return userFromRepo;
     }
 
-    private void ensureUsernameUniqueness(String userName) throws BaseException {
+    public void ensureUsernameUniqueness(String userName) throws BaseException {
         User user = userRepository.findByUsername(userName);
         if (user != null) {
             throw new BaseException(ResponseCode.USER_USERNAME_ALREADY_TAKEN, "That username is taken.");

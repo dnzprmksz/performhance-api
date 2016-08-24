@@ -71,9 +71,8 @@ public class OrganizationController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<OrganizationResponse> add(@RequestBody AddOrganizationRequest addOrganizationRequest)
             throws BaseException {
-        String organizationName = addOrganizationRequest.getOrganizationName();
-        validateName(organizationName);
-        Organization organization = new Organization(organizationName);
+        validateAddOrganizationRequest(addOrganizationRequest);
+        Organization organization = new Organization(addOrganizationRequest.getOrganizationName());
         Organization addedOrganization = organizationService.add(organization);
 
         User manager = new User(
@@ -179,13 +178,33 @@ public class OrganizationController {
 
     // region Helper Methods
 
-    private void validateName(String name) throws BaseException {
+    private void validateAddOrganizationRequest(AddOrganizationRequest request) throws BaseException {
+        String name = request.getOrganizationName();
         if (Util.isNullOrEmpty(name)) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID, "Empty organization name is not allowed.");
         } else if (doesNameExists(name)) {
             throw new BaseException(ResponseCode.ORGANIZATION_NAME_EXISTS,
                     "Given name is used by another organization.");
         }
+
+        if (Util.isNullOrEmpty(request.getManagerName())) {
+            throw new BaseException(ResponseCode.USER_NAME_INVALID, "Empty manager name is not allowed.");
+        }
+
+        if (Util.isNullOrEmpty(request.getManagerSurname())) {
+            throw new BaseException(ResponseCode.USER_SURNAME_INVALID, "Empty manager surname is not allowed.");
+        }
+
+        String username = request.getUsername();
+        if (Util.isNullOrEmpty(username)) {
+            throw new BaseException(ResponseCode.USERNAME_INVALID, "Empty username is not allowed.");
+        }
+        userService.ensureUsernameUniqueness(username);
+
+        if (Util.isNullOrEmpty(request.getPassword())) {
+            throw new BaseException(ResponseCode.PASSWORD_INVALID, "Empty password is not allowed.");
+        }
+
     }
 
     private boolean doesNameExists(String name) {

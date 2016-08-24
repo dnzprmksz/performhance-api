@@ -65,6 +65,7 @@ public class JobTitleController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public Response<JobTitleResponse> add(@RequestBody AddJobTitleRequest addJobTitleRequest) throws BaseException {
         int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
+        validateAddJobTitleRequest(addJobTitleRequest);
         Organization organization = organizationService.get(organizationId);
         JobTitle jobTitle = new JobTitle(addJobTitleRequest.getTitle(), organization);
         JobTitle jobTitleFromService = jobTitleService.add(jobTitle);
@@ -138,6 +139,10 @@ public class JobTitleController {
         if (Util.isNullOrEmpty(title)) {
             throw new BaseException(ResponseCode.JOB_TITLE_UPDATE_EMPTY_TITLE, "Title cannot be empty.");
         }
+    }
+
+    private void validateAddJobTitleRequest(AddJobTitleRequest request) throws BaseException {
+        Util.isNullOrEmpty(request.getTitle());
     }
 
     private void checkAuthentication(int jobTitleId) throws BaseException {
