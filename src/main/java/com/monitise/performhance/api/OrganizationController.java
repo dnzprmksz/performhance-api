@@ -97,8 +97,8 @@ public class OrganizationController {
 
     @RequestMapping(value = "/{organizationId}", method = RequestMethod.GET)
     public Response<OrganizationResponse> get(@PathVariable int organizationId) throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
         Organization organizationFromService = organizationService.get(organizationId);
+        securityHelper.checkAuthentication(organizationId);
 
         OrganizationResponse responseOrganization = OrganizationResponse.fromOrganization(organizationFromService);
         Response<OrganizationResponse> response = new Response<>();
