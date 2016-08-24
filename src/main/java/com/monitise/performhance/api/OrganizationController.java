@@ -25,6 +25,7 @@ import com.monitise.performhance.services.JobTitleService;
 import com.monitise.performhance.services.OrganizationService;
 import com.monitise.performhance.services.TeamService;
 import com.monitise.performhance.services.UserService;
+import org.omg.CORBA.Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -118,6 +119,16 @@ public class OrganizationController {
         OrganizationResponse organizationResponse = OrganizationResponse.fromOrganization(organization);
         Response<OrganizationResponse> response = new Response<>();
         response.setData(organizationResponse);
+        response.setSuccess(true);
+        return response;
+    }
+
+    @Secured("ROLE_MANAGER")
+    @RequestMapping(value = "/{organizationId}", method = RequestMethod.DELETE)
+    public Response<Object> delete(@PathVariable int organizationId) throws BaseException {
+        securityHelper.checkAuthentication(organizationId);
+        organizationService.remove(organizationId);
+        Response<Object> response = new Response<>();
         response.setSuccess(true);
         return response;
     }

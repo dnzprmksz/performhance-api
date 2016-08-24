@@ -4,6 +4,7 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.Util;
@@ -27,6 +28,8 @@ public class UserService {
     private JobTitleService jobTitleService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TeamService teamService;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -84,6 +87,8 @@ public class UserService {
     public void remove(int userId) throws BaseException {
         ensureExistence(userId);
         removeUserFromOrganization(userId);
+        removeUserFromTeam(userId);
+        checkAndClearManagerStatus(userId);
         userRepository.delete(userId);
     }
 
@@ -169,7 +174,26 @@ public class UserService {
         User user = userService.get(userId);
         Organization organization = user.getOrganization();
         organization.getUsers().remove(user);
+        organization.setNumberOfEmployees(organization.getNumberOfEmployees() - 1);
         organizationService.update(organization);
+    }
+
+    private void removeUserFromTeam(int userId) throws BaseException {
+        User user = userService.get(userId);
+        Team team = user.getTeam();
+        if (team != null) {
+            team.getMembers().remove(user);
+            teamService.update(team);
+        }
+    }
+
+    private void checkAndClearManagerStatus(int userId) throws BaseException {
+        User user = get(userId);
+        if (user.getRole().equals(Role.MANAGER)) {
+            Organization organization = user.getOrganization();
+            organization.setManager(null);
+            organizationService.update(organization);
+        }
     }
 
     // endregion

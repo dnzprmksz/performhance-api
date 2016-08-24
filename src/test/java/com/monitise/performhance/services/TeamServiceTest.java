@@ -78,7 +78,7 @@ public class TeamServiceTest {
 
     @Test
     public void deleteTeam_shouldDelete() throws BaseException {
-        teamService.deleteTeam(1);
+        teamService.remove(1);
 
         User pelin = userRepository.findOne(2);
         User faruk = userRepository.findOne(3);
@@ -96,7 +96,7 @@ public class TeamServiceTest {
     @Test
     public void deleteTeam_nonExistingTeam_shouldNotDelete() throws BaseException {
         thrown.expect(CustomMatcher.hasCode(ResponseCode.TEAM_ID_DOES_NOT_EXIST));
-        teamService.deleteTeam(5000);
+        teamService.remove(5000);
     }
 
     @Test
