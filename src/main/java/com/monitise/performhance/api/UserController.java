@@ -152,9 +152,9 @@ public class UserController {
     public Response<CriteriaUserResponse> assignCriteriaToUser(@PathVariable int userId,
                                                                @PathVariable int criteriaId) throws BaseException {
         checkAuthentication(userId);
-        securityHelper.checkAuthentication(criteriaId);
-        User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
+        securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
 
+        User userFromService = criteriaService.assignCriteriaToUserById(criteriaId, userId);
         CriteriaUserResponse criteriaUserResponse = CriteriaUserResponse.fromUser(userFromService);
         Response<CriteriaUserResponse> response = new Response<>();
         response.setData(criteriaUserResponse);
@@ -167,7 +167,8 @@ public class UserController {
     public Response<Object> removeCriteriaFromUser(@PathVariable int userId,
                                                    @PathVariable int criteriaId) throws BaseException {
         checkAuthentication(userId);
-        securityHelper.checkAuthentication(criteriaId);
+        securityHelper.checkAuthentication(criteriaService.get(criteriaId).getOrganization().getId());
+
         criteriaService.removeCriteriaFromUserById(criteriaId, userId);
         Response<Object> response = new Response<>();
         response.setSuccess(true);

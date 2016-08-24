@@ -121,60 +121,6 @@ public class OrganizationController {
         return response;
     }
 
-    @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{organizationId}/jobTitles", method = RequestMethod.GET)
-    public Response<List<OrganizationJobTitleResponse>> getJobTitleByOrganization(@PathVariable int organizationId)
-            throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
-        List<JobTitle> list = jobTitleService.getListFilterByOrganizationId(organizationId);
-
-        List<OrganizationJobTitleResponse> jobTitleResponseList = OrganizationJobTitleResponse.fromList(list);
-        Response<List<OrganizationJobTitleResponse>> response = new Response<>();
-        response.setData(jobTitleResponseList);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{organizationId}/users", method = RequestMethod.GET)
-    public Response<List<OrganizationUserResponse>> getUsers(@PathVariable int organizationId) throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
-        List<User> users = userService.getByOrganizationId(organizationId);
-
-        List<OrganizationUserResponse> responseList = OrganizationUserResponse.fromList(users);
-        Response response = new Response();
-        response.setData(responseList);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{organizationId}/teams", method = RequestMethod.GET)
-    public Response<List<SimplifiedTeam>> getTeamListByOrganizationId(@PathVariable int organizationId)
-            throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
-        List<Team> list = teamService.getListFilterByOrganizationId(organizationId);
-
-        List<SimplifiedTeam> responseList = SimplifiedTeam.fromList(list);
-        Response<List<SimplifiedTeam>> response = new Response<>();
-        response.setData(responseList);
-        response.setSuccess(true);
-        return response;
-    }
-
-    @Secured("ROLE_MANAGER")
-    @RequestMapping(value = "/{organizationId}/criteria", method = RequestMethod.GET)
-    public Response<List<CriteriaResponse>> getAllCriteriaFilterByOrganizationId(@PathVariable int organizationId)
-            throws BaseException {
-        securityHelper.checkAuthentication(organizationId);
-        List<Criteria> list = criteriaService.getAllFilterByOrganizationId(organizationId);
-
-        List<CriteriaResponse> criteriaResponseList = CriteriaResponse.fromList(list);
-        Response<List<CriteriaResponse>> response = new Response<>();
-        response.setData(criteriaResponseList);
-        response.setSuccess(true);
-        return response;
-    }
 
     // region Helper Methods
 
