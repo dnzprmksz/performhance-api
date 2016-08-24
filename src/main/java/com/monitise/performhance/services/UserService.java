@@ -4,12 +4,16 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.Util;
+import com.monitise.performhance.repositories.ReviewRepository;
 import com.monitise.performhance.repositories.UserRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
@@ -27,9 +31,9 @@ public class UserService {
     @Autowired
     private JobTitleService jobTitleService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private TeamService teamService;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -86,20 +90,16 @@ public class UserService {
 
     public void remove(int userId) throws BaseException {
         ensureExistence(userId);
-        purgeFromTeamIfTeamExists(userId);
 
-        removeUserFromOrganization(userId);
+        // Removes the reviews that are made TO this user.
+        removeReviews(userId);
+        // Makes the reviewer column null for all the reviews this user has made
+        correctReviews(userId);
         removeUserFromTeam(userId);
+        removeUserFromOrganization(userId);
         checkAndClearManagerStatus(userId);
-        userRepository.delete(userId);
-    }
 
-    private void purgeFromTeamIfTeamExists(int userId) throws BaseException {
-        User user = get(userId);
-        Team team = user.getTeam();
-        if ( team != null) {
-            teamService.removeEmployeeFromTeam(userId,team.getId());
-        }
+        userRepository.delete(userId);
     }
 
     public User update(User user) throws BaseException {
@@ -133,7 +133,7 @@ public class UserService {
     }
 
     public User updateFromRequest(UpdateUserRequest updateUserRequest, int userId) throws BaseException {
-        User user = userService.get(userId);
+        User user = get(userId);
         String name = updateUserRequest.getName();
         String surname = updateUserRequest.getSurname();
         String password = updateUserRequest.getPassword();
@@ -181,19 +181,42 @@ public class UserService {
     }
 
     private void removeUserFromOrganization(int userId) throws BaseException {
-        User user = userService.get(userId);
+        User user = get(userId);
         Organization organization = user.getOrganization();
         organization.getUsers().remove(user);
         organization.setNumberOfEmployees(organization.getNumberOfEmployees() - 1);
         organizationService.update(organization);
     }
 
+    // Removes user from team if the user has a team.
     private void removeUserFromTeam(int userId) throws BaseException {
-        User user = userService.get(userId);
+        User user = get(userId);
         Team team = user.getTeam();
         if (team != null) {
             team.getMembers().remove(user);
             teamService.update(team);
+        }
+    }
+
+    private void removeReviews(int userId) throws BaseException {
+        User user = get(userId);
+        List<Review> reviews = user.getReviews();
+        Hibernate.initialize(reviews);
+        user.setReviews(null);
+        update(user);
+        for (Review review : reviews) {
+            reviewRepository.delete(review.getId());
+        }
+    }
+
+    // Makes the `reviewer_id` column null for all the reviews this user has made.
+    private void correctReviews(int userId) throws BaseException {
+        System.out.println("GIRDIK");
+        // TODO ASLINDA GIRMEMISTIK.
+        List<Review> reviews = reviewRepository.findByReviewerId(userId);
+        for (Review review : reviews) {
+            review.setReviewer(null);
+            reviewRepository.save(review);
         }
     }
 

@@ -150,7 +150,7 @@ INSERT INTO `user_criteria_list`(user_id, criteria_list_id) VALUES(9,5);
 
 --                        REVIEW INSERTIONS                        --
 
---Google Reviews
+-- Google Reviews
 INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
     VALUES('She is harder better faster stronger this year.', 1, 2, 3, 1);
 INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
@@ -160,7 +160,7 @@ INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id
 INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
     VALUES('Impressive for a Russian.', 1, 4, 3, 1);
 
---Monitise Reviews
+-- Monitise Reviews
 INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
     VALUES('I dont know why he is in the team, but this guy is awesome.', 2, 7, 8, 2);
 INSERT INTO `review`(comment, organization_id, reviewed_employee_id, reviewer_id, team_id)
