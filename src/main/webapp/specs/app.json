@@ -124,6 +124,39 @@
             }
           }
         }
+      },
+      "delete": {
+        "operationId": "deleteOrganization",
+        "description": "Deletes the `Organization` with given id",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `Organization` to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "An organization with given id does not exist",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
       }
     },
     "/users/": {
