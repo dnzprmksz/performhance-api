@@ -1,5 +1,6 @@
 package com.monitise.performhance.api;
 
+import com.monitise.performhance.api.model.AddJobTitleRequest;
 import com.monitise.performhance.api.model.AddTeamRequest;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
@@ -85,6 +86,7 @@ public class TeamController {
     public Response<TeamResponse> add(@RequestBody AddTeamRequest addTeamRequest) throws BaseException {
         int organizationId = securityHelper.getAuthenticatedUser().getOrganization().getId();
         Organization organization = organizationService.get(organizationId);
+        validateAddTeamRequest(addTeamRequest);
         Team team = new Team(addTeamRequest.getName(), organization);
         Team addedTeam = teamService.add(team);
 
@@ -214,6 +216,13 @@ public class TeamController {
 
     private void validateUpdateTeamRequest(UpdateTeamRequest updateRequest) throws BaseException {
         String name = updateRequest.getName();
+        if (Util.isNullOrEmpty(name)) {
+            throw new BaseException(ResponseCode.INVALID_TEAM_NAME, "Team name can not be empty");
+        }
+    }
+
+    private void validateAddTeamRequest(AddTeamRequest request) throws BaseException {
+        String name = request.getName();
         if (Util.isNullOrEmpty(name)) {
             throw new BaseException(ResponseCode.INVALID_TEAM_NAME, "Team name can not be empty");
         }

@@ -79,14 +79,15 @@ public class TeamService {
     }
 
     public Team add(Team team) throws BaseException {
-        int organizationId = team.getOrganization().getId();
-        securityHelper.checkAuthentication(organizationId);
+        Organization organization = team.getOrganization();
+        ensureTeamNameIsUnique(team, organization);
+
         Team teamFromRepo = teamRepository.save(team);
 
         if (teamFromRepo == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Could not add given team.");
         }
-        addTeamToOrganization(organizationId, teamFromRepo);
+        addTeamToOrganization(organization.getId(), teamFromRepo);
         return teamFromRepo;
     }
 
@@ -168,6 +169,21 @@ public class TeamService {
     }
 
     // region Helper Methods
+
+    // Throws if the organization has a team with the same name.
+    // Though two teams may have the same name if they belong to different organizations.
+    private void ensureTeamNameIsUnique(Team team, Organization organization) throws BaseException {
+        String name = team.getName();
+        List<Team> teams = organization.getTeams();
+
+        for (Team current : teams) {
+            if ( current.getName().equals(name)) {
+                throw new BaseException(ResponseCode.TEAM_NAME_TAKEN,
+                        "A team with a given name already exists in this organization.");
+            }
+        }
+
+    }
 
     private void ensureTeamHasLeader(int teamId) throws BaseException {
         Team team = get(teamId);

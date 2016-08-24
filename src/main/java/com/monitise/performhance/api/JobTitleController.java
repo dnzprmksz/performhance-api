@@ -142,7 +142,9 @@ public class JobTitleController {
     }
 
     private void validateAddJobTitleRequest(AddJobTitleRequest request) throws BaseException {
-        Util.isNullOrEmpty(request.getTitle());
+        if (Util.isNullOrEmpty(request.getTitle())) {
+            throw new BaseException(ResponseCode.JOB_TITLE_NAME_INVALID, "Empty title name is not allowed");
+        }
     }
 
     private void checkAuthentication(int jobTitleId) throws BaseException {
