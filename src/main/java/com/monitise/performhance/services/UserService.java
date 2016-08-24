@@ -4,6 +4,7 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.UpdateUserRequest;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.Util;
@@ -27,6 +28,8 @@ public class UserService {
     private JobTitleService jobTitleService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TeamService teamService;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -83,8 +86,18 @@ public class UserService {
 
     public void remove(int userId) throws BaseException {
         ensureExistence(userId);
+        purgeFromTeamIfTeamExists(userId);
+
         removeUserFromOrganization(userId);
         userRepository.delete(userId);
+    }
+
+    private void purgeFromTeamIfTeamExists(int userId) throws BaseException {
+        User user = get(userId);
+        Team team = user.getTeam();
+        if ( team != null) {
+            teamService.removeEmployeeFromTeam(userId,team.getId());
+        }
     }
 
     public User update(User user) throws BaseException {

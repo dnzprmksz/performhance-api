@@ -109,7 +109,7 @@ public class UserController {
         return response;
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_MANAGER"})
+    @Secured("ROLE_MANAGER")
     @RequestMapping(value = "/{userId}", method = RequestMethod.DELETE)
     public Response<Object> remove(@PathVariable int userId) throws BaseException {
         checkAuthentication(userId);
