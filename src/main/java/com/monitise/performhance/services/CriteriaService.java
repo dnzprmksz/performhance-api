@@ -9,6 +9,7 @@ import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.Util;
 import com.monitise.performhance.repositories.CriteriaRepository;
+import com.monitise.performhance.repositories.ReviewRepository;
 import com.monitise.performhance.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class CriteriaService {
     private RelationshipHelper relationshipHelper;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     public List<Criteria> getAll() {
         return criteriaRepository.findAll();
@@ -65,6 +68,7 @@ public class CriteriaService {
             throw new BaseException(ResponseCode.CRITERIA_CAN_NOT_BE_DELETED,
                     "Criteria with given id is assigned to some users.");
         }
+        removeCriteriaFromOrganization(criteriaId);
         criteriaRepository.delete(criteriaId);
     }
 
@@ -201,6 +205,13 @@ public class CriteriaService {
         if (updatedOrganization == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add given criteria to given organization.");
         }
+    }
+
+    private void removeCriteriaFromOrganization(int criteriaId) throws BaseException {
+        Criteria criteria = get(criteriaId);
+        Organization organization = criteria.getOrganization();
+        organization.getCriteriaList().remove(criteria);
+        organizationService.update(organization);
     }
 
     // endregion

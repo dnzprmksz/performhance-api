@@ -2,7 +2,11 @@ package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.UpdateOrganizationRequest;
+import com.monitise.performhance.entity.Criteria;
+import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.Review;
+import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
 import com.monitise.performhance.helpers.Util;
@@ -10,6 +14,7 @@ import com.monitise.performhance.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,6 +28,10 @@ public class OrganizationService {
     private JobTitleService jobTitleService;
     @Autowired
     private TeamService teamService;
+    @Autowired
+    private CriteriaService criteriaService;
+    @Autowired
+    private ReviewService reviewService;
 
     public List<Organization> getAll() {
         return organizationRepository.findAll();
@@ -108,6 +117,16 @@ public class OrganizationService {
         return updatedOrganization;
     }
 
+    public void remove(int organizationId) throws BaseException {
+        ensureExistence(organizationId);
+        removeJobTitles(organizationId);
+        removeReviews(organizationId);
+        removeAllCriteria(organizationId);
+        removeUsers(organizationId);
+        removeTeams(organizationId);
+        organizationRepository.delete(organizationId);
+    }
+
     // region Helper Methods
 
     private void ensureUniqueness(String name) throws BaseException {
@@ -123,6 +142,105 @@ public class OrganizationService {
         if (organization == null) {
             throw new BaseException(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST,
                     "An organization with given ID does not exist.");
+        }
+    }
+
+    private void removeJobTitles(int organizationId) throws BaseException {
+        removeJobTitleOfAllEmployees(organizationId);
+        Organization organization = get(organizationId);
+
+        List<JobTitle> jobTitles = organization.getJobTitles();
+        int jobTitleCount = jobTitles.size();
+        int jobTitleId = 0;
+        for (int i = 0; i < jobTitleCount; i++) {
+            jobTitleId = jobTitles.get(0).getId();
+            jobTitleService.remove(jobTitleId);
+        }
+    }
+
+    private void removeJobTitleOfAllEmployees(int organizationId) throws BaseException {
+        Organization organization = get(organizationId);
+        for (User employee : organization.getUsers()) {
+            employee.setJobTitle(null);
+            userService.update(employee);
+        }
+    }
+
+    private void removeAllCriteria(int organizationId) throws BaseException {
+        removeCriteriaOfAllEmployees(organizationId);
+        Organization organization = get(organizationId);
+
+        List<Criteria> criteriaList = organization.getCriteriaList();
+        int criteriaCount = criteriaList.size();
+        int criteriaId = 0;
+        for (int i = 0; i < criteriaCount; i++) {
+            criteriaId = criteriaList.get(0).getId();
+            criteriaService.remove(criteriaId);
+        }
+        update(organization);
+    }
+
+    private void removeCriteriaOfAllEmployees(int organizationId) throws BaseException {
+        Organization organization = get(organizationId);
+        for (User employee : organization.getUsers()) {
+            removeAllCriteriaOfAnEmployee(employee.getId());
+        }
+    }
+
+    private void removeAllCriteriaOfAnEmployee(int userId) throws BaseException {
+        User user = userService.get(userId);
+        List<Criteria> criteriaList = user.getCriteriaList();
+        int criteriaCount = criteriaList.size();
+        int criteriaId = 0;
+        for (int i = 0; i < criteriaCount; i++) {
+            criteriaId = criteriaList.get(0).getId();
+            criteriaService.removeCriteriaFromUserById(criteriaId, userId);
+        }
+    }
+
+    private void removeReviews(int organizationId) throws BaseException {
+        removeReviewsOfAllEmployees(organizationId);
+        List<Review> reviews = reviewService.getAllFilterByOrganizationId(organizationId);
+        for (Review review : reviews) {
+            reviewService.remove(review.getId());
+        }
+    }
+
+    private void removeReviewsOfAllEmployees(int organizationId) throws BaseException {
+        Organization organization = get(organizationId);
+        for (User employee : organization.getUsers()) {
+            removeReviewsOfAnEmployee(employee.getId());
+        }
+    }
+
+    private void removeReviewsOfAnEmployee(int userId) throws BaseException {
+        User user = userService.get(userId);
+        List<Review> reviews = user.getReviews();
+        int reviewCount = reviews.size();
+
+        for (int i = 0; i < reviewCount; i++) {
+            reviews.remove(0);
+        }
+        userService.update(user);
+    }
+
+    private void removeUsers(int organizationId) throws BaseException {
+        Organization organization = get(organizationId);
+        List<User> users = organization.getUsers();
+        int userCount = users.size();
+        for (int i = 0; i < userCount; i++) {
+            User user = users.get(0);
+            userService.remove(user.getId());
+        }
+    }
+
+    private void removeTeams(int organizationId) throws BaseException {
+        Organization organization = get(organizationId);
+        List<Team> teams = organization.getTeams();
+        int teamCount = teams.size();
+        for (int i = 0; i < teamCount; i++) {
+            Team team = teams.get(0);
+            teamService.remove(team.getId());
         }
     }
 

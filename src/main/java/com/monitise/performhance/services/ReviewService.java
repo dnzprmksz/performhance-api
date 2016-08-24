@@ -1,7 +1,7 @@
 package com.monitise.performhance.services;
 
 import com.monitise.performhance.api.model.ResponseCode;
-import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReviewService {
@@ -23,13 +24,15 @@ public class ReviewService {
     private OrganizationService organizationService;
     @Autowired
     private TeamService teamService;
+    @Autowired
+    private CriteriaService criteriaService;
 
     public List<Review> getAll() {
         return reviewRepository.findAll();
     }
 
-    public List<Review> getAllFilterByOrganizationId(int organizationId) throws BaseException{
-        // Make sure an organization with given id exists.
+    public List<Review> getAllFilterByOrganizationId(int organizationId) throws BaseException {
+
         organizationService.get(organizationId);
         return reviewRepository.findByOrganizationId(organizationId);
     }

@@ -89,6 +89,8 @@ public class UserService {
         purgeFromTeamIfTeamExists(userId);
 
         removeUserFromOrganization(userId);
+        removeUserFromTeam(userId);
+        checkAndClearManagerStatus(userId);
         userRepository.delete(userId);
     }
 
@@ -182,7 +184,26 @@ public class UserService {
         User user = userService.get(userId);
         Organization organization = user.getOrganization();
         organization.getUsers().remove(user);
+        organization.setNumberOfEmployees(organization.getNumberOfEmployees() - 1);
         organizationService.update(organization);
+    }
+
+    private void removeUserFromTeam(int userId) throws BaseException {
+        User user = userService.get(userId);
+        Team team = user.getTeam();
+        if (team != null) {
+            team.getMembers().remove(user);
+            teamService.update(team);
+        }
+    }
+
+    private void checkAndClearManagerStatus(int userId) throws BaseException {
+        User user = get(userId);
+        if (user.getRole().equals(Role.MANAGER)) {
+            Organization organization = user.getOrganization();
+            organization.setManager(null);
+            organizationService.update(organization);
+        }
     }
 
     // endregion

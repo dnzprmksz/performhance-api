@@ -66,9 +66,9 @@ public class TeamService {
         return teamRepository.findAll(filter);
     }
 
-    public void deleteTeam(int teamId) throws BaseException {
+    public void remove(int teamId) throws BaseException {
         ensureExistence(teamId);
-        removeLeadershipFromTeam(teamId);
+        checkAndRemoveLeadership(teamId);
         removeAllEmployeesFromTeam(teamId);
         removeTeamFromOrganization(teamId);
         teamRepository.delete(teamId);
@@ -231,6 +231,13 @@ public class TeamService {
         Organization updatedOrganization = organizationService.update(organization);
         if (updatedOrganization == null) {
             throw new BaseException(ResponseCode.UNEXPECTED, "Failed to add this team to given organization.");
+        }
+    }
+
+    private void checkAndRemoveLeadership(int teamId) throws BaseException {
+        Team team = get(teamId);
+        if (team.getLeader() != null) {
+            removeLeadershipFromTeam(teamId);
         }
     }
 

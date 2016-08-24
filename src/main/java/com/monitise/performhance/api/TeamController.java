@@ -116,7 +116,7 @@ public class TeamController {
     @RequestMapping(value = "/{teamId}", method = RequestMethod.DELETE)
     public Response<Object> remove(@PathVariable int teamId) throws BaseException {
         checkAuthentication(teamId);
-        teamService.deleteTeam(teamId);
+        teamService.remove(teamId);
         Response<Object> response = new Response<>();
         response.setSuccess(true);
         return response;
