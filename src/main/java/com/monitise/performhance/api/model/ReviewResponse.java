@@ -47,7 +47,7 @@ public class ReviewResponse {
         return responseList;
     }
 
-    // region Getters
+    // region Getters & Setters
 
     public int getId() {
         return id;
@@ -68,10 +68,6 @@ public class ReviewResponse {
     public String getReviewerName() {
         return reviewerName;
     }
-
-    // endregion
-
-    // region Setters
 
     public void setReviewerName(String reviewerName) {
         this.reviewerName = reviewerName;
