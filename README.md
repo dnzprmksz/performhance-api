@@ -3,17 +3,19 @@ RESTful API for corporate peer review and performance tracking application.
 
 
 # Features
-Different user roles such as Employee, Team Leader, Manager and Admin.
+Supports multiple Organizations.
 
-Employees can review and comment on their colleagues.
+Different user roles such as Employee, Team Leader and Manager.
 
 Managers can alter review criteria for a person, team, job title or a given list of users.
 
 Managers can assign employees to a team and select one of them as the team leader, who can read the reviews in that team.
 
-CRUD operations for Organizations, Employees, Teams, JobTitles, Criteria, Reviews.
+Employees can review and comment on their colleagues.
 
-Logging incoming requests.
+Search functionality for Employees and Teams.
+
+CRUD operations for Organizations, Employees, Teams, Job Titles, Criteria, Reviews.
 
 
 # Installation
