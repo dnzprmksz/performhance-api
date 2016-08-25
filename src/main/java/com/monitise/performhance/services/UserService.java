@@ -211,8 +211,6 @@ public class UserService {
 
     // Makes the `reviewer_id` column null for all the reviews this user has made.
     private void correctReviews(int userId) throws BaseException {
-        System.out.println("GIRDIK");
-        // TODO ASLINDA GIRMEMISTIK.
         List<Review> reviews = reviewRepository.findByReviewerId(userId);
         for (Review review : reviews) {
             review.setReviewer(null);

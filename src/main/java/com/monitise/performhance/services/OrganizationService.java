@@ -122,8 +122,8 @@ public class OrganizationService {
         removeJobTitles(organizationId);
         removeReviews(organizationId);
         removeAllCriteria(organizationId);
-        removeUsers(organizationId);
         removeTeams(organizationId);
+        removeUsers(organizationId);
         organizationRepository.delete(organizationId);
     }
 

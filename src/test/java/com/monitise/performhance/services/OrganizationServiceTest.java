@@ -175,6 +175,20 @@ public class OrganizationServiceTest {
         Assert.assertFalse(result);
     }
 
+    @Test
+    public void deleteOrganization() throws BaseException {
+        organizationService.remove(1);
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST));
+        organizationService.get(1);
+    }
+
+    @Test
+    public void deleteOrganization_idDoesNotExist_ShouldNotDelete() throws BaseException {
+        organizationService.remove(1);
+        thrown.expect(CustomMatcher.hasCode(ResponseCode.ORGANIZATION_ID_DOES_NOT_EXIST));
+        organizationService.get(1);
+    }
+
     // region Helper Methods
 
     private boolean listContainsOrganization(List<Organization> list, String organizationName,
@@ -196,6 +210,8 @@ public class OrganizationServiceTest {
         }
         return false;
     }
+
+
 
     // endregion
 
