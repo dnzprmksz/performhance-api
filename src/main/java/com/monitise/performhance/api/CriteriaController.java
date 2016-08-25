@@ -4,6 +4,7 @@ import com.monitise.performhance.api.model.CriteriaRequest;
 import com.monitise.performhance.api.model.CriteriaResponse;
 import com.monitise.performhance.api.model.ExtendedResponse;
 import com.monitise.performhance.api.model.Response;
+import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.exceptions.BaseException;
@@ -97,6 +98,7 @@ public class CriteriaController {
     public Response<CriteriaResponse> update(@PathVariable int criteriaId,
                                              @RequestBody CriteriaRequest criteriaRequest) throws BaseException {
         checkAuthentication(criteriaId);
+        validateUpdateCriteriaRequest(criteriaRequest);
         Criteria criteriaFromService = criteriaService.updateFromRequest(criteriaRequest, criteriaId);
 
         CriteriaResponse criteriaResponse = CriteriaResponse.fromCriteria(criteriaFromService);
@@ -137,6 +139,12 @@ public class CriteriaController {
         securityHelper.checkAuthentication(organizationId);
     }
 
+    private void validateUpdateCriteriaRequest(CriteriaRequest request) throws BaseException {
+        if (Util.isNullOrEmpty(request.getCriteria())) {
+            throw new BaseException(ResponseCode.CRITERIA_NAME_INVALID,
+                    "Empty criteria name is not allowed");
+        }
+    }
     // endregion
 
 }

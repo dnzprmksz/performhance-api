@@ -70,6 +70,7 @@ public class ResponseCode {
     public static final int CRITERIA_BELONGS_TO_ANOTHER_ORGANIZATION = 1510;
     public static final int CRITERIA_AND_USER_BELONG_TO_DIFFERENT_ORGANIZATIONS = 1511;
     public static final int CRITERIA_CAN_NOT_BE_DELETED = 1512;
+    public static final int CRITERIA_NAME_INVALID = 1513;
 
     /**
      * REVIEW RELATED RESPONSE CODES.
