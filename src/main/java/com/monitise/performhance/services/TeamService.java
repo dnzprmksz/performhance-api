@@ -4,6 +4,7 @@ import com.monitise.performhance.api.model.ResponseCode;
 import com.monitise.performhance.api.model.Role;
 import com.monitise.performhance.api.model.UpdateTeamRequest;
 import com.monitise.performhance.entity.Organization;
+import com.monitise.performhance.entity.Review;
 import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
@@ -36,6 +37,8 @@ public class TeamService {
     private UserService userService;
     @Autowired
     private RelationshipHelper relationshipHelper;
+    @Autowired
+    private ReviewService reviewService;
 
     public List<Team> getAll() {
         return teamRepository.findAll();
@@ -71,6 +74,7 @@ public class TeamService {
         checkAndRemoveLeadership(teamId);
         removeAllEmployeesFromTeam(teamId);
         removeTeamFromOrganization(teamId);
+        removeTeamFromReviews(teamId);
         teamRepository.delete(teamId);
     }
 
@@ -238,6 +242,14 @@ public class TeamService {
         Team team = get(teamId);
         if (team.getLeader() != null) {
             removeLeadershipFromTeam(teamId);
+        }
+    }
+
+    private void removeTeamFromReviews(int teamId) throws BaseException {
+        Team team = get(teamId);
+        List<Review> reviews = reviewService.getAllFilterByTeamId(teamId);
+        for (Review review : reviews) {
+            review.setTeam(null);
         }
     }
 
