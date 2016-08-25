@@ -76,6 +76,7 @@ public class OrganizationService {
     public Organization updateFromRequest(UpdateOrganizationRequest updateOrganizationRequest, int organizationId)
             throws BaseException {
         checkUpdateRequest(updateOrganizationRequest);
+        ensureUniqueness(updateOrganizationRequest.getName());
         Organization organization = get(organizationId);
         organization.setName(updateOrganizationRequest.getName());
 

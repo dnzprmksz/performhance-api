@@ -60,8 +60,17 @@ public class JobTitleService {
 
     public JobTitle updateFromRequest(UpdateJobTitleRequest updateJobTitleRequest, int jobTitleId) throws BaseException {
         JobTitle jobTitle = get(jobTitleId);
+        ensureNameIsUnique(updateJobTitleRequest, jobTitle.getOrganization().getId());
         jobTitle.setTitle(updateJobTitleRequest.getTitle());
         return update(jobTitle);
+    }
+
+    private void ensureNameIsUnique(UpdateJobTitleRequest request, int organizationId) throws BaseException {
+        JobTitle jobTitle = jobTitleRepository.findByTitleAndOrganizationId(request.getTitle(), organizationId);
+        if (jobTitle != null) {
+            throw new BaseException(ResponseCode.JOB_TITLE_EXISTS_IN_ORGANIZATION,
+                    "You organization already has job title: " + request.getTitle() + ".");
+        }
     }
 
     public void remove(int jobTitleId) throws BaseException {
