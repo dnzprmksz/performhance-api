@@ -75,11 +75,10 @@ public class OrganizationService {
 
     public Organization updateFromRequest(UpdateOrganizationRequest updateOrganizationRequest, int organizationId)
             throws BaseException {
+        checkUpdateRequest(updateOrganizationRequest);
         Organization organization = get(organizationId);
-        String name = updateOrganizationRequest.getName();
-        if (!Util.isNullOrEmpty(name)) {
-            organization.setName(name);
-        }
+        organization.setName(updateOrganizationRequest.getName());
+
         return update(organization);
     }
 
@@ -241,6 +240,14 @@ public class OrganizationService {
         for (int i = 0; i < teamCount; i++) {
             Team team = teams.get(0);
             teamService.remove(team.getId());
+        }
+    }
+
+    private void checkUpdateRequest(UpdateOrganizationRequest request) throws BaseException {
+        String name = request.getName();
+        if (Util.isNullOrEmpty(name)) {
+            throw new BaseException(ResponseCode.ORGANIZATION_NAME_INVALID,
+                    "Empty organization name is not allowed.");
         }
     }
 
