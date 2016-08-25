@@ -97,9 +97,10 @@ public class JobTitleController {
         validateUpdateRequest(updateJobTitleRequest);
         checkAuthentication(jobTitleId);
 
+
         JobTitle jobTitle = jobTitleService.get(jobTitleId);
         jobTitle.setTitle(updateJobTitleRequest.getTitle());
-        JobTitle jobTitleFromService = jobTitleService.update(jobTitle);
+        JobTitle jobTitleFromService = jobTitleService.updateFromRequest(updateJobTitleRequest, jobTitleId);
 
         JobTitleResponse jobTitleResponse = JobTitleResponse.fromJobTitle(jobTitleFromService);
         Response<JobTitleResponse> response = new Response<>();
