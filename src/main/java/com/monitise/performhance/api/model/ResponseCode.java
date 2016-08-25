@@ -81,6 +81,7 @@ public class ResponseCode {
     public static final int REVIEW_USER_CRITERIA_LIST_NOT_SATISFIED = 1604;
     public static final int REVIEW_USER_IN_DIFFERENT_TEAM = 1605;
     public static final int REVIEW_SAME_USER = 1606;
+    public static final int REVIEW_NOT_AUTHORIZED_TO_VIEW = 1607;
 
     /**
      * RELATIONSHIP RELATED RESPONSE CODES.
