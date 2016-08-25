@@ -80,7 +80,7 @@ public class TeamService {
 
     public Team add(Team team) throws BaseException {
         Organization organization = team.getOrganization();
-        ensureTeamNameIsUnique(team, organization);
+        ensureTeamNameIsUnique(team.getName(), organization);
 
         Team teamFromRepo = teamRepository.save(team);
 
@@ -164,6 +164,7 @@ public class TeamService {
 
     public Team updateFromRequest(int teamId, UpdateTeamRequest updateRequest) throws BaseException {
         Team team = get(teamId);
+        ensureTeamNameIsUnique(updateRequest.getName(), team.getOrganization());
         team.setName(updateRequest.getName());
         return update(team);
     }
@@ -172,8 +173,7 @@ public class TeamService {
 
     // Throws if the organization has a team with the same name.
     // Though two teams may have the same name if they belong to different organizations.
-    private void ensureTeamNameIsUnique(Team team, Organization organization) throws BaseException {
-        String name = team.getName();
+    private void ensureTeamNameIsUnique(String name, Organization organization) throws BaseException {
         List<Team> teams = organization.getTeams();
 
         for (Team current : teams) {

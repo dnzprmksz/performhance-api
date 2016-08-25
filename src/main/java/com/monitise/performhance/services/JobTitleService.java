@@ -65,13 +65,6 @@ public class JobTitleService {
         return update(jobTitle);
     }
 
-    private void ensureNameIsUnique(UpdateJobTitleRequest request, int organizationId) throws BaseException {
-        JobTitle jobTitle = jobTitleRepository.findByTitleAndOrganizationId(request.getTitle(), organizationId);
-        if (jobTitle != null) {
-            throw new BaseException(ResponseCode.JOB_TITLE_EXISTS_IN_ORGANIZATION,
-                    "You organization already has job title: " + request.getTitle() + ".");
-        }
-    }
 
     public void remove(int jobTitleId) throws BaseException {
         ensureExistence(jobTitleId);
@@ -81,6 +74,14 @@ public class JobTitleService {
     }
 
     // region Helper Methods
+
+    private void ensureNameIsUnique(UpdateJobTitleRequest request, int organizationId) throws BaseException {
+        JobTitle jobTitle = jobTitleRepository.findByTitleAndOrganizationId(request.getTitle(), organizationId);
+        if (jobTitle != null) {
+            throw new BaseException(ResponseCode.JOB_TITLE_EXISTS_IN_ORGANIZATION,
+                    "You organization already has job title: " + request.getTitle() + ".");
+        }
+    }
 
     private void ensureUniquenessInOrganization(JobTitle jobTitle, int organizationId) throws BaseException {
         JobTitle jobTitleFromRepo = jobTitleRepository.findByTitleAndOrganizationId(jobTitle.getTitle(),

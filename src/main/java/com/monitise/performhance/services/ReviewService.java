@@ -64,6 +64,8 @@ public class ReviewService {
 
     public void remove(int reviewId) throws BaseException {
         ensureExistence(reviewId);
+        Review review = get(reviewId);
+        review.getReviewedEmployee().getReviews().remove(review);
         reviewRepository.delete(reviewId);
     }
 
