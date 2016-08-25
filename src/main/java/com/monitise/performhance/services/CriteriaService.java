@@ -80,6 +80,7 @@ public class CriteriaService {
 
     public Criteria updateFromRequest(CriteriaRequest criteriaRequest, int criteriaId) throws BaseException {
         Criteria criteria = get(criteriaId);
+        checkUniqueness(criteriaRequest, criteria.getOrganization());
         criteria.setCriteria(criteriaRequest.getCriteria());
         return update(criteria);
     }
@@ -213,6 +214,15 @@ public class CriteriaService {
         organization.getCriteriaList().remove(criteria);
         organizationService.update(organization);
     }
+
+    private void checkUniqueness(CriteriaRequest request, Organization organization) throws BaseException {
+        Criteria criteria = criteriaRepository.findByOrganizationAndCriteria(organization, request.getCriteria());
+        if (criteria != null) {
+            throw new BaseException(ResponseCode.CRITERIA_EXISTS_IN_ORGANIZATION,
+                    "Your organization already has criteria: " + request.getCriteria() + ".");
+        }
+    }
+
 
     // endregion
 
