@@ -15,8 +15,10 @@ import com.monitise.performhance.entity.Criteria;
 import com.monitise.performhance.entity.JobTitle;
 import com.monitise.performhance.entity.Organization;
 import com.monitise.performhance.entity.Review;
+import com.monitise.performhance.entity.Team;
 import com.monitise.performhance.entity.User;
 import com.monitise.performhance.exceptions.BaseException;
+import com.monitise.performhance.exceptions.NotAuthorizedException;
 import com.monitise.performhance.helpers.RelationshipHelper;
 import com.monitise.performhance.helpers.SecurityHelper;
 import com.monitise.performhance.helpers.Util;
@@ -183,6 +185,7 @@ public class UserController {
     @RequestMapping(value = "/{userId}/score", method = RequestMethod.GET)
     public Response<EmployeeScoreResponse> getEmployeeReviewScore(@PathVariable int userId) throws BaseException {
         checkAuthentication(userId);
+        checkRole(userId);
         User employee = userService.get(userId);
 
         List<AverageCriteriaScore> criteriaScores = calculateCriteriaScores(employee);
@@ -252,6 +255,26 @@ public class UserController {
         Organization organization = user.getOrganization();
         int organizationId = organization.getId();
         securityHelper.checkAuthentication(organizationId);
+    }
+
+    private void checkRole(int userId) throws BaseException {
+        User authenticatedUser = securityHelper.getAuthenticatedUser();
+        int currentUserId = authenticatedUser.getId();
+        Team userTeam = userService.get(userId).getTeam();
+
+        if (securityHelper.isAuthenticatedUserEmployee() && currentUserId != userId) {
+            throw new NotAuthorizedException(ResponseCode.REVIEW_NOT_AUTHORIZED_TO_VIEW,
+                    "You are not authorized to view this user's score.");
+        }
+        if (securityHelper.isAuthenticatedUserTeamLeader()) {
+            if (userTeam == null) {
+                throw new NotAuthorizedException(ResponseCode.REVIEW_NOT_AUTHORIZED_TO_VIEW,
+                        "You are not authorized to view other teams' user's score.");
+            } else if (userTeam.getId() != authenticatedUser.getTeam().getId()) {
+                throw new NotAuthorizedException(ResponseCode.REVIEW_NOT_AUTHORIZED_TO_VIEW,
+                        "You are not authorized to view other teams' user's score.");
+            }
+        }
     }
 
     private void validateUserRequest(Organization organization, AddUserRequest request) throws BaseException {
