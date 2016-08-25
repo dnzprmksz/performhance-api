@@ -14,7 +14,7 @@ public class SimplifiedReview {
 
     public SimplifiedReview(Review review) {
         id = review.getId();
-        reviewedEmployeeName = review.getReviewedEmployee().getName();
+        reviewedEmployeeName = review.getReviewedEmployee().getName() + " " + review.getReviewedEmployee().getSurname();
         if (review.getReviewer() != null) {
             reviewerName = review.getReviewer().getName() + " " + review.getReviewer().getSurname();
         } else {

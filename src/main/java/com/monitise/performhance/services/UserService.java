@@ -90,15 +90,14 @@ public class UserService {
 
     public void remove(int userId) throws BaseException {
         ensureExistence(userId);
-
         // Removes the reviews that are made TO this user.
         removeReviews(userId);
         // Makes the reviewer column null for all the reviews this user has made
         correctReviews(userId);
+        checkAndClearTeamLeaderStatus(userId);
         removeUserFromTeam(userId);
         removeUserFromOrganization(userId);
         checkAndClearManagerStatus(userId);
-
         userRepository.delete(userId);
     }
 
@@ -224,6 +223,14 @@ public class UserService {
             Organization organization = user.getOrganization();
             organization.setManager(null);
             organizationService.update(organization);
+        }
+    }
+
+    private void checkAndClearTeamLeaderStatus(int userId) throws BaseException {
+        User user = get(userId);
+        Team team = user.getTeam();
+        if (user.getRole().equals(Role.TEAM_LEADER) && team != null) {
+            teamService.removeLeadershipFromTeam(team.getId());
         }
     }
 
