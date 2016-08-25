@@ -427,6 +427,41 @@
         }
       }
     },
+    "/users/{userId}/reviews": {
+      "get": {
+        "operationId": "getEmployeeReviews",
+        "description": "Gets all `Review`s of the given `User`",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "Id of the `User`"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "403": {
+            "description": "You are not authorized for this `Organization`",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "404": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          }
+        }
+      }
+    },
     "/users/{userId}/score": {
       "get": {
         "operationId": "getEmployeeReviewScore",
