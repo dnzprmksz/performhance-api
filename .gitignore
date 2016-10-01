@@ -6,3 +6,4 @@ out/
 logs/
 
 *.iml
+.DS_Store
