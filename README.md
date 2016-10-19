@@ -5,19 +5,30 @@ RESTful API for corporate peer review and performance tracking application.
 
 
 # Features
-Supports multiple Organizations.
+Supports multiple organizations, not specific to an Organization/Company.
 
 Different user roles such as Employee, Team Leader and Manager.
 
-Managers can alter review criteria for a person, team, job title or a given list of users.
+Managers alter review criteria for a person, team, job title or a given list of users.
 
-Managers can assign employees to a team and select one of them as the team leader, who can read the reviews in that team.
+Managers assign employees to a team and select one of them as team leader,
+who can read the reviews in that team.
+
+Managers and team leaders can see overall performance of an employee or team
+member, respectively.
 
 Employees can review and comment on their colleagues.
 
-Search functionality for Employees and Teams.
+Search functionality for Employee and Team.
 
-CRUD operations for Organizations, Employees, Teams, Job Titles, Criteria, Reviews.
+CRUD operations for Organization, Employee, Team, Job Title, Criteria and
+Review.
+
+
+# Documentation
+API documentation is available for Swagger.
+
+Go to http://editor.swagger.io and import the app.json file which is in the following path `Performhance-API/src/main/webapp/specs/`
 
 
 # Installation
