@@ -1,5 +1,4 @@
-# Performhance API
-[![Build Status](https://travis-ci.org/dnzprmksz/Performhance-API.svg?branch=master)](https://travis-ci.org/dnzprmksz/Performhance-API)
+# Performhance API [![Build Status](https://travis-ci.org/dnzprmksz/Performhance-API.svg?branch=master)](https://travis-ci.org/dnzprmksz/Performhance-API)
 
 RESTful API for corporate peer review and performance tracking application.
 
